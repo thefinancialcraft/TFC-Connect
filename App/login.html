@@ -103,6 +103,11 @@
     
  <div class="form-container flex">
 
+
+    <div id="error-message" style="display: flex;">
+    </div>
+    
+
     <!-- Login Container with id -->
     <div class="container lg-cnt flex-coloum" id="login-container">
         
@@ -126,7 +131,7 @@
     <!-- user login by id form -->
 
     
-      <form class="login-form flex-coloum" onsubmit="submitForm(event)">
+      <form class="login-form flex-coloum" onsubmit="submitIdLoginForm(event)">
         <div class="input-group">
             <label for="loginUserId">User Id</label>
             <input type="text" id="loginUserId" name="loginUserId" required>
@@ -138,9 +143,12 @@
             <a href="#" id="forgot-password-link">Forgot Password?</a>
         </div>
         <div class="btn-cnt flex">
-            <button type="submit" class="login-button">Login</button>
+            <button type="submit" class="login-button">
+                <span class="button-text">Login</span>
+                <div class="spinner" id="spinner" style="display:none;"></div>
+            </button>
         </div>
-        <div id="error-message" class="error-message"></div>
+    
     </form>
 
 
@@ -154,7 +162,7 @@
                 more options
                 <span></span>
             </div>
-            <button onclick="loginEmail()">Login with Email</button>
+            <button class="switch-btn" onclick="loginEmail()">Login with Email</button>
         </div>
         
 
@@ -178,20 +186,28 @@
         <h2 class="mainh2">Login with Email</h2>
     </div>
 
-        <form class="login-form flex-coloum" action="/submit-login" method="POST">
-            <div class="input-group">
-                <label for="username">User Email</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-                <a href="#" id="forgot-password-link2">Forgot Password?</a>
-            </div>
-            <div class="btn-cnt flex">
-            <button type="submit" class="login-button">Login</button>
-            </div>
-        </form>
+
+
+        <!-- user login by email form -->
+
+    
+      <form class="login-form flex-coloum" onsubmit="submitEmailLoginForm(event)" >
+    <div class="input-group">
+        <label for="loginUserEmail">User Email</label>
+        <input type="email" id="loginUserEmail" name="loginUserEmail" required>
+    </div>
+    <div class="input-group">
+        <label for="loginUserEmailPassword">Password</label>
+        <input type="password" id="loginUserEmailPassword" name="loginUserEmailPassword" required>
+        <a href="#" id="forgot-password-link2">Forgot Password?</a>
+    </div>
+    <div class="btn-cnt flex">
+        <button type="submit" class="login-button">
+            <span class="button-text">Login</span>
+            <div class="spinner" id="spinner" style="display:none;"></div>
+        </button>
+    </div>
+</form>
 
         <div class="sign-opn flex-coloum">
             <div class="decor flex">
@@ -199,7 +215,7 @@
                 more options
                 <span></span>
             </div>
-            <button onclick="loginUserid()">Login with User Id</button>
+            <button class="switch-btn" onclick="loginUserid()">Login with User Id</button>
         </div>
         
 
@@ -223,15 +239,15 @@
         <h2 class="mainh2">Forgot User Id</h2>
     </div>
 
-    <form id="id-otp-verify-form" class="login-form flex-coloum" action="/submit-login" method="POST">
+    <form id="id-otp-verify-form" class="login-form flex-coloum" onsubmit="findId">
         <div class="input-group">
-            <label for="username">Mail Id</label>
-            <input type="text" id="username" name="username" required>
-            <a href="#" id="forgot-id-link">Send OTP</a>
+            <label for="findMailId">Mail Id</label>
+            <input type="email" id="findMailId" name="findMailId" required>
+            <a href="#" onclick="sendOtp()" id="sendIdOtp">Send OTP</a>
         </div>
 
         <div class="input-group otp">
-            <label for="password">Enter OTP</label>
+            <label for="otpMail">Enter OTP</label>
             <div class="otp-box flex-row">
                 <input type="text" id="otp-id-1" name="otp" maxlength="1" required oninput="moveToNext(this, 'otp-id-2')" onkeydown="moveToPrevious(event, this, 'otp-id-1')">
                 <input type="text" id="otp-id-2" name="otp" maxlength="1" required oninput="moveToNext(this, 'otp-id-3')" onkeydown="moveToPrevious(event, this, 'otp-id-1')">
@@ -247,9 +263,11 @@
         </div>
     </form>
 
-   <div id="findId" class="find-userid login-form">
+
+
+   <div id="findUserId-cont" class="find-userid login-form">
     <img src="https://lh3.googleusercontent.com/d/1aUVoNux4vHYjvwLQsbV8Hn_OZYzu7rfK" alt="">
-    <input type="text" id="username" name="username" required>
+    <input type="text" id="findUserId" name="findUserId" required>
     <p>Let’s continue your journey! 🚀</p>
     
    </div>

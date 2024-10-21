@@ -327,10 +327,13 @@ body::-webkit-scrollbar{
     padding: 0 15px;
     
 }
-input:focus {
-    border-color: #4931e7; /* Border color jab user type kare */
-    outline: none; /* Optional: Browser ke default outline ko hide karne ke liye */
+
+.login-form input:focus {
+    border-color: #4931e7 !important; /* Border color when the input is focused */
+    outline: none; /* Remove the outline */
 }
+
+
 .otp-box{
     width: 100%;
     justify-content: space-between;
@@ -431,6 +434,43 @@ input:focus {
     /* background-color: #263238; */
 }
 
+
+.spinner {
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-left-color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    animation: spin 1s linear infinite;
+    margin-left: 0px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+
+@keyframes moveDown {
+    0% {
+        top: 2%;
+    }
+    100% {
+        top: 6%; /* Adjust as needed */
+    }
+}
+
+#error-message {
+    position: absolute;
+    font-family: 'roboto';
+    font-size: 1vw;
+    background-color: rgb(255, 72, 72);
+    padding: 8px 30px;
+    color: white;
+    border: 1px solid rgb(255, 255, 255);
+    box-shadow: 0px 5px 30px rgba(255, 0, 0, 0.292);
+    border-radius: 10px;
+    animation: moveDown .4s forwards; /* Animation duration and movement */
+}
 
 
 @media only screen and (max-width: 567px) {

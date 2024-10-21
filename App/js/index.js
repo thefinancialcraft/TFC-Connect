@@ -158,7 +158,7 @@ function moveToNext(current, nextFieldId) {
 
     function submitIdOtp(){
     document.getElementById("id-otp-verify-form").style.display = "none";
-    document.getElementById("findId").style.display = "flex";
+    document.getElementById("findUserId-cont").style.display = "flex";
     document.getElementById("hero2").style.display = "none";
     document.getElementById("hero4").style.display = "flex";
     }
@@ -166,7 +166,7 @@ function moveToNext(current, nextFieldId) {
     function resetId(){
         document.getElementById("slider").style.display = "none";
     document.getElementById("hero2").style.display = "flex";
-    document.getElementById("findId").style.display = "none";
+    document.getElementById("findUserId-cont").style.display = "none";
 
     }
 
@@ -192,17 +192,48 @@ function moveToNext(current, nextFieldId) {
     document.getElementById("slider").style.display = "flex";
     document.getElementById("hero2").style.display = "none";
     document.getElementById("hero3").style.display = "none";
-    document.getElementById("findId").style.display = "none";
+    document.getElementById("findUserId-cont").style.display = "none";
     document.getElementById("id-otp-verify-form").style.display = "flex";
     }
 
 
     // Assuming this code is part of your form submission function
+    function showSpinner() {
+        var spinners = document.querySelectorAll(".spinner");
+        var buttonTexts = document.querySelectorAll(".button-text"); // Corrected variable name
+    
+        // Hide the button text and show the spinner
+        buttonTexts.forEach(buttonText => {
+            buttonText.style.display = "none"; // Use the correct variable name
+        });
+    
+        spinners.forEach(spinner => {
+            spinner.style.display = "inline-block";
+        });
+    }
+    
+    function hideSpinner() {
+        var spinners = document.querySelectorAll(".spinner");
+        var buttonTexts = document.querySelectorAll(".button-text");
+    
+        // Hide the spinner and show the button text again
+        spinners.forEach(spinner => {
+            spinner.style.display = "none";
+        });
+    
+        buttonTexts.forEach(buttonText => {
+            buttonText.style.display = "inline-block";
+        });
+    }
+       
 
-function submitForm(event) {
+function submitIdLoginForm(event) {
+    showSpinner();
     event.preventDefault(); // Prevent default form submission
     const formData = new FormData(event.target);
     const data = {};
+      // Add action parameter for login
+      data.action = 'login'; // Specify the action as 'login'
     formData.forEach((value, key) => {
         data[key] = value;
     });
@@ -220,6 +251,10 @@ function submitForm(event) {
         }
     })
     .then(result => {
+        // Reset the input borders and clear the error message
+        resetInputBorders();
+        clearErrorMessage();
+
         if (result.status === 'success') {
             // Construct the URL based on the userType
             const userType = result.userType.toLowerCase(); // Ensure the userType is in lowercase
@@ -229,21 +264,124 @@ function submitForm(event) {
             if (validUserTypes.includes(userType)) {
                 window.location.href = `html/${userType}.html`; // Redirect dynamically
             } else {
-                document.getElementById('error-message').innerText = 'Unexpected user type.';
-            }
+                document.getElementById('error-message').innerText = 'Unexpected user type';
+                highlightInputFields();
+                hideSpinner(); // Hide spinner after processing the response
+            } 
         } else {
             // Display error message
+            document.getElementById('error-message').style.display = 'block';
             document.getElementById('error-message').innerText = result.message;
+            highlightInputFields(); // Highlight input fields on error
+            hideSpinner(); // Hide spinner after processing the response
         }
     })
     .catch(error => {
         console.error('Error:', error);
+        
         document.getElementById('error-message').innerText = 'An error occurred';
+        highlightInputFields(); // Highlight input fields on error
+        hideSpinner(); // Hide spinner after processing the response
     });
 }
 
+// Function to highlight input fields
+function highlightInputFields() {
+    const inputs = document.querySelectorAll('.login-form input');
+    inputs.forEach(input => {
+        input.style.border = '1.5px solid red'; // Change border color to red
+    });
+}
+
+// Function to reset input borders to default
+function resetInputBorders() {
+    const inputs = document.querySelectorAll('.login-form input');
+    inputs.forEach(input => {
+        input.style.border = '1.5px solid #8773da8e'; // Reset to default color
+    });
+}
+
+// Function to clear the error message
+function clearErrorMessage() {
+    const errorMessage = document.getElementById('error-message');
+    errorMessage.style.display = 'none'; // Hide the error message
+    errorMessage.innerText = ''; // Clear the error message text
+}
+
+// Add event listeners to input fields to reset borders on click
+document.querySelectorAll('.login-form input').forEach(input => {
+    input.addEventListener('click', () => {
+        resetInputBorders(); // Reset borders when input is clicked
+        clearErrorMessage(); // Clear error message when input is clicked
+    });
+
+   
+});
+
+// Add event listeners to buttons with class "switch-btn"
+document.querySelectorAll('.switch-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        resetInputBorders(); // Reset borders when switch button is clicked
+        clearErrorMessage(); // Clear error message when switch button is clicked
+    });
+});
 
 
 
+function submitEmailLoginForm(event) {
+    showSpinner();
+    event.preventDefault(); // Prevent default form submission
+    const formData = new FormData(event.target);
+    const data = {};
+    data.action = 'login'; // Specify the action as 'login'
 
-    
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+
+    fetch('https://script.google.com/macros/s/AKfycbwirPyufQu-oKZWjTj_T9k-SfXCckuBvdCMLNlDUNpBv-HbuFwyeVixl_xd6ArukjNh/exec', {
+        method: 'POST',
+        body: new URLSearchParams(data)
+    })
+    .then(response => {
+        // Check if the response is actually JSON
+        if (response.headers.get('content-type')?.includes('application/json')) {
+            return response.json();
+        } else {
+            throw new Error("Invalid JSON response");
+        }
+    })
+    .then(result => {
+        // Reset the input borders and clear the error message
+        resetInputBorders();
+        clearErrorMessage();
+
+        if (result.status === 'success') {
+            // Construct the URL based on the userType
+            const userType = result.userType.toLowerCase(); // Ensure the userType is in lowercase
+            const validUserTypes = ['user', 'admin', 'agent']; // Define valid user types
+            
+            // Check if the userType is valid
+            if (validUserTypes.includes(userType)) {
+                window.location.href = `html/${userType}.html`; // Redirect dynamically
+            } else {
+                document.getElementById('error-message').innerText = 'Unexpected user type';
+                highlightInputFields();
+                hideSpinner(); // Hide spinner after processing the response
+            } 
+        } else {
+            // Display error message
+            document.getElementById('error-message').style.display = 'block';
+            document.getElementById('error-message').innerText = result.message;
+            highlightInputFields(); // Highlight input fields on error
+            hideSpinner(); // Hide spinner after processing the response
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        
+        document.getElementById('error-message').innerText = 'An error occurred';
+        highlightInputFields(); // Highlight input fields on error
+        hideSpinner(); // Hide spinner after processing the response
+    });
+}
