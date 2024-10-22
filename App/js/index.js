@@ -156,12 +156,6 @@ function moveToNext(current, nextFieldId) {
     document.getElementById("hero3").style.display = "flex";
     }
 
-    function submitIdOtp(){
-    document.getElementById("id-otp-verify-form").style.display = "none";
-    document.getElementById("findUserId-cont").style.display = "flex";
-    document.getElementById("hero2").style.display = "none";
-    document.getElementById("hero4").style.display = "flex";
-    }
 
     function resetId(){
         document.getElementById("slider").style.display = "none";
@@ -227,63 +221,68 @@ function moveToNext(current, nextFieldId) {
     }
        
 
-function submitIdLoginForm(event) {
-    showSpinner();
-    event.preventDefault(); // Prevent default form submission
-    const formData = new FormData(event.target);
-    const data = {};
-      // Add action parameter for login
-      data.action = 'login'; // Specify the action as 'login'
-    formData.forEach((value, key) => {
-        data[key] = value;
-    });
-
-    fetch('https://script.google.com/macros/s/AKfycbwirPyufQu-oKZWjTj_T9k-SfXCckuBvdCMLNlDUNpBv-HbuFwyeVixl_xd6ArukjNh/exec', {
-        method: 'POST',
-        body: new URLSearchParams(data)
-    })
-    .then(response => {
-        // Check if the response is actually JSON
-        if (response.headers.get('content-type')?.includes('application/json')) {
-            return response.json();
-        } else {
-            throw new Error("Invalid JSON response");
-        }
-    })
-    .then(result => {
-        // Reset the input borders and clear the error message
-        resetInputBorders();
-        clearErrorMessage();
-
-        if (result.status === 'success') {
-            // Construct the URL based on the userType
-            const userType = result.userType.toLowerCase(); // Ensure the userType is in lowercase
-            const validUserTypes = ['user', 'admin', 'agent']; // Define valid user types
-            
-            // Check if the userType is valid
-            if (validUserTypes.includes(userType)) {
-                window.location.href = `html/${userType}.html`; // Redirect dynamically
-            } else {
-                document.getElementById('error-message').innerText = 'Unexpected user type';
-                highlightInputFields();
+    function submitIdLoginForm(event) {
+        showSpinner();
+        event.preventDefault(); // Prevent default form submission
+        const formData = new FormData(event.target);
+        const data = {};
+        data.action = 'loginbyid'; // Specify the action as 'login'
+    
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+    
+        fetch('config.json')
+            .then(response => response.json())
+            .then(config => {
+                const scriptUrl = config.scriptUrl; // Get the script URL from config
+    
+                // Make the POST request to the App Script endpoint
+                return fetch(scriptUrl, {
+                    method: 'POST',
+                    body: new URLSearchParams(data) // Send form data
+                });
+            })
+            .then(response => {
+                // Check if the response is actually JSON
+                if (response.headers.get('content-type')?.includes('application/json')) {
+                    return response.json();
+                } else {
+                    throw new Error("Invalid JSON response");
+                }
+            })
+            .then(result => {
+                // Reset the input borders and clear the error message
+                resetInputBorders();
+                clearErrorMessage();
+    
+                if (result.status === 'success') {
+                    // Construct the URL based on the userType
+                    const userType = result.userType.toLowerCase(); // Ensure the userType is in lowercase
+                    const validUserTypes = ['user', 'admin', 'agent']; // Define valid user types
+                    
+                    // Check if the userType is valid
+                    if (validUserTypes.includes(userType)) {
+                        window.location.href = `html/${userType}.html`; // Redirect dynamically
+                    } else {
+                        showErrorMessage(document.getElementById('error-message'), 'Unexpected user type');
+                        highlightInputFields();
+                    }
+                } else {
+                    // Display error message
+                    showErrorMessage(document.getElementById('error-message'), result.message);
+                    highlightInputFields(); // Highlight input fields on error
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showErrorMessage(document.getElementById('error-message'), 'An error occurred while submitting the form.');
+                highlightInputFields(); // Highlight input fields on error
+            })
+            .finally(() => {
                 hideSpinner(); // Hide spinner after processing the response
-            } 
-        } else {
-            // Display error message
-            document.getElementById('error-message').style.display = 'block';
-            document.getElementById('error-message').innerText = result.message;
-            highlightInputFields(); // Highlight input fields on error
-            hideSpinner(); // Hide spinner after processing the response
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        
-        document.getElementById('error-message').innerText = 'An error occurred';
-        highlightInputFields(); // Highlight input fields on error
-        hideSpinner(); // Hide spinner after processing the response
-    });
-}
+            });
+    }
 
 // Function to highlight input fields
 function highlightInputFields() {
@@ -333,15 +332,22 @@ function submitEmailLoginForm(event) {
     event.preventDefault(); // Prevent default form submission
     const formData = new FormData(event.target);
     const data = {};
-    data.action = 'login'; // Specify the action as 'login'
+    data.action = 'loginbyemail'; // Specify the action as 'login'
 
     formData.forEach((value, key) => {
         data[key] = value;
     });
 
-    fetch('https://script.google.com/macros/s/AKfycbwirPyufQu-oKZWjTj_T9k-SfXCckuBvdCMLNlDUNpBv-HbuFwyeVixl_xd6ArukjNh/exec', {
-        method: 'POST',
-        body: new URLSearchParams(data)
+    fetch('config.json')
+    .then(response => response.json())
+    .then(config => {
+        const scriptUrl = config.scriptUrl; // Get the script URL from config
+
+        // Make the POST request to the App Script endpoint
+        return fetch(scriptUrl, {
+            method: 'POST',
+            body: new URLSearchParams(data) // Send form data
+        });
     })
     .then(response => {
         // Check if the response is actually JSON
@@ -384,4 +390,140 @@ function submitEmailLoginForm(event) {
         highlightInputFields(); // Highlight input fields on error
         hideSpinner(); // Hide spinner after processing the response
     });
+}
+
+
+
+let timerInterval; // To store the timer interval
+
+async function sendOtp() {
+    const emailInput = document.getElementById('findMailId');
+    const errorMessageElement = document.getElementById('error-message');
+    const sendIdOtp = document.getElementById('sendIdOtp');
+    const timerDisplay = document.getElementById('timer-display');
+
+    // Clear previous error message
+    errorMessageElement.textContent = '';
+    errorMessageElement.style.display = 'none';
+    errorMessageElement.style.backgroundColor = '';
+    errorMessageElement.style.boxShadow = '';
+
+    var email = emailInput.value; // Get the email value
+
+    if (!email) {
+        showErrorMessage(errorMessageElement, "Please enter a valid email address.");
+        highlightInputFields();
+        return;
+    }
+
+    var payload = {
+        action: 'verifyidemail',
+        email: email
+    };
+
+    // Disable the link while processing
+    sendIdOtp.textContent = 'Sending...';
+    sendIdOtp.style.pointerEvents = 'none'; // Disable clicks
+
+    try {
+        // Load the config.json file to get the script URL
+        const configResponse = await fetch('config.json');
+        const config = await configResponse.json();
+        const scriptUrl = config.scriptUrl; // Get the script URL from config
+
+        // Make the POST request to the App Script endpoint
+        const response = await fetch(scriptUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded' // Use the appropriate header for form data
+            },
+            body: new URLSearchParams(payload) // Send form data
+        });
+
+        const data = await response.json();
+
+        if (data.status === 'success') {
+            showSuccessMessage(errorMessageElement, 'OTP sent successfully!'); // Show success message
+            emailInput.setAttribute('readonly', true); // Set input field to readonly
+            sendIdOtp.style.display = 'none'; // Hide Send OTP button
+            timerDisplay.style.display = 'block'; // Show the timer display
+            startTimer(59); // Start the 59 seconds timer
+        } else {
+            showErrorMessage(errorMessageElement, data.message);
+            highlightInputFields(); // Highlight input fields on error
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showErrorMessage(errorMessageElement, 'An error occurred while sending the OTP. Please try again.');
+        highlightInputFields(); // Highlight input fields on error
+    } finally {
+        // Reset button text if needed (this will be overridden in the success case)
+        sendIdOtp.textContent = 'Send OTP'; // Reset button text if needed
+    }
+}
+
+// Function to start the timer
+function startTimer(duration) {
+    const timerDisplay = document.getElementById('timer-display');
+    let timeLeft = duration;
+
+    // Update the timer display every second
+    timerInterval = setInterval(() => {
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval); // Stop the timer
+            resetUi(); // Reset the UI after the timer ends
+        } else {
+            timerDisplay.textContent = `Please wait: ${timeLeft} seconds`;
+            timeLeft--;
+        }
+    }, 1000);
+}
+
+// Function to reset the UI after the timer
+function resetUi() {
+    const emailInput = document.getElementById('findMailId');
+    const sendIdOtp = document.getElementById('sendIdOtp');
+    const timerDisplay = document.getElementById('timer-display');
+    const errorMessageElement = document.getElementById('error-message');
+
+    emailInput.removeAttribute('readonly'); // Make input editable again
+    sendIdOtp.style.display = 'inline'; // Show the Send OTP button again
+    sendIdOtp.style.pointerEvents = 'auto'; // Enable clicks on the link
+    sendIdOtp.textContent = 'Send OTP'; // Reset button text
+    timerDisplay.style.display = 'none'; // Hide the timer display
+    errorMessageElement.textContent = ''; // Clear any previous error messages
+    errorMessageElement.style.display = 'none'; // Hide error message
+}
+
+// Function to display error messages
+function showErrorMessage(element, message) {
+    element.textContent = message;
+    element.style.display = 'block'; // Show the error message
+    element.style.backgroundColor = 'rgb(255, 72, 72)'; // Show the error message
+}
+
+// Function to display success messages
+function showSuccessMessage(element, message) {
+    element.textContent = message;
+    element.style.backgroundColor = 'rgb(11, 239, 38)'; // Corrected property assignment
+    element.style.boxShadow = '0px 5px 30px rgba(64, 255, 0, 0.292)'; // Corrected property assignment
+    element.style.display = 'block'; // Show the message
+    element.style.color = 'white'; // Set text color to white 
+}
+
+
+// Function to display error messages
+function showErrorMessage(element, message) {
+    element.textContent = message;
+    element.style.display = 'block'; // Show the error message
+    element.style. backgroundColor = 'rgb(255, 72, 72)'; // Show the error message
+}
+
+
+function showSuccessMessage(element, message) {
+    element.textContent = message;
+    element.style.backgroundColor = 'rgb(11, 239, 38)'; // Corrected property assignment
+    element.style.boxShadow = '0px 5px 30px rgba(64, 255, 0, 0.292)'; // Corrected property assignment
+    element.style.display = 'block'; // Show the message
+    element.style.color = 'white'; // Set text color to white 
 }

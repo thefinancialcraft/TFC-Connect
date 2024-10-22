@@ -135,7 +135,7 @@
         <div class="input-group">
             <label for="loginUserId">User Id</label>
             <input type="text" id="loginUserId" name="loginUserId" required>
-            <a href="#" id="forgot-id-link">Forgot User Id?</a>
+            <a href="#forgotuserid" id="forgot-id-link">Forgot User Id?</a>
         </div>
         <div class="input-group">
             <label for="loginUserIdPassword">Password</label>
@@ -244,6 +244,8 @@
             <label for="findMailId">Mail Id</label>
             <input type="email" id="findMailId" name="findMailId" required>
             <a href="#" onclick="sendOtp()" id="sendIdOtp">Send OTP</a>
+            <a id="timer-display" style="display: none;"></a>
+
         </div>
 
         <div class="input-group otp">
