@@ -188,6 +188,12 @@ function moveToNext(current, nextFieldId) {
     document.getElementById("hero3").style.display = "none";
     document.getElementById("findUserId-cont").style.display = "none";
     document.getElementById("id-otp-verify-form").style.display = "flex";
+    const inputs = document.querySelectorAll('.login-form input');
+    inputs.forEach(input => {
+        input.value = ''; // Change border color to red
+    });
+    resetUi(); 
+
     }
 
 
@@ -467,7 +473,7 @@ async function sendOtpid() {
             document.getElementById('findMailId').setAttribute('readonly', true); // Set input field to readonly
             sendIdOtp.style.display = 'none'; // Hide Send OTP button
             document.getElementById('timer-display').style.display = 'block'; // Show the timer display
-            startTimer(59); // Start the 59 seconds timer
+            startTimer(60); // Start the 59 seconds timer
             console.log('Timer started for 59 seconds.');
         } else {
             console.log('Error from server:', data.message);
@@ -548,5 +554,118 @@ function showSuccessMessage(element, message) {
     element.style.boxShadow = '0px 5px 30px rgba(64, 255, 0, 0.292)'; // Corrected property assignment
     element.style.display = 'block'; // Show the message
     element.style.color = 'white'; // Set text color to white 
+
+
 }
 
+async function submitIdOtp(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+    console.log("Form submission prevented.");
+
+    // Collecting OTP values
+    const otpInputs = document.querySelectorAll('input[name="otp"]');
+    const otp = Array.from(otpInputs).map(input => input.value).join('');
+    console.log("Collected OTP:", otp);
+
+    const messageElement = document.getElementById('error-message'); // Single message element
+
+    // Clear previous messages
+    resetMessageDisplay(messageElement);
+    console.log("Previous messages cleared.");
+
+    // Check if the OTP is complete
+    if (otp.length < 6) {
+        console.log("Incomplete OTP, length:", otp.length);
+        showMessage(messageElement, 'Please enter a complete OTP.', 'error');
+        return;
+    }
+    console.log("OTP is complete.");
+
+    // Prepare payload for the server
+    const payload = {
+        action: 'verifyidotp',
+        email: storedEmail, // Use stored email
+        token: storedToken, // Use stored token
+        otp: otp
+    };
+    console.log("Payload prepared:", payload);
+
+    try {
+        console.log("Fetching config.json...");
+        // Fetch the script URL from config.json
+        const configResponse = await fetch('config.json');
+        const config = await configResponse.json();
+        const scriptUrl = config.scriptUrl;
+        console.log("Config loaded, script URL:", scriptUrl);
+
+        // Send the OTP verification request to the server
+        console.log("Sending OTP verification request...");
+        const response = await fetch(scriptUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams(payload)
+        });
+
+        console.log("Response received:", response);
+        const data = await response.json();
+        console.log("Response data:", data);
+
+        // Handle response from the server
+        if (data.status === 'success') {
+            console.log("OTP verified successfully.");
+            showMessage(messageElement, 'OTP verified successfully!', 'success');
+            
+            // Show the userId in the findUserId function
+          
+            document.getElementById('findUserId').innerText = `User Id : ${data.userId}`;
+            clearInterval(timerInterval); // Stop the timer
+            
+            
+
+            // Additional success handling logic
+            handleSuccessfulVerification();
+        } else {
+            console.log("Verification failed:", data.message);
+            showMessage(messageElement, data.message || 'Verification failed. Please try again.', 'error');
+        }
+    } catch (error) {
+        console.error("Error during verification:", error);
+        showMessage(messageElement, 'An error occurred during verification. Please try again.', 'error');
+    }
+}
+
+
+
+// Helper function to reset message display
+function resetMessageDisplay(element) {
+    element.textContent = '';
+    element.style.display = 'none';
+    element.style.backgroundColor = ''; // Reset background color
+    element.style.boxShadow = ''; // Reset box shadow
+}
+
+// Function to display messages
+function showMessage(element, message, type) {
+    element.textContent = message;
+    element.style.display = 'block'; // Show the message
+
+    if (type === 'error') {
+        element.style.backgroundColor = 'rgb(255, 72, 72)'; // Error background color
+        element.style.color = 'white'; // Error text color
+        element.style.boxShadow = '0px 5px 30px rgba(255, 0, 0, 0.292)';
+    } else if (type === 'success') {
+        element.style.backgroundColor = 'rgb(11, 239, 38)'; // Success background color
+        element.style.color = 'white'; // Success text color
+        element.style.boxShadow = '0px 5px 30px rgba(64, 255, 0, 0.292)'; // Box shadow for success
+    }
+}
+
+// Handle successful OTP verification
+function handleSuccessfulVerification() {
+    document.getElementById("id-otp-verify-form").style.display = "none"; // Hide OTP form
+    document.getElementById("findUserId-cont").style.display = "flex"; // Show the findUserId container
+    document.getElementById("hero2").style.display = "none"; // Hide hero2
+    document.getElementById("hero4").style.display = "flex"; // Show hero4
+}

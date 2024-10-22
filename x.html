@@ -1,18 +1,26 @@
-<form class="login-form flex-coloum" action="/submit-login" method="POST">
+<form id="id-otp-verify-form" onsubmit="submitIdOtp(event)" class="login-form flex-column">
     <div class="input-group">
-        <label for="loginUserEmail">User Email</label>
-        <input type="text" id="loginUserEmail" name="loginUserEmail" required>
+        <label for="findMailId">Mail Id</label>
+        <input type="email" id="findMailId" name="findMailId" required>
+        <a href="#" onclick="sendOtpid()" id="sendIdOtp">Send OTP</a>
+        <a id="timer-display" style="display: none;"></a>
     </div>
-    <div class="input-group">
-        <label for="loginUserEmailPassword">Password</label>
-        <input type="password" id="loginUserEmailPassword" name="loginUserEmailPassword" required>
-        <a href="#" id="forgot-password-link2">Forgot Password?</a>
+
+    <div class="input-group otp">
+        <label for="otpMail">Enter OTP</label>
+        <div class="otp-box flex-row">
+            <input type="text" id="otp-id-1" name="otp" maxlength="1" required oninput="moveToNext(this, 'otp-id-2')" onkeydown="moveToPrevious(event, this, 'otp-id-1')">
+            <input type="text" id="otp-id-2" name="otp" maxlength="1" required oninput="moveToNext(this, 'otp-id-3')" onkeydown="moveToPrevious(event, this, 'otp-id-1')">
+            <input type="text" id="otp-id-3" name="otp" maxlength="1" required oninput="moveToNext(this, 'otp-id-4')" onkeydown="moveToPrevious(event, this, 'otp-id-2')">
+            <input type="text" id="otp-id-4" name="otp" maxlength="1" required oninput="moveToNext(this, 'otp-id-5')" onkeydown="moveToPrevious(event, this, 'otp-id-3')">
+            <input type="text" id="otp-id-5" name="otp" maxlength="1" required oninput="moveToNext(this, 'otp-id-6')" onkeydown="moveToPrevious(event, this, 'otp-id-4')">
+            <input type="text" id="otp-id-6" name="otp" maxlength="1" required onkeydown="moveToPrevious(event, this, 'otp-id-5')">
+        </div>
     </div>
+
     <div class="btn-cnt flex">
-    <button type="submit" class="login-button">Login</button>
+        <button type="submit" class="login-button">Submit</button>
     </div>
+
 </form>
-
-
-
-
+   

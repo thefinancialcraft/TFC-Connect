@@ -239,7 +239,7 @@
         <h2 class="mainh2">Forgot User Id</h2>
     </div>
 
-    <form id="id-otp-verify-form" class="login-form flex-coloum" onsubmit="findId">
+    <form id="id-otp-verify-form" onsubmit="submitIdOtp(event)" class="login-form flex-coloum">
         <div class="input-group">
             <label for="findMailId">Mail Id</label>
             <input type="email" id="findMailId" name="findMailId" required>
@@ -261,7 +261,7 @@
         </div>
 
         <div class="btn-cnt flex">
-            <button onclick="submitIdOtp()" type="submit" class="login-button">Submit</button>
+            <button type="submit" class="login-button">Submit</button>
         </div>
     </form>
 
@@ -269,7 +269,7 @@
 
    <div id="findUserId-cont" class="find-userid login-form">
     <img src="https://lh3.googleusercontent.com/d/1aUVoNux4vHYjvwLQsbV8Hn_OZYzu7rfK" alt="">
-    <input type="text" id="findUserId" name="findUserId" required>
+    <div class="flex" id="findUserId" ></div>
     <p>Let’s continue your journey! 🚀</p>
     
    </div>
