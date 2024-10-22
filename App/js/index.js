@@ -394,13 +394,17 @@ function submitEmailLoginForm(event) {
 
 
 
+// send otp to mail
+
+
 let timerInterval; // To store the timer interval
 
-async function sendOtp() {
-    const emailInput = document.getElementById('findMailId');
+let storedEmail = ''; // Variable to hold the email
+let storedToken = ''; // Variable to hold the token
+
+async function sendOtpid() {
+    var email = document.getElementById('findMailId').value;
     const errorMessageElement = document.getElementById('error-message');
-    const sendIdOtp = document.getElementById('sendIdOtp');
-    const timerDisplay = document.getElementById('timer-display');
 
     // Clear previous error message
     errorMessageElement.textContent = '';
@@ -408,20 +412,28 @@ async function sendOtp() {
     errorMessageElement.style.backgroundColor = '';
     errorMessageElement.style.boxShadow = '';
 
-    var email = emailInput.value; // Get the email value
+    console.log('Attempting to send OTP for email:', email);
 
     if (!email) {
+        console.log('Error: No email provided.');
         showErrorMessage(errorMessageElement, "Please enter a valid email address.");
         highlightInputFields();
         return;
     }
 
+    // Generate a token
+    const token = Math.random().toString(36).substr(2, 9); // Random token generation
+    console.log('Generated token:', token);
+
     var payload = {
         action: 'verifyidemail',
-        email: email
+        email: email,
+        token: token // Add the token to the payload
     };
+    console.log('Payload to send:', payload);
 
     // Disable the link while processing
+    const sendIdOtp = document.getElementById('sendIdOtp');
     sendIdOtp.textContent = 'Sending...';
     sendIdOtp.style.pointerEvents = 'none'; // Disable clicks
 
@@ -430,6 +442,7 @@ async function sendOtp() {
         const configResponse = await fetch('config.json');
         const config = await configResponse.json();
         const scriptUrl = config.scriptUrl; // Get the script URL from config
+        console.log('Script URL loaded:', scriptUrl);
 
         // Make the POST request to the App Script endpoint
         const response = await fetch(scriptUrl, {
@@ -441,26 +454,52 @@ async function sendOtp() {
         });
 
         const data = await response.json();
+        console.log('Response received from server:', data);
 
         if (data.status === 'success') {
             showSuccessMessage(errorMessageElement, 'OTP sent successfully!'); // Show success message
-            emailInput.setAttribute('readonly', true); // Set input field to readonly
+            
+            // Store email and token for later use
+            storedEmail = email;
+            storedToken = token;
+            console.log('Stored email and token:', storedEmail, storedToken);
+
+            document.getElementById('findMailId').setAttribute('readonly', true); // Set input field to readonly
             sendIdOtp.style.display = 'none'; // Hide Send OTP button
-            timerDisplay.style.display = 'block'; // Show the timer display
+            document.getElementById('timer-display').style.display = 'block'; // Show the timer display
             startTimer(59); // Start the 59 seconds timer
+            console.log('Timer started for 59 seconds.');
         } else {
+            console.log('Error from server:', data.message);
+            // Reset email and token on error
+            resetFields(); // Call function to reset fields and remove readonly attribute
             showErrorMessage(errorMessageElement, data.message);
             highlightInputFields(); // Highlight input fields on error
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error occurred during the fetch operation:', error);
+        
+        // Reset email and token on catch
+        resetFields(); // Call function to reset fields and remove readonly attribute
         showErrorMessage(errorMessageElement, 'An error occurred while sending the OTP. Please try again.');
         highlightInputFields(); // Highlight input fields on error
     } finally {
-        // Reset button text if needed (this will be overridden in the success case)
-        sendIdOtp.textContent = 'Send OTP'; // Reset button text if needed
+        // Re-enable the link
+        sendIdOtp.textContent = 'Send OTP';
+        sendIdOtp.style.pointerEvents = 'auto'; // Enable clicks
     }
 }
+
+// Function to reset fields and remove readonly attribute
+function resetFields() {
+    storedEmail = ''; // Reset email
+    storedToken = ''; // Reset token
+    document.getElementById('findMailId').removeAttribute('readonly'); // Remove readonly attribute
+    console.log('Fields have been reset. Email and token cleared.');
+}
+
+
+
 
 // Function to start the timer
 function startTimer(duration) {
@@ -511,19 +550,3 @@ function showSuccessMessage(element, message) {
     element.style.color = 'white'; // Set text color to white 
 }
 
-
-// Function to display error messages
-function showErrorMessage(element, message) {
-    element.textContent = message;
-    element.style.display = 'block'; // Show the error message
-    element.style. backgroundColor = 'rgb(255, 72, 72)'; // Show the error message
-}
-
-
-function showSuccessMessage(element, message) {
-    element.textContent = message;
-    element.style.backgroundColor = 'rgb(11, 239, 38)'; // Corrected property assignment
-    element.style.boxShadow = '0px 5px 30px rgba(64, 255, 0, 0.292)'; // Corrected property assignment
-    element.style.display = 'block'; // Show the message
-    element.style.color = 'white'; // Set text color to white 
-}
