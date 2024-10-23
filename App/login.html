@@ -290,6 +290,28 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- forgot password Container -->
 <div class="container lg-cnt flex-coloum" id="forgot-password-container">
     <div class="prm-logo-cnt hero-small-container">
@@ -306,47 +328,50 @@
     </div>
 
 
-    <form id="pass-otp-verify-form" class="login-form otp-verify flex-coloum" action="/submit-login" method="POST">
+    <form id="pass-otp-verify-form" onsubmit="submitPassOtp(event)"  class="login-form otp-verify flex-coloum" >
         <div class="input-group">
-            <label for="username">Mail Id</label>
-            <input type="text" id="username" name="username" required>
-            <a href="#" id="forgot-id-link">Send OTP</a>
+            <label for="passMailId">Mail Id</label>
+            <input type="email" id="passMailId" name="passMailId" required>
+            <a href="#" onclick="sendPassOtp()" id="sendPassOtp">Send OTP</a>
+            <a id="timer-display-pass" style="display: none;"></a>
         </div>
 
         <div class="input-group otp">
             <label for="password">Enter OTP</label>
             <div class="otp-box flex-row">
-                <input type="text" id="otp-pass-1" name="otp" maxlength="1" required oninput="moveToNext(this, 'otp-pass-2')" onkeydown="moveToPrevious(event, this, 'otp-pass-1')">
-                <input type="text" id="otp-pass-2" name="otp" maxlength="1" required oninput="moveToNext(this, 'otp-pass-3')" onkeydown="moveToPrevious(event, this, 'otp-pass-1')">
-                <input type="text" id="otp-pass-3" name="otp" maxlength="1" required oninput="moveToNext(this, 'otp-pass-4')" onkeydown="moveToPrevious(event, this, 'otp-pass-2')">
-                <input type="text" id="otp-pass-4" name="otp" maxlength="1" required oninput="moveToNext(this, 'otp-pass-5')" onkeydown="moveToPrevious(event, this, 'otp-pass-3')">
-                <input type="text" id="otp-pass-5" name="otp" maxlength="1" required oninput="moveToNext(this, 'otp-pass-6')" onkeydown="moveToPrevious(event, this, 'otp-pass-4')">
-                <input type="text" id="otp-pass-6" name="otp" maxlength="1" required onkeydown="moveToPrevious(event, this, 'otp-pass-5')">
+                <input type="text" id="otp-pass-1" name="passOtp" maxlength="1" required oninput="moveToNext(this, 'otp-pass-2')" onkeydown="moveToPrevious(event, this, 'otp-pass-1')">
+                <input type="text" id="otp-pass-2" name="passOtp" maxlength="1" required oninput="moveToNext(this, 'otp-pass-3')" onkeydown="moveToPrevious(event, this, 'otp-pass-1')">
+                <input type="text" id="otp-pass-3" name="passOtp" maxlength="1" required oninput="moveToNext(this, 'otp-pass-4')" onkeydown="moveToPrevious(event, this, 'otp-pass-2')">
+                <input type="text" id="otp-pass-4" name="passOtp" maxlength="1" required oninput="moveToNext(this, 'otp-pass-5')" onkeydown="moveToPrevious(event, this, 'otp-pass-3')">
+                <input type="text" id="otp-pass-5" name="passOtp" maxlength="1" required oninput="moveToNext(this, 'otp-pass-6')" onkeydown="moveToPrevious(event, this, 'otp-pass-4')">
+                <input type="text" id="otp-pass-6" name="passOtp" maxlength="1" required onkeydown="moveToPrevious(event, this, 'otp-pass-5')">
             </div>
         </div>
 
         <div class="btn-cnt flex">
-            <button type="submit" onclick=" submitPassOtp()" id="sub-pass-otp" class="login-button">Submit OTP</button>
-           
+            <button type="submit" class="login-button">Submit OTP</button> 
         </div>
     </form>
 
 
-    <form id="upd-pass-form" class="login-form upd-pass flex-coloum" action="/submit-login" method="POST">
+    <form id="upd-pass-form"  class="login-form upd-pass flex-coloum" onsubmit="submitNewPassword(event) ">
         <div class="input-group">
-            <label for="username">New Password</label>
-            <input type="text" id="username" name="username" required>
-           
+            <label for="new-password">New Password</label>
+            <input type="password" id="new-password" name="newPassword" required>
         </div>
         <div class="input-group">
-            <label for="password">Confirm Password</label>
-            <input type="password" id="password" name="password" required>
-          
+            <label for="confirm-password">Confirm Password</label>
+            <input type="password" id="confirm-password" name="confirmPassword" required>
         </div>
+        <!-- Hidden fields to store userId and email -->
+        <input type="hidden" id="user-id" name="userId">
+        <input type="hidden" id="email" name="email">
+    
         <div class="btn-cnt flex">
-        <button type="submit" class="login-button">Update</button>
+            <button type="submit" class="login-button">Update</button>
         </div>
     </form>
+    
 
 
     <div class="sign-opn flex-coloum">

@@ -149,12 +149,12 @@ function moveToNext(current, nextFieldId) {
         
 
 
-    function submitPassOtp(){
-    document.getElementById("pass-otp-verify-form").style.display = "none";
-    document.getElementById("upd-pass-form").style.display = "flex";
-    document.getElementById("hero2").style.display = "none";
-    document.getElementById("hero3").style.display = "flex";
-    }
+    // function submitPassOtp(){
+    // document.getElementById("pass-otp-verify-form").style.display = "none";
+    // document.getElementById("upd-pass-form").style.display = "flex";
+    // document.getElementById("hero2").style.display = "none";
+    // document.getElementById("hero3").style.display = "flex";
+    // }
 
 
     function resetId(){
@@ -193,6 +193,7 @@ function moveToNext(current, nextFieldId) {
         input.value = ''; // Change border color to red
     });
     resetUi(); 
+    resetPassUi();
 
     }
 
@@ -496,6 +497,8 @@ async function sendOtpid() {
     }
 }
 
+
+
 // Function to reset fields and remove readonly attribute
 function resetFields() {
     storedEmail = ''; // Reset email
@@ -557,6 +560,8 @@ function showSuccessMessage(element, message) {
 
 
 }
+
+
 
 async function submitIdOtp(event) {
     event.preventDefault(); // Prevent the default form submission behavior
@@ -668,4 +673,338 @@ function handleSuccessfulVerification() {
     document.getElementById("findUserId-cont").style.display = "flex"; // Show the findUserId container
     document.getElementById("hero2").style.display = "none"; // Hide hero2
     document.getElementById("hero4").style.display = "flex"; // Show hero4
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function sendPassOtp() {
+    var email = document.getElementById('passMailId').value;
+    const errorMessageElement = document.getElementById('error-message');
+
+    // Clear previous error message
+    errorMessageElement.textContent = '';
+    errorMessageElement.style.display = 'none';
+    errorMessageElement.style.backgroundColor = '';
+    errorMessageElement.style.boxShadow = '';
+
+    console.log('Attempting to send OTP for email:', email);
+
+    if (!email) {
+        console.log('Error: No email provided.');
+        showErrorMessage(errorMessageElement, "Please enter a valid email address.");
+        highlightInputFields();
+        return;
+    }
+
+    // Generate a token
+    const token = Math.random().toString(36).substr(2, 9); // Random token generation
+    console.log('Generated token:', token);
+
+    var payload = {
+        action: 'verifyidemail',
+        email: email,
+        token: token // Add the token to the payload
+    };
+    console.log('Payload to send:', payload);
+
+    // Disable the link while processing
+    const sendIdOtp = document.getElementById('sendPassOtp');
+    sendIdOtp.textContent = 'Sending...';
+    sendIdOtp.style.pointerEvents = 'none'; // Disable clicks
+
+    try {
+        // Load the config.json file to get the script URL
+        const configResponse = await fetch('config.json');
+        const config = await configResponse.json();
+        const scriptUrl = config.scriptUrl; // Get the script URL from config
+        console.log('Script URL loaded:', scriptUrl);
+
+        // Make the POST request to the App Script endpoint
+        const response = await fetch(scriptUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded' // Use the appropriate header for form data
+            },
+            body: new URLSearchParams(payload) // Send form data
+        });
+
+        const data = await response.json();
+        console.log('Response received from server:', data);
+
+        if (data.status === 'success') {
+            showSuccessMessage(errorMessageElement, 'OTP sent successfully!'); // Show success message
+            
+            // Store email and token for later use
+            storedEmail = email;
+            storedToken = token;
+            console.log('Stored email and token:', storedEmail, storedToken);
+
+            document.getElementById('passMailId').setAttribute('readonly', true); // Set input field to readonly
+            sendIdOtp.style.display = 'none'; // Hide Send OTP button
+            document.getElementById('timer-display-pass').style.display = 'block'; // Show the timer display
+            startPassTimer(60); // Start the 59 seconds timer
+            console.log('Timer started for 59 seconds.');
+        } else {
+            console.log('Error from server:', data.message);
+            // Reset email and token on error
+            resetFields(); // Call function to reset fields and remove readonly attribute
+            showErrorMessage(errorMessageElement, data.message);
+            highlightInputFields(); // Highlight input fields on error
+        }
+    } catch (error) {
+        console.error('Error occurred during the fetch operation:', error);
+        
+        // Reset email and token on catch
+        resetFields(); // Call function to reset fields and remove readonly attribute
+        showErrorMessage(errorMessageElement, 'An error occurred while sending the OTP. Please try again.');
+        highlightInputFields(); // Highlight input fields on error
+    } finally {
+        // Re-enable the link
+        sendIdOtp.textContent = 'Send OTP';
+        sendIdOtp.style.pointerEvents = 'auto'; // Enable clicks
+    }
+}
+
+
+function startPassTimer(duration) {
+    const timerDisplay = document.getElementById('timer-display-pass');
+    let timeLeft = duration;
+
+    // Update the timer display every second
+    timerInterval = setInterval(() => {
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval); // Stop the timer
+            resetPassUi(); // Reset the UI after the timer ends
+        } else {
+            timerDisplay.textContent = `Please wait: ${timeLeft} seconds`;
+            timeLeft--;
+        }
+    }, 1000);
+}
+
+function resetPassUi() {
+    const emailInput = document.getElementById('passMailId');
+    const sendIdOtp = document.getElementById('sendPassOtp');
+    const timerDisplay = document.getElementById('timer-display-pass');
+    const errorMessageElement = document.getElementById('error-message');
+
+    emailInput.removeAttribute('readonly'); // Make input editable again
+    sendIdOtp.style.display = 'inline'; // Show the Send OTP button again
+    sendIdOtp.style.pointerEvents = 'auto'; // Enable clicks on the link
+    sendIdOtp.textContent = 'Send OTP'; // Reset button text
+    timerDisplay.style.display = 'none'; // Hide the timer display
+    errorMessageElement.textContent = ''; // Clear any previous error messages
+    errorMessageElement.style.display = 'none'; // Hide error message
+}
+
+
+
+async function submitPassOtp(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+    console.log("Form submission prevented.");
+
+    // Collecting OTP values
+    const otpInputs = document.querySelectorAll('input[name="passOtp"]');
+    const otp = Array.from(otpInputs).map(input => input.value).join('');
+    console.log("Collected OTP:", otp);
+
+    const messageElement = document.getElementById('error-message'); // Single message element
+
+    // Clear previous messages
+    resetMessageDisplay(messageElement);
+    console.log("Previous messages cleared.");
+
+    // Check if the OTP is complete
+    if (otp.length < 6) {
+        console.log("Incomplete OTP, length:", otp.length);
+        showMessage(messageElement, 'Please enter a complete OTP.', 'error');
+        return;
+    }
+    console.log("OTP is complete.");
+
+    // Prepare payload for the server
+    const payload = {
+        action: 'verifyidotp',
+        email: storedEmail, // Use stored email
+        token: storedToken, // Use stored token
+        otp: otp
+    };
+    console.log("Payload prepared:", payload);
+
+    try {
+        console.log("Fetching config.json...");
+        // Fetch the script URL from config.json
+        const configResponse = await fetch('config.json');
+        const config = await configResponse.json();
+        const scriptUrl = config.scriptUrl;
+        console.log("Config loaded, script URL:", scriptUrl);
+
+        // Send the OTP verification request to the server
+        console.log("Sending OTP verification request...");
+        const response = await fetch(scriptUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams(payload)
+        });
+
+        console.log("Response received:", response);
+        const data = await response.json();
+        console.log("Response data:", data);
+
+        // Handle response from the server
+        if (data.status === 'success') {
+            console.log("OTP verified successfully.");
+            showMessage(messageElement, 'OTP verified successfully!', 'success');
+            
+
+            document.getElementById('user-id').value = data.userId; // Set userId
+            document.getElementById('email').value = data.email; // Set email
+            handleSuccessfulPassVerification();
+            clearInterval(timerInterval); // Stop the timer
+            
+            
+
+        } else {
+            console.log("Verification failed:", data.message);
+            showMessage(messageElement, data.message || 'Verification failed. Please try again.', 'error');
+        }
+    } catch (error) {
+        console.error("Error during verification:", error);
+        showMessage(messageElement, 'An error occurred during verification. Please try again.', 'error');
+    }
+}
+
+
+function handleSuccessfulPassVerification() {
+    console.log("OTP verification successful. Proceeding to password update form.");
+
+    // Hide OTP verification form
+    console.log("Hiding OTP verification form...");
+    document.getElementById("pass-otp-verify-form").style.display = "none"; // Hide OTP form
+
+    // Show password update form
+    console.log("Showing password update form...");
+    document.getElementById("upd-pass-form").style.display = "flex"; // Show the password update form
+
+    // Hide hero2 section
+    console.log("Hiding hero2 section...");
+    document.getElementById("hero2").style.display = "none"; // Hide hero2
+
+    // Show hero3 section
+    console.log("Showing hero3 section...");
+    document.getElementById("hero3").style.display = "flex"; // Show hero3
+
+    // Retrieve userId and email directly from the populated fields
+    const userId = document.getElementById('user-id').value; // Get userId
+    const email = document.getElementById('email').value; // Get email
+
+    // Logging populated values
+    console.log("userId and email populated: ", userId, email);
+}
+
+
+async function submitNewPassword(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+    console.log("Form submission prevented.");
+
+    // Retrieve values from the form
+    const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    const userId = document.getElementById('user-id').value; // From server response
+    const email = document.getElementById('email').value; // From server response
+
+    // Clear any previous messages
+    resetMessageDisplay(document.getElementById('error-message'));
+
+    // Log the retrieved values
+    console.log("New Password:", newPassword);
+    console.log("Confirm Password:", confirmPassword);
+    console.log("User ID:", userId);
+    console.log("Email:", email);
+
+    // Check if passwords match
+    if (newPassword !== confirmPassword) {
+        console.log("Password mismatch detected.");
+        showMessage(document.getElementById('error-message'), 'Passwords do not match.', 'error');
+        return;
+    }
+
+    // Prepare payload
+    const payload = {
+        action: 'updatePassword',
+        userId: userId,
+        newPassword: newPassword
+    };
+    
+    try {
+        console.log("Fetching config.json...");
+        const configResponse = await fetch('config.json');
+        if (!configResponse.ok) {
+            throw new Error("Failed to load config.json");
+        }
+        const config = await configResponse.json();
+        const scriptUrl = config.scriptUrl;
+        
+        console.log("Sending password update request to:", scriptUrl);
+        const response = await fetch(scriptUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams(payload)
+        });
+
+        console.log("Response received:", response);
+        if (!response.ok) {
+            throw new Error("Failed to update password, status: " + response.status);
+        }
+        const data = await response.json();
+        console.log("Response data:", data);
+
+        // Handle response
+        if (data.status === 'success') {
+            console.log("Password updated successfully.");
+            showMessage(document.getElementById('error-message'), 'Password updated successfully!', 'success');
+            
+            // Reset input fields
+            document.getElementById('new-password').value = "";
+            document.getElementById('confirm-password').value = "";
+            document.getElementById('user-id').value = "";
+            document.getElementById('email').value = "";
+            console.log("Input fields reset.");
+
+            // Start countdown and reset page after 10 seconds
+            let countdown = 10;
+            const countdownMessage = document.getElementById('error-message'); // Assuming it's the same element for messages
+            countdownMessage.innerHTML = `Password Updated, Redirecting in ${countdown} seconds...`;
+            
+            const interval = setInterval(() => {
+                countdown--;
+                countdownMessage.innerHTML = `Redirecting in ${countdown} seconds...`;
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    // Reset the page or redirect to a specific URL
+                    window.location.reload(); // Reload the current page
+                }
+            }, 1000);
+        } else {
+            console.log("Password update failed:", data.message);
+            showMessage(document.getElementById('error-message'), data.message || 'Password update failed.', 'error');
+        }
+    } catch (error) {
+        console.error("Error during password update:", error);
+        showMessage(document.getElementById('error-message'), 'An error occurred during password update. Please try again.', 'error');
+    }
 }
