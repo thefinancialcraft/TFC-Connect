@@ -279,6 +279,14 @@ function moveToNext(current, nextFieldId) {
                     console.warn("No logs found in the result.");
                 }
     
+                // Store token details in localStorage
+                if (result.tokenDetails) {
+                    console.log("Token Details:", result.tokenDetails); // Log token details
+                    localStorage.setItem('tokenDetails', JSON.stringify(result.tokenDetails)); // Save token details in localStorage
+                } else {
+                    console.warn("No token details found in the result.");
+                }
+    
                 // Reset the input borders and clear the error message
                 resetInputBorders();
                 clearErrorMessage();
@@ -310,7 +318,6 @@ function moveToNext(current, nextFieldId) {
                 hideSpinner(); // Hide spinner after processing the response
             });
     }
-    
     
     
     
