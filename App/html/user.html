@@ -24,9 +24,9 @@
             }
 
             // Retrieve token details from localStorage
-            const tokenDetails = JSON.parse(localStorage.getItem('tokenDetails'));
+            const tokenDetails = JSON.parse(localStorage.getItem('ticketDetails'));
             if (tokenDetails) {
-                console.log("Token Details:", tokenDetails); // Display token details in the console
+                console.log("ticket Details:", tokenDetails); // Display token details in the console
 
                 // Display token details in the DOM
                 const tokenDetailsContainer = document.getElementById('tokenDetailsContainer');
@@ -39,7 +39,7 @@
 
             // Optionally, clear logs and token details from localStorage after retrieving them
             localStorage.removeItem('loginLogs');
-            // localStorage.removeItem('tokenDetails');
+            localStorage.removeItem('tokenDetails');
         };
     </script>
 </head>

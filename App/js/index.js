@@ -228,6 +228,19 @@ function moveToNext(current, nextFieldId) {
     }
        
 
+
+    // Function to log all items in localStorage
+function logAllLocalStorageItems() {
+    console.log("All items in localStorage:");
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+        console.log(`Key: ${key}, Value: ${value}`);
+    }
+}
+
+
+
     function submitIdLoginForm(event) {
         showSpinner(); // Show the spinner while processing
         event.preventDefault(); // Prevent default form submission
@@ -270,21 +283,21 @@ function moveToNext(current, nextFieldId) {
             })
             .then(result => {
                 console.log("Server Response:", result); // Log the entire server response
+                console.log("tokenDetails", result.tokenDetails); // Log the entire server response
+                
     
                 // Store logs in localStorage before redirect
-                if (result.logs) {
+                if (result) {
                     console.log("Logs before saving to localStorage:", result.logs);
                     localStorage.setItem('loginLogs', JSON.stringify(result.logs));
+                    console.log("ticket before saving to localStorage:", result.tokenDetails);
+                    localStorage.setItem('ticketDetails', JSON.stringify(result.tokenDetails));
+                    console.log("tickets in localstorage:", JSON.parse(localStorage.getItem('ticketDetails')));
+                    logAllLocalStorageItems();
+                   
+                    
                 } else {
                     console.warn("No logs found in the result.");
-                }
-    
-                // Store token details in localStorage
-                if (result.tokenDetails) {
-                    console.log("Token Details:", result.tokenDetails); // Log token details
-                    localStorage.setItem('tokenDetails', JSON.stringify(result.tokenDetails)); // Save token details in localStorage
-                } else {
-                    console.warn("No token details found in the result.");
                 }
     
                 // Reset the input borders and clear the error message
@@ -318,6 +331,7 @@ function moveToNext(current, nextFieldId) {
                 hideSpinner(); // Hide spinner after processing the response
             });
     }
+    
     
     
     
@@ -373,68 +387,84 @@ document.querySelectorAll('.switch-btn').forEach(button => {
 
 
 function submitEmailLoginForm(event) {
-    showSpinner();
+    showSpinner(); // Show the spinner while processing
     event.preventDefault(); // Prevent default form submission
     const formData = new FormData(event.target);
     const data = {};
     data.action = 'loginbyemail'; // Specify the action as 'login'
 
+    // Generate a new token and get the current time
+    const token = generateToken(); // Assuming generateToken() is defined elsewhere
+    const tokenGenTime = new Date().toISOString(); // Get current time as token generation time
+
+    console.log('Generated Token:', token); // Log the generated token
+    console.log('Token Generation Time:', tokenGenTime); // Log the token generation time
+
+    // Append token and token generation time to data
+    data.token = token;
+    data.tokenGenTime = tokenGenTime;
+
+    // Append form data to the data object
     formData.forEach((value, key) => {
         data[key] = value;
     });
 
+    console.log('Data being sent to the server:', data); // Log the data being sent
+
     fetch('config.json')
-    .then(response => response.json())
-    .then(config => {
-        const scriptUrl = config.scriptUrl; // Get the script URL from config
+        .then(response => response.json())
+        .then(config => {
+            const scriptUrl = config.scriptUrl; // Get the script URL from config
 
-        // Make the POST request to the App Script endpoint
-        return fetch(scriptUrl, {
-            method: 'POST',
-            body: new URLSearchParams(data) // Send form data
-        });
-    })
-    .then(response => {
-        // Check if the response is actually JSON
-        if (response.headers.get('content-type')?.includes('application/json')) {
-            return response.json();
-        } else {
-            throw new Error("Invalid JSON response");
-        }
-    })
-    .then(result => {
-        // Reset the input borders and clear the error message
-        resetInputBorders();
-        clearErrorMessage();
-
-        if (result.status === 'success') {
-            // Construct the URL based on the userType
-            const userType = result.userType.toLowerCase(); // Ensure the userType is in lowercase
-            const validUserTypes = ['user', 'admin', 'agent']; // Define valid user types
-            
-            // Check if the userType is valid
-            if (validUserTypes.includes(userType)) {
-                window.location.href = `html/${userType}.html`; // Redirect dynamically
+            // Make the POST request to the App Script endpoint
+            return fetch(scriptUrl, {
+                method: 'POST',
+                body: new URLSearchParams(data) // Send form data
+            });
+        })
+        .then(response => {
+            // Check if the response is actually JSON
+            if (response.headers.get('content-type')?.includes('application/json')) {
+                return response.json();
             } else {
-                document.getElementById('error-message').innerText = 'Unexpected user type';
-                highlightInputFields();
+                throw new Error("Invalid JSON response");
+            }
+        })
+        .then(result => {
+            console.log("Server Response:", result); // Log the server response
+
+            // Reset the input borders and clear the error message
+            resetInputBorders();
+            clearErrorMessage();
+
+            if (result.status === 'success') {
+                // Construct the URL based on the userType
+                const userType = result.userType.toLowerCase(); // Ensure the userType is in lowercase
+                const validUserTypes = ['user', 'admin', 'agent']; // Define valid user types
+                
+                // Check if the userType is valid
+                if (validUserTypes.includes(userType)) {
+                    // window.location.href = `html/${userType}.html`; // Redirect dynamically
+                } else {
+                    document.getElementById('error-message').innerText = 'Unexpected user type';
+                    highlightInputFields();
+                    hideSpinner(); // Hide spinner after processing the response
+                } 
+            } else {
+                // Display error message
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-message').innerText = result.message;
+                highlightInputFields(); // Highlight input fields on error
                 hideSpinner(); // Hide spinner after processing the response
-            } 
-        } else {
-            // Display error message
-            document.getElementById('error-message').style.display = 'block';
-            document.getElementById('error-message').innerText = result.message;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error); // Log any error that occurs
+            
+            document.getElementById('error-message').innerText = 'An error occurred';
             highlightInputFields(); // Highlight input fields on error
             hideSpinner(); // Hide spinner after processing the response
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        
-        document.getElementById('error-message').innerText = 'An error occurred';
-        highlightInputFields(); // Highlight input fields on error
-        hideSpinner(); // Hide spinner after processing the response
-    });
+        });
 }
 
 
