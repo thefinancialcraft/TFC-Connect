@@ -229,14 +229,24 @@ function moveToNext(current, nextFieldId) {
        
 
     function submitIdLoginForm(event) {
-        showSpinner();
+        showSpinner(); // Show the spinner while processing
         event.preventDefault(); // Prevent default form submission
         const formData = new FormData(event.target);
-        const data = {};
-        data.action = 'loginbyid'; // Specify the action as 'login'
+        const data = new URLSearchParams(); // Use URLSearchParams to construct the data
     
+        data.append('action', 'loginbyid'); // Specify the action as 'login'
+    
+        // Generate a new token and get the current time
+        const token = generateToken(); // Assuming generateToken() is defined elsewhere
+        const tokenGenTime = new Date().toISOString(); // Get current time as token generation time
+    
+        // Append token and token generation time to data
+        data.append('token', token);
+        data.append('tokenGenTime', tokenGenTime);
+    
+        // Append form data to the URLSearchParams object
         formData.forEach((value, key) => {
-            data[key] = value;
+            data.append(key, value);
         });
     
         fetch('config.json')
@@ -247,7 +257,7 @@ function moveToNext(current, nextFieldId) {
                 // Make the POST request to the App Script endpoint
                 return fetch(scriptUrl, {
                     method: 'POST',
-                    body: new URLSearchParams(data) // Send form data
+                    body: data // Send URLSearchParams data
                 });
             })
             .then(response => {
@@ -259,6 +269,16 @@ function moveToNext(current, nextFieldId) {
                 }
             })
             .then(result => {
+                console.log("Server Response:", result); // Log the entire server response
+    
+                // Store logs in localStorage before redirect
+                if (result.logs) {
+                    console.log("Logs before saving to localStorage:", result.logs);
+                    localStorage.setItem('loginLogs', JSON.stringify(result.logs));
+                } else {
+                    console.warn("No logs found in the result.");
+                }
+    
                 // Reset the input borders and clear the error message
                 resetInputBorders();
                 clearErrorMessage();
@@ -290,6 +310,17 @@ function moveToNext(current, nextFieldId) {
                 hideSpinner(); // Hide spinner after processing the response
             });
     }
+    
+    
+    
+    
+    
+    function generateToken() {
+        // Example token generation logic (you can replace this with a more secure method)
+        return 'token_' + Math.random().toString(36).substr(2, 9); // Simple random token
+    }
+
+
 
 // Function to highlight input fields
 function highlightInputFields() {

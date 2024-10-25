@@ -1,11 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" href="https://lh3.googleusercontent.com/d/16nA0iO-ZnfyO6__sGfKGN5hx3T4crX0n" type="image/png">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Redirected Page</title>
+    <script>
+        // This function will run when the page is fully loaded
+        window.onload = function() {
+            // Retrieve logs from localStorage
+            const logs = JSON.parse(localStorage.getItem('loginLogs'));
+            if (logs && logs.length > 0) {
+                console.log("Login Logs:", logs); // Display logs in the console
+
+                // Optionally, display logs in the DOM (e.g., in a <div>)
+                const logsContainer = document.getElementById('logsContainer');
+                logs.forEach(log => {
+                    const logItem = document.createElement('p');
+                    logItem.textContent = log; // Create a new paragraph for each log
+                    logsContainer.appendChild(logItem); // Add the log to the container
+                });
+            } else {
+                console.log("No logs found.");
+            }
+
+            // Optionally, clear logs from localStorage after retrieving them
+            localStorage.removeItem('loginLogs');
+        };
+    </script>
 </head>
 <body>
-    <h1>user page</h1>
+    <h1>Welcome to the Redirected Page</h1>
+    <div id="logsContainer">
+        <h2>Login Logs:</h2>
+        <!-- Logs will be appended here -->
+    </div>
+    <!-- Add other page content here -->
 </body>
 </html>
