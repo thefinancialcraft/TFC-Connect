@@ -229,15 +229,7 @@ function moveToNext(current, nextFieldId) {
        
 
 
-    // Function to log all items in localStorage
-function logAllLocalStorageItems() {
-    console.log("All items in localStorage:");
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        const value = localStorage.getItem(key);
-        console.log(`Key: ${key}, Value: ${value}`);
-    }
-}
+
 
 
 
@@ -288,12 +280,55 @@ function logAllLocalStorageItems() {
     
                 // Store logs in localStorage before redirect
                 if (result) {
-                    console.log("Logs before saving to localStorage:", result.logs);
-                    localStorage.setItem('loginLogs', JSON.stringify(result.logs));
-                    console.log("ticket before saving to localStorage:", result.tokenDetails);
-                    localStorage.setItem('ticketDetails', JSON.stringify(result.tokenDetails));
-                    console.log("tickets in localstorage:", JSON.parse(localStorage.getItem('ticketDetails')));
-                    logAllLocalStorageItems();
+
+
+                    // console.log("Logs before saving to localStorage:", result.logs);
+                    // localStorage.setItem('loginLogs', JSON.stringify(result.logs));
+                    // console.log("ticket before saving to localStorage:", result.tokenDetails);
+                    // logAllLocalStorageItems();
+                   
+           // Assuming result.tokenDetails contains the new token details
+          const tokenDetailsWithId = {
+              id: result.tokenDetails.token, // Replace 'tokenId' with the actual property name of the token ID
+              details: result.tokenDetails // Include all other token details
+          };
+          
+          // Retrieve existing ticket details from localStorage
+          let existingTicketDetails = localStorage.getItem('ticketDetails');
+          
+          // Check if existingTicketDetails is valid and parse it
+          if (existingTicketDetails) {
+              existingTicketDetails = JSON.parse(existingTicketDetails);
+              
+              // Ensure that it is an array
+              if (!Array.isArray(existingTicketDetails)) {
+                  existingTicketDetails = []; // Reset to an empty array if it's not an array
+              }
+          } else {
+              existingTicketDetails = []; // Initialize as an empty array if no data is found
+          }
+          
+          // Add the new token details to the existing array
+          existingTicketDetails.push(tokenDetailsWithId);
+          
+          // Save the updated array back to localStorage
+          localStorage.setItem('ticketDetails', JSON.stringify(existingTicketDetails));
+          
+          // Log the saved ticket details
+          console.log("ticketDetails:", JSON.parse(localStorage.getItem('ticketDetails')));
+          
+          // Function to log all items in localStorage
+          function logAllLocalStorageItems() {
+              for (let i = 0; i < localStorage.length; i++) {
+                  const key = localStorage.key(i);
+                  const value = localStorage.getItem(key);
+                  console.log(`${key}: ${value}`);
+              }
+          }
+          
+          logAllLocalStorageItems();
+              
+
                    
                     
                 } else {
