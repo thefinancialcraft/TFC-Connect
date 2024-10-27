@@ -39,6 +39,11 @@
         slideWidth = slides[0].offsetWidth;
     });
 
+
+
+    
+
+    
         // JavaScript to handle showing/hiding forms
         const forgotIdContainer = document.getElementById('forgot-id-container');
         const loginContainer = document.getElementById('login-container');
@@ -228,7 +233,312 @@ function moveToNext(current, nextFieldId) {
     }
        
 
+// Function to log 'ticketDetails' data as an array of objects
+function logTicketDetailsAsObjects() {
+    const key = "ticketDetails";
+    const value = localStorage.getItem(key);
 
+    if (value) {
+        // Parse the value as JSON, assuming it's an array format like '[{"id":1,"name":"example"},...]'
+        const ticketDetailsArray = JSON.parse(value);
+
+        // Transform each entry into an object if it’s an array
+        const ticketDetailsObjects = ticketDetailsArray.map((detail, index) => ({
+            [`ticketDetail_${index + 1}`]: detail
+        }));
+
+        console.log(ticketDetailsObjects);
+    } else {
+        console.log("No data found for 'ticketDetails'");
+    }
+}
+
+
+
+
+
+
+
+
+// Run logTicketDetailsAsObjects on page load
+window.onload = function() {
+  
+    
+    checkTicketDetails();
+
+    let existingTicketDetails = localStorage.getItem('ticketDetails');
+          
+    // Check if existingTicketDetails is valid and parse it
+    if (existingTicketDetails) {
+       console.log( existingTicketDetails = JSON.parse(existingTicketDetails));
+        
+       }
+    
+};
+
+
+    setInterval(checkAndLogActiveTickets, 1000); 
+
+function checkAndLogActiveTickets() {
+    const ticketDetails = localStorage.getItem('ticketDetails'); // Retrieve 'ticketDetails' from localStorage
+
+    if (ticketDetails) { // Check if 'ticketDetails' is available
+        let tickets = JSON.parse(ticketDetails); // Parse the JSON string to an array of tickets
+        const currentTime = Date.now(); // Current timestamp in milliseconds
+        const gracePeriod = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
+        let activeFound = false; // Flag to track if any active ticket was found
+
+        // Function to convert UTC time to IST
+        const toIST = (timestamp) => {
+            return new Date(timestamp).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+        };
+
+        // Filter out expired tickets
+        tickets = tickets.filter((ticket, index) => {
+            if (ticket.details.isActive) { // Check if isActive is true
+                activeFound = true; // Set flag to true if active ticket is found
+                console.log(`Active Ticket ${index + 1}:`, ticket); // Log active ticket
+                
+                // Convert lastLoginTime from ISO string to timestamp in milliseconds
+                const lastLoginTime = new Date(ticket.details.lastLoginTime).getTime();
+                
+                // Calculate removal time based on lastLoginTime and grace period
+                const removalTime = lastLoginTime + gracePeriod;
+
+                console.log(`Removal Time (IST): ${toIST(removalTime)}`);
+                console.log(`Last Login Time (IST): ${toIST(ticket.details.lastLoginTime)}`);
+                console.log(`Expiry Timestamp (IST): ${toIST(ticket.details.expiryTimestamp)}`); // Log expiry timestamp
+
+                // Check if currentTime is less than or equal to either the removalTime or expiryTimestamp
+                if (currentTime > removalTime || currentTime >= new Date(ticket.details.expiryTimestamp).getTime()) {
+                    // Log removal details in IST
+                    console.log(`Removing Ticket - Token No: ${ticket.details.token}`);
+                    console.log(`Removal Time (IST): ${toIST(removalTime)}`);
+                    console.log(`Current Time (IST): ${toIST(currentTime)}`); // Added current time log
+                    console.log(`Last Login Time (IST): ${toIST(ticket.details.lastLoginTime)}`);
+                    console.log(`Expiry Timestamp (IST): ${toIST(ticket.details.expiryTimestamp)}`); // Added expiry timestamp log
+                    
+                    return false; // Exclude ticket from updated tickets array
+                } else {
+                    console.log(`Ticket not removed. Last Login Time is still valid.`);
+                }
+            }
+            return true; // Keep non-expired tickets
+        });
+
+        if (!activeFound) {
+            console.log('No active ticket found.');
+        }
+
+        // Update localStorage with the filtered tickets
+        localStorage.setItem('ticketDetails', JSON.stringify(tickets));
+    } else {
+        console.log('No ticketDetails available in localStorage');
+    }
+}
+
+
+
+
+
+
+// Multi-tab change detection
+window.addEventListener('storage', function(event) {
+    if (event.key === 'ticketDetails') {
+        location.reload();
+    }
+});
+
+// Single-tab change detection
+let previousTicketDetails = localStorage.getItem('ticketDetails');
+setInterval(() => {
+    const currentTicketDetails = localStorage.getItem('ticketDetails');
+    if (currentTicketDetails !== previousTicketDetails) {
+        location.reload();
+        previousTicketDetails = currentTicketDetails;
+    }
+}, 1000);
+
+
+
+function checkTicketDetails() {
+    const ticketDetails = localStorage.getItem('ticketDetails'); // Retrieve 'ticketDetails' from localStorage
+
+    if (ticketDetails) { // If 'ticketDetails' exists and is not null
+        switchToken();
+        createSlidesFromLocalStorage();
+        logTicketDetailsAsObjects();
+        initializeSlider();
+    } else { // If 'ticketDetails' does not exist
+        switchLogin();
+    }
+}
+
+
+
+
+function switchToken(){
+    document.getElementById("login-container").style.display = 'none';
+    document.getElementById("Last-login-container").style.display = 'flex';
+}
+
+
+function switchLogin(){
+    document.getElementById("login-container").style.display = 'flex';
+    document.getElementById("Last-login-container").style.display = 'none';
+}
+
+
+
+
+// Function to create slides based on ticketDetails in localStorage
+function createSlidesFromLocalStorage() {
+    const key = "ticketDetails";
+    const value = localStorage.getItem(key);
+
+    // Clear existing slides
+    const slider = document.querySelector('.token-slider');
+    slider.innerHTML = ''; // Clear existing slides
+
+    if (value) {
+        // Parse the value as JSON
+        const ticketDetailsArray = JSON.parse(value);
+
+        // Iterate over each ticket detail and create a slide
+        ticketDetailsArray.forEach((detail, index) => {
+            // Access user details from the nested structure
+            const userDetails = detail.details;
+
+            // Log the user image URL for debugging
+            console.log(`User Image URL for index ${index + 1}: ${userDetails.userImage}`);
+
+            // Create a new slide
+            const slide = document.createElement('div');
+            slide.className = 'token-slide';
+
+            // Create the inner content for the slide
+            slide.innerHTML = `
+                <img id="token_userImg_${index + 1}" src="${userDetails.userImage}" alt="${userDetails.userName}">
+                <div class="token_details flex-coloum">
+                    <h2 id="token_userName_${index + 1}">${userDetails.userName}</h2>
+                    <div class="tUsrDetails flex-row">
+                        <p id="token_userId_${index + 1}">${userDetails.userId}</p>
+                        <span></span>
+                        <p id="token_userType_${index + 1}">${userDetails.userType}</p>
+                        <p style="display: none;" id="token_id_store_${index + 1}">${userDetails.token}</p>
+                    </div>
+                </div>
+            `;
+
+            // Append the new slide to the slider
+            slider.appendChild(slide);
+        });
+    } else {
+        console.log("No data found for 'ticketDetails'");
+    }
+}
+
+
+function initializeSlider() {
+    let tcurrentIndex = 0;
+    const tslides = document.querySelectorAll('.token-slide');
+    const ttotalSlides = tslides.length;
+    const tsliderContainer = document.querySelector('.token-slider');
+    
+    // Get button elements
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    // Get the anchor element to update its ID and text
+    const tokenIdLink = document.getElementById('token_id');
+    
+    // Variables for touch events
+    let Startt, endX; // Startt for touch start position
+    let isDragging = false;
+
+    // Function to update the slider position
+    function updateSliderPosition() {
+        const offset = -tcurrentIndex * 100; // Adjust slide position by 100%
+        tsliderContainer.style.transform = `translateX(${offset}%)`;
+        updateButtonVisibility(); // Update button visibility after changing slide
+        updateTokenId(); // Update the token ID based on the current slide
+    }
+
+    // Function to update button visibility
+    function updateButtonVisibility() {
+        prevBtn.style.display = tcurrentIndex === 0 ? 'none' : 'block'; // Hide or show the previous button
+        nextBtn.style.display = tcurrentIndex === ttotalSlides - 1 ? 'none' : 'block'; // Hide or show the next button
+    }
+
+    // Function to update the token ID link
+    function updateTokenId() {
+        const activeSlide = tslides[tcurrentIndex]; // Get the currently active slide
+        const tokenData = activeSlide.textContent; // Get the text content of the slide
+
+        // Use regex to extract the token part
+        const tokenMatch = tokenData.match(/token_[a-zA-Z0-9]+/); // Match the token pattern
+        const token = tokenMatch ? tokenMatch[0] : ''; // Extract the token, or set as empty if not found
+
+        // Set the ID and href to # (inactive)
+        tokenIdLink.id = `token_id_store_${tcurrentIndex + 1}`;
+        tokenIdLink.href = '#'; // Set href to # to make it inactive
+        tokenIdLink.textContent = token; // Set text to the extracted token
+
+        console.log(`Updated ID: ${tokenIdLink.id}, Token: ${token}`); // Log the updated values
+    }
+
+    // Function to show the next slide
+    function showNextSlide() {
+        if (tcurrentIndex < ttotalSlides - 1) { // Check if not at the last slide
+            tcurrentIndex++; // Move to the next slide
+            updateSliderPosition(); // Update the slider position
+        }
+    }
+
+    // Function to show the previous slide
+    function showPrevSlide() {
+        if (tcurrentIndex > 0) { // Check if not at the first slide
+            tcurrentIndex--; // Move to the previous slide
+            updateSliderPosition(); // Update the slider position
+        }
+    }
+
+    // Button event listeners
+    prevBtn.addEventListener('click', showPrevSlide);
+    nextBtn.addEventListener('click', showNextSlide);
+
+    // Touch start event
+    tsliderContainer.addEventListener('touchstart', (e) => {
+        Startt = e.touches[0].clientX; // Get starting X position
+        isDragging = true; // Set dragging to true
+    });
+
+    // Touch move event
+    tsliderContainer.addEventListener('touchmove', (e) => {
+        if (!isDragging) return; // Exit if not dragging
+        endX = e.touches[0].clientX; // Get current X position
+    });
+
+    // Touch end event
+    tsliderContainer.addEventListener('touchend', () => {
+        if (!isDragging) return; // Exit if not dragging
+        if (Startt > endX + 50) { // Swipe left
+            showNextSlide(); // Call function to show next slide
+        } else if (Startt < endX - 50) { // Swipe right
+            showPrevSlide(); // Call function to show previous slide
+        }
+        isDragging = false; // Reset dragging
+    });
+
+    // Prevent default drag behavior
+    tsliderContainer.addEventListener('dragstart', (e) => {
+        e.preventDefault();
+    });
+
+    // Initial button visibility update
+    updateButtonVisibility();
+    updateTokenId(); // Set the initial token ID and text
+}
 
 
 
@@ -288,7 +598,7 @@ function moveToNext(current, nextFieldId) {
                     // logAllLocalStorageItems();
                    
            // Assuming result.tokenDetails contains the new token details
-          const tokenDetailsWithId = {
+              const tokenDetailsWithId = {
               id: result.tokenDetails.token, // Replace 'tokenId' with the actual property name of the token ID
               details: result.tokenDetails // Include all other token details
           };
@@ -316,20 +626,7 @@ function moveToNext(current, nextFieldId) {
           
           // Log the saved ticket details
           console.log("ticketDetails:", JSON.parse(localStorage.getItem('ticketDetails')));
-          
-          // Function to log all items in localStorage
-          function logAllLocalStorageItems() {
-              for (let i = 0; i < localStorage.length; i++) {
-                  const key = localStorage.key(i);
-                  const value = localStorage.getItem(key);
-                  console.log(`${key}: ${value}`);
-              }
-          }
-          
-          logAllLocalStorageItems();
-              
-
-                   
+                             
                     
                 } else {
                     console.warn("No logs found in the result.");

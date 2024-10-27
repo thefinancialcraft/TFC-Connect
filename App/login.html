@@ -364,7 +364,7 @@
 
 
 <!--Last Save details Container -->
-<div class="container lg-cnt flex-coloum" style="display: none;" id="Last-login-container">
+<div class="container lg-cnt flex-coloum"  id="Last-login-container">
     <div class="prm-logo-cnt hero-small-container">
         <div class="logo flex">
             <div class="logo-icon-box flex">
@@ -374,10 +374,34 @@
         </div>
     </div>
 
-    <div class="welcome-msg flex-coloum">
-        <h2 class="mainh2">User Detsils</h2>
+<div class="token-container flex-coloum">
+
+
+    <div class="token-slider-container flex">
+        <div class="token-slider">
+
+       
+            
+        </div>
+        
     </div>
 
+
+
+
+     <!-- Navigation buttons -->
+      <div class="nav-btn-tkn-sld flex-row">
+          <div class="nxtBtn btnbx">  <button id="prevBtn"><i class="fi fi-rr-angle-small-right fi-rot"></i></button></div>
+        <div class="nxtBtn btnbx"> <button id="nextBtn"><i class="fi fi-rr-angle-small-right"></i></button></div>
+       
+    
+      </div>
+     
+
+
+<a id="token_id" class="token_id" href="#"></a>
+    <button  class="login-button2" >Login</button>
+</div>
 
 
     <div class="sign-opn flex-coloum">
@@ -386,7 +410,7 @@
             more options
             <span></span>
         </div>
-        <button onclick="backtologin()" id="back-to-login-password">Back To Login</button>
+        <button onclick="switchLogin()" id="back-to-login-password">Login Another Account</button>
     </div>
 </div>
 

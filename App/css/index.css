@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Noto+Sans+Carian&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 @import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css');
+@import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css');
 
  /* General Styles */
 
@@ -366,7 +367,7 @@ body::-webkit-scrollbar{
     color: #4931e7;
 }
 
-.input-group a{
+.input-group a, .token_id{
     text-align: end;
     font-size: .8vw;
     margin-top: 2px;
@@ -376,13 +377,18 @@ body::-webkit-scrollbar{
 
 }
 
+.token_id{
+    margin-top: 5px;
+    color: #263238aa;
+}
+
 .btn-cnt{
     width: 100%;
     justify-content: space-evenly;
 }
 
-.login-form button{
-   background-color: #4931e7;
+.login-form button, .login-button2{
+    background-color: #4931e7;
     font-size: 1.2vw;
     color: white; /* Text ka color */
     /* font-weight: 500; */
@@ -392,6 +398,11 @@ body::-webkit-scrollbar{
     width: 70% ;
     height: 35px; /* Full height button */
     margin-top: 10px;
+    box-shadow: 1px 2px 30px #4931e710;
+}
+
+.login-button2{
+    width: 90%;
 }
 
 .sign-opn{
@@ -423,6 +434,143 @@ body::-webkit-scrollbar{
     border: 1px solid #4931e7;
     margin-top: 5px;
 }
+
+
+.token-slide img{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #E6E2FF;
+    overflow: hidden;
+    box-shadow: 1px 2px 30px #4931e710;
+}
+.tUsrDetails{
+    margin-top: 3px;
+}
+
+.token-slide h2{
+    color: #263238;
+}
+
+
+.token-slide p{
+    font-size: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.token-slide span{
+    width: 4px;
+    height: 4px;
+    background-color: #4931e7;
+    border-radius: 50%;
+    margin: 0 6px;
+}
+
+
+
+.token-slide{
+    height: 95%;
+    width: 100%;
+    /* background-color: #9f9f9f1d; */
+    border-radius: 20px;
+    gap: 10px;
+    font-family: 'roboto', 'sans-serif';
+    padding-top: 20px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    
+}
+
+
+.token-slider-container{
+    height: 75%;
+    width: 90%;
+    overflow: hidden;
+}
+
+
+
+
+.token-slider{
+    height: 100%;
+    width: 100%;
+    /* background-color: #4931e7; */
+    border-radius: 20px;
+    position: relative;
+    display: flex;
+    /* justify-content: center; */
+    transition: transform 0.5s ease;
+    /* justify-content: center; */
+    /* align-items: center; */
+    /* background-color: #4931e7; */
+}
+
+
+
+
+.token-container{
+    height: 62%;
+    width: 80%;
+    /* background-color: #4931e7; */
+    border-radius: 20px;
+    position: relative;
+}
+
+
+.nav-btn-tkn-sld{
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    justify-content: space-between;
+}
+
+
+.nav-btn-tkn-sld button{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    background-color: #E6E2FF;
+    color: #4931e7;
+    transition: .03s ease-in-out;
+}
+
+.nav-btn-tkn-sld button:active{
+    width: 22px;
+    height: 22px;
+    background-color: #4931e7 ;
+    color:  #E6E2FF;
+}
+
+.fi-rot {
+    transform: rotateY(180deg);
+    
+}
+
+.fi-rr-angle-small-right{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+  
+}
+
+
+.nav-btn-tkn-sld .btnbx{
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-color: #263238; */
+}
+
+
+
 
 .decor span{
     width: 50px;
