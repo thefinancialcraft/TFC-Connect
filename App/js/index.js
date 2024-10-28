@@ -277,7 +277,9 @@ window.onload = function() {
 };
 
 
-    setInterval(checkAndLogActiveTickets, 1000); 
+
+
+
 
 function checkAndLogActiveTickets() {
     const ticketDetails = localStorage.getItem('ticketDetails'); // Retrieve 'ticketDetails' from localStorage
@@ -285,7 +287,7 @@ function checkAndLogActiveTickets() {
     if (ticketDetails) { // Check if 'ticketDetails' is available
         let tickets = JSON.parse(ticketDetails); // Parse the JSON string to an array of tickets
         const currentTime = Date.now(); // Current timestamp in milliseconds
-        const gracePeriod = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
+        const gracePeriod = 1 * 60 * 1000; // 3 days in milliseconds
         let activeFound = false; // Flag to track if any active ticket was found
 
         // Function to convert UTC time to IST
@@ -339,6 +341,7 @@ function checkAndLogActiveTickets() {
 
 
 
+    setInterval(checkAndLogActiveTickets, 1000); 
 
 
 
@@ -362,14 +365,14 @@ setInterval(() => {
 
 
 function checkTicketDetails() {
-    const ticketDetails = localStorage.getItem('ticketDetails'); // Retrieve 'ticketDetails' from localStorage
+    const ticketDetails = JSON.parse(localStorage.getItem('ticketDetails')); // Parse 'ticketDetails' from localStorage
 
-    if (ticketDetails) { // If 'ticketDetails' exists and is not null
+    if (ticketDetails && Array.isArray(ticketDetails) && ticketDetails.length > 0) { // Check if 'ticketDetails' exists, is an array, and not empty
         switchToken();
         createSlidesFromLocalStorage();
         logTicketDetailsAsObjects();
         initializeSlider();
-    } else { // If 'ticketDetails' does not exist
+    } else { // If 'ticketDetails' does not exist, is null, or is an empty array
         switchLogin();
     }
 }
