@@ -280,71 +280,6 @@ window.onload = function() {
 
 
 
-
-function checkAndLogActiveTickets() {
-    const ticketDetails = localStorage.getItem('ticketDetails'); // Retrieve 'ticketDetails' from localStorage
-
-    if (ticketDetails) { // Check if 'ticketDetails' is available
-        let tickets = JSON.parse(ticketDetails); // Parse the JSON string to an array of tickets
-        const currentTime = Date.now(); // Current timestamp in milliseconds
-        const gracePeriod = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
-        let activeFound = false; // Flag to track if any active ticket was found
-
-        // Function to convert UTC time to IST
-        const toIST = (timestamp) => {
-            return new Date(timestamp).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-        };
-
-        // Filter out expired tickets
-        tickets = tickets.filter((ticket, index) => {
-            if (ticket.details.isActive) { // Check if isActive is true
-                activeFound = true; // Set flag to true if active ticket is found
-                console.log(`Active Ticket ${index + 1}:`, ticket); // Log active ticket
-                
-                // Convert lastLoginTime from ISO string to timestamp in milliseconds
-                const lastLoginTime = new Date(ticket.details.lastLoginTime).getTime();
-                
-                // Calculate removal time based on lastLoginTime and grace period
-                const removalTime = lastLoginTime + gracePeriod;
-
-                console.log(`Removal Time (IST): ${toIST(removalTime)}`);
-                console.log(`Last Login Time (IST): ${toIST(ticket.details.lastLoginTime)}`);
-                console.log(`Expiry Timestamp (IST): ${toIST(ticket.details.expiryTimestamp)}`); // Log expiry timestamp
-
-                // Check if currentTime is less than or equal to either the removalTime or expiryTimestamp
-                if (currentTime > removalTime || currentTime >= new Date(ticket.details.expiryTimestamp).getTime()) {
-                    // Log removal details in IST
-                    console.log(`Removing Ticket - Token No: ${ticket.details.token}`);
-                    console.log(`Removal Time (IST): ${toIST(removalTime)}`);
-                    console.log(`Current Time (IST): ${toIST(currentTime)}`); // Added current time log
-                    console.log(`Last Login Time (IST): ${toIST(ticket.details.lastLoginTime)}`);
-                    console.log(`Expiry Timestamp (IST): ${toIST(ticket.details.expiryTimestamp)}`); // Added expiry timestamp log
-                    
-                    return false; // Exclude ticket from updated tickets array
-                } else {
-                    console.log(`Ticket not removed. Last Login Time is still valid.`);
-                }
-            }
-            return true; // Keep non-expired tickets
-        });
-
-        if (!activeFound) {
-            console.log('No active ticket found.');
-        }
-
-        // Update localStorage with the filtered tickets
-        localStorage.setItem('ticketDetails', JSON.stringify(tickets));
-    } else {
-        console.log('No ticketDetails available in localStorage');
-    }
-}
-
-
-
-    setInterval(checkAndLogActiveTickets, 1000); 
-
-
-
 // Multi-tab change detection
 window.addEventListener('storage', function(event) {
     if (event.key === 'ticketDetails') {
@@ -546,127 +481,114 @@ function initializeSlider() {
 
 
 
-    function submitIdLoginForm(event) {
-        showSpinner(); // Show the spinner while processing
-        event.preventDefault(); // Prevent default form submission
-        const formData = new FormData(event.target);
-        const data = new URLSearchParams(); // Use URLSearchParams to construct the data
-    
-        data.append('action', 'loginbyid'); // Specify the action as 'login'
-    
-        // Generate a new token and get the current time
-        const token = generateToken(); // Assuming generateToken() is defined elsewhere
-        const tokenGenTime = new Date().toISOString(); // Get current time as token generation time
-    
-        // Append token and token generation time to data
-        data.append('token', token);
-        data.append('tokenGenTime', tokenGenTime);
-    
-        // Append form data to the URLSearchParams object
-        formData.forEach((value, key) => {
-            data.append(key, value);
-        });
-    
-        fetch('config.json')
-            .then(response => response.json())
-            .then(config => {
-                const scriptUrl = config.scriptUrl; // Get the script URL from config
-    
-                // Make the POST request to the App Script endpoint
-                return fetch(scriptUrl, {
-                    method: 'POST',
-                    body: data // Send URLSearchParams data
-                });
-            })
-            .then(response => {
-                // Check if the response is actually JSON
-                if (response.headers.get('content-type')?.includes('application/json')) {
-                    return response.json();
-                } else {
-                    throw new Error("Invalid JSON response");
-                }
-            })
-            .then(result => {
-                console.log("Server Response:", result); // Log the entire server response
-                console.log("tokenDetails", result.tokenDetails); // Log the entire server response
-                
-    
-                // Store logs in localStorage before redirect
-                if (result) {
+function submitIdLoginForm(event) {
+    showSpinner();
+    event.preventDefault();
 
+    const formData = new FormData(event.target);
+    const data = new URLSearchParams();
 
-                    // console.log("Logs before saving to localStorage:", result.logs);
-                    // localStorage.setItem('loginLogs', JSON.stringify(result.logs));
-                    // console.log("ticket before saving to localStorage:", result.tokenDetails);
-                    // logAllLocalStorageItems();
-                   
-           // Assuming result.tokenDetails contains the new token details
-              const tokenDetailsWithId = {
-              id: result.tokenDetails.token, // Replace 'tokenId' with the actual property name of the token ID
-              details: result.tokenDetails // Include all other token details
-          };
-          
-          // Retrieve existing ticket details from localStorage
-          let existingTicketDetails = localStorage.getItem('ticketDetails');
-          
-          // Check if existingTicketDetails is valid and parse it
-          if (existingTicketDetails) {
-              existingTicketDetails = JSON.parse(existingTicketDetails);
-              
-              // Ensure that it is an array
-              if (!Array.isArray(existingTicketDetails)) {
-                  existingTicketDetails = []; // Reset to an empty array if it's not an array
-              }
-          } else {
-              existingTicketDetails = []; // Initialize as an empty array if no data is found
-          }
-          
-          // Add the new token details to the existing array
-          existingTicketDetails.push(tokenDetailsWithId);
-          
-          // Save the updated array back to localStorage
-          localStorage.setItem('ticketDetails', JSON.stringify(existingTicketDetails));
-          
-          // Log the saved ticket details
-          console.log("ticketDetails:", JSON.parse(localStorage.getItem('ticketDetails')));
-                             
-                    
-                } else {
-                    console.warn("No logs found in the result.");
-                }
-    
-                // Reset the input borders and clear the error message
-                resetInputBorders();
-                clearErrorMessage();
-    
-                if (result.status === 'success') {
-                    // Construct the URL based on the userType
-                    const userType = result.userType.toLowerCase(); // Ensure the userType is in lowercase
-                    const validUserTypes = ['user', 'admin', 'agent']; // Define valid user types
-                    
-                    // Check if the userType is valid
-                    if (validUserTypes.includes(userType)) {
-                        window.location.href = `html/${userType}.html`; // Redirect dynamically
-                    } else {
-                        showErrorMessage(document.getElementById('error-message'), 'Unexpected user type');
-                        highlightInputFields();
-                    }
-                } else {
-                    // Display error message
-                    showErrorMessage(document.getElementById('error-message'), result.message);
-                    highlightInputFields(); // Highlight input fields on error
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showErrorMessage(document.getElementById('error-message'), 'An error occurred while submitting the form.');
-                highlightInputFields(); // Highlight input fields on error
-            })
-            .finally(() => {
-                hideSpinner(); // Hide spinner after processing the response
+    data.append('action', 'loginbyid');
+    const token = generateToken(); // Assuming generateToken() is defined elsewhere
+    const tokenGenTime = new Date().toISOString();
+
+    data.append('token', token);
+    data.append('tokenGenTime', tokenGenTime);
+
+    formData.forEach((value, key) => {
+        data.append(key, value);
+    });
+
+    fetch('config.json')
+        .then(response => response.json())
+        .then(config => {
+            const scriptUrl = config.scriptUrl;
+            return fetch(scriptUrl, {
+                method: 'POST',
+                body: data
             });
+        })
+        .then(response => {
+            if (response.headers.get('content-type')?.includes('application/json')) {
+                return response.json();
+            } else {
+                throw new Error("Invalid JSON response");
+            }
+        })
+        .then(result => {
+            handleResponse(result); // Separate function for handling response
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showErrorMessage(document.getElementById('error-message'), 'An error occurred while submitting the form.');
+            highlightInputFields();
+        })
+        .finally(() => {
+            hideSpinner();
+        });
+}
+
+
+
+
+// Function to handle response processing
+function handleResponse(result) {
+    console.log("Server Response:", result);
+    console.log("tokenDetails", result.tokenDetails);
+
+    if (result) {
+        const tokenDetailsWithId = {
+            id: result.tokenDetails.token,
+            details: result.tokenDetails
+        };
+
+        let existingTicketDetails = localStorage.getItem('ticketDetails');
+        existingTicketDetails = existingTicketDetails ? JSON.parse(existingTicketDetails) : [];
+
+        if (!Array.isArray(existingTicketDetails)) {
+            existingTicketDetails = [];
+        }
+
+        // Check if the token already exists
+        const existingTokenIndex = existingTicketDetails.findIndex(ticket => ticket.id === tokenDetailsWithId.id);
+
+        if (existingTokenIndex !== -1) {
+            // Token exists, update the existing entry
+            existingTicketDetails[existingTokenIndex] = tokenDetailsWithId;
+            console.log("Updated existing token details:", tokenDetailsWithId);
+        } else {
+            // Token does not exist, add new entry
+            existingTicketDetails.push(tokenDetailsWithId);
+            console.log("Added new token details:", tokenDetailsWithId);
+        }
+
+        // Save updated ticket details back to localStorage
+        localStorage.setItem('ticketDetails', JSON.stringify(existingTicketDetails));
+        
+        console.log("ticketDetails:", JSON.parse(localStorage.getItem('ticketDetails')));
+    } else {
+        console.warn("No logs found in the result.");
     }
-    
+
+    resetInputBorders();
+    clearErrorMessage();
+
+    if (result.status === 'success') {
+        const userType = result.userType.toLowerCase();
+        const validUserTypes = ['user', 'admin', 'agent'];
+
+        if (validUserTypes.includes(userType)) {
+            window.location.href = `html/${userType}.html`;
+        } else {
+            showErrorMessage(document.getElementById('error-message'), 'Unexpected user type');
+            highlightInputFields();
+        }
+    } else {
+        showErrorMessage(document.getElementById('error-message'), result.message);
+        highlightInputFields();
+    }
+}
+
     
     
     
@@ -758,7 +680,6 @@ function submitEmailLoginForm(event) {
             });
         })
         .then(response => {
-            // Check if the response is actually JSON
             if (response.headers.get('content-type')?.includes('application/json')) {
                 return response.json();
             } else {
@@ -766,41 +687,18 @@ function submitEmailLoginForm(event) {
             }
         })
         .then(result => {
-            console.log("Server Response:", result); // Log the server response
-
-            // Reset the input borders and clear the error message
-            resetInputBorders();
-            clearErrorMessage();
-
-            if (result.status === 'success') {
-                // Construct the URL based on the userType
-                const userType = result.userType.toLowerCase(); // Ensure the userType is in lowercase
-                const validUserTypes = ['user', 'admin', 'agent']; // Define valid user types
-                
-                // Check if the userType is valid
-                if (validUserTypes.includes(userType)) {
-                    // window.location.href = `html/${userType}.html`; // Redirect dynamically
-                } else {
-                    document.getElementById('error-message').innerText = 'Unexpected user type';
-                    highlightInputFields();
-                    hideSpinner(); // Hide spinner after processing the response
-                } 
-            } else {
-                // Display error message
-                document.getElementById('error-message').style.display = 'block';
-                document.getElementById('error-message').innerText = result.message;
-                highlightInputFields(); // Highlight input fields on error
-                hideSpinner(); // Hide spinner after processing the response
-            }
+            handleResponse(result); // Separate function for handling response
         })
         .catch(error => {
-            console.error('Error:', error); // Log any error that occurs
-            
-            document.getElementById('error-message').innerText = 'An error occurred';
-            highlightInputFields(); // Highlight input fields on error
-            hideSpinner(); // Hide spinner after processing the response
+            console.error('Error:', error);
+            showErrorMessage(document.getElementById('error-message'), 'An error occurred while submitting the form.');
+            highlightInputFields();
+        })
+        .finally(() => {
+            hideSpinner();
         });
 }
+
 
 
 
@@ -1411,3 +1309,106 @@ async function submitNewPassword(event) {
         showMessage(document.getElementById('error-message'), 'An error occurred during password update. Please try again.', 'error');
     }
 }
+
+
+
+function checkAndLogActiveTickets() {
+    const ticketDetails = localStorage.getItem('ticketDetails');
+
+    if (ticketDetails) {
+        let tickets = JSON.parse(ticketDetails);
+        const currentTime = Date.now(); 
+        let activeFound = false; 
+
+        // Function to convert UTC time to IST
+        const toIST = (timestamp) => {
+            return new Date(timestamp).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+        };
+
+        tickets = tickets.filter((ticket, index) => {
+            if (ticket.details.isActive) { 
+                activeFound = true;
+
+                const expiryDate = new Date(ticket.details.expiryTimestamp).getTime();
+
+                console.log(`Active Ticket ${index + 1}:`, ticket);
+                console.log(`Expiry Timestamp (IST): ${toIST(expiryDate)}`);
+                console.log(`Current Time (IST): ${toIST(currentTime)}`);
+
+                // Check if the ticket is still within the expiry date
+                if (currentTime <= expiryDate) {
+                    console.log(`Ticket is valid. Sending token to backend.`);
+
+                    // Send token to backend with action 'loginByToken'
+                    sendTokenToBackend(ticket.details.token,ticket.details.tokenGenTime, 'loginByToken');
+
+                } else {
+                    console.log(`Ticket expired. Removing from list.`);
+                    return false; // Remove expired tickets
+                }
+            }
+            return true; 
+        });
+
+        if (!activeFound) {
+            console.log('No active ticket found.');
+        }
+
+        // Update localStorage with the filtered tickets
+        localStorage.setItem('ticketDetails', JSON.stringify(tickets));
+
+    } else {
+        console.log('No ticketDetails available in localStorage');
+    }
+}
+
+
+
+
+// Function to send token to backend
+async function sendTokenToBackend(token, tokenGenTime, action) {
+    const payload = { token: token, tokenGenTime: tokenGenTime, action: action };
+    console.log('Sending token to backend:', payload);
+
+    try {
+        // Load the config.json file to get the script URL
+        const configResponse = await fetch('config.json');
+        const config = await configResponse.json();
+        const scriptUrl = config.scriptUrl; // Get the script URL from config
+        console.log('Script URL loaded:', scriptUrl);
+
+        // Make the POST request to the App Script endpoint
+        const response = await fetch(scriptUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams(payload) // Send form data
+        });
+
+        // Check if the response is actually JSON
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const result = await response.json(); // Parse JSON response
+            console.log("Server Response:", result);
+
+            if (result.status === 'success') {
+                handleResponse(result);
+              
+            } else {
+                // Display error message from the server response
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-message').innerText = result.message;
+            }
+        } else {
+            throw new Error("Invalid JSON response");
+        }
+    } catch (error) {
+        console.error('Error:', error); // Log any error that occurs
+        document.getElementById('error-message').innerText = 'An error occurred';
+    }
+}
+
+
+checkAndLogActiveTickets();
+
