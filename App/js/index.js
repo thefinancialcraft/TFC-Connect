@@ -287,7 +287,7 @@ function checkAndLogActiveTickets() {
     if (ticketDetails) { // Check if 'ticketDetails' is available
         let tickets = JSON.parse(ticketDetails); // Parse the JSON string to an array of tickets
         const currentTime = Date.now(); // Current timestamp in milliseconds
-        const gracePeriod = 1 * 60 * 1000; // 3 days in milliseconds
+        const gracePeriod = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
         let activeFound = false; // Flag to track if any active ticket was found
 
         // Function to convert UTC time to IST
