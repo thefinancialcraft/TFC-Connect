@@ -3,59 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirected Page</title>
-    <script>
-        // This function will run when the page is fully loaded
-        window.onload = function() {
-            // Retrieve logs from localStorage
-            const logs = JSON.parse(localStorage.getItem('loginLogs'));
-            if (logs && logs.length > 0) {
-                console.log("Login Logs:", logs); // Display logs in the console
+    <title>User Page</title>
 
-                // Optionally, display logs in the DOM (e.g., in a <div>)
-                const logsContainer = document.getElementById('logsContainer');
-                logs.forEach(log => {
-                    const logItem = document.createElement('p');
-                    logItem.textContent = log; // Create a new paragraph for each log
-                    logsContainer.appendChild(logItem); // Add the log to the container
-                });
-            } else {
-                console.log("No logs found.");
-            }
-
-            // Retrieve token details from localStorage
-            const tokenDetails = JSON.parse(localStorage.getItem('ticketDetails'));
-            if (tokenDetails) {
-                console.log("ticket Details:", tokenDetails); // Display token details in the console
-
-                // Display token details in the DOM
-                const tokenDetailsContainer = document.getElementById('tokenDetailsContainer');
-                const tokenDetailItem = document.createElement('p');
-                tokenDetailItem.textContent = `Token: ${tokenDetails.token}, isActive: ${tokenDetails.isActive}, Last Login: ${tokenDetails.lastLoginTime}, Expiry: ${tokenDetails.expiryTimestamp}`;
-                tokenDetailsContainer.appendChild(tokenDetailItem); // Add the token details to the container
-            } else {
-                console.log("No token details found.");
-            }
-
-            // Optionally, clear logs and token details from localStorage after retrieving them
-            localStorage.removeItem('loginLogs');
-            localStorage.removeItem('tokenDetails');
-        };
-    </script>
+    <link rel="icon" href="path/to/favicon.ico" type="image/x-icon">
+    <!-- <link rel="stylesheet" href="css/styles.css"> -->
+    <meta name="description" content="Welcome to the user page where you can manage your account.">
 </head>
 <body>
-    <h1>Welcome to the Redirected Page</h1>
-    
-    <div id="logsContainer">
-        <h2>Login Logs:</h2>
-        <!-- Logs will be appended here -->
-    </div>
-    
-    <div id="tokenDetailsContainer">
-        <h2>Token Details:</h2>
-        <!-- Token details will be appended here -->
-    </div>
-
-    <!-- Add other page content here -->
+    <h1>Welcome to the User Page</h1>
+    <script src="/App/js/user.js"></script>
 </body>
 </html>

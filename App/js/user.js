@@ -1,31 +1,25 @@
-window.onload = function() {
-    checkTokenAndLog();
-};
-
-function checkTokenAndLog() {
-    console.log("Checking for token in localStorage...");
-
-    // Retrieve the token details from localStorage
-    const tokenDetailsJSON = localStorage.getItem('tokenDetails');
+ // This function will run when the page is fully loaded
+ window.onload = function() {
+    const sentData = JSON.parse(localStorage.getItem('sentData'));
     
-    if (tokenDetailsJSON) {
-        // Parse the JSON string into an object
-        const tokenDetails = JSON.parse(tokenDetailsJSON);
-        
-        // Log the token and expiration details
-        console.log("Token details found:", tokenDetails);
-        
-        // Optional: Display the token details on the page
-        displayUserInfo(tokenDetails);
-    } else {
-        console.log("No token found in localStorage.");
-    }
-}
+    console.log("Data sent to backend:", sentData);
+    console.log("Receive from backend:", JSON.parse(localStorage.getItem('reciveData')));
+    console.log("Active Ticket:", JSON.parse(localStorage.getItem('activeTicket')));
 
-function displayUserInfo(tokenDetails) {
-    const userInfoDiv = document.getElementById('user-info');
-    userInfoDiv.innerHTML = `
-        <p><strong>Token:</strong> ${tokenDetails.token}</p>
-        <p><strong>Expiration:</strong> ${new Date(tokenDetails.expiration).toLocaleString()}</p>
-    `;
-}
+
+    // Retrieve token details from localStorage
+    const tokenDetails = JSON.parse(localStorage.getItem('ticketDetails'));
+    if (tokenDetails) {
+        console.log("ticket Details:", tokenDetails); // Display token details in the console
+
+
+    } else {
+        console.log("No token details found.");
+        window.location.href = "/index.html";
+
+    }
+
+    // Optionally, clear logs and token details from localStorage after retrieving them
+    localStorage.removeItem('loginLogs');
+    localStorage.removeItem('tokenDetails');
+};

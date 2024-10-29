@@ -479,8 +479,6 @@ function initializeSlider() {
 }
 
 
-
-
 function submitIdLoginForm(event) {
     showSpinner();
     event.preventDefault();
@@ -495,9 +493,20 @@ function submitIdLoginForm(event) {
     data.append('token', token);
     data.append('tokenGenTime', tokenGenTime);
 
+    const deviceDetails = getDeviceDetails();
+    data.append('deviceType', deviceDetails.deviceType);
+    data.append('deviceModel', deviceDetails.deviceModel);
+    data.append('os', deviceDetails.os);
+    data.append('browser', deviceDetails.browser);
+
     formData.forEach((value, key) => {
         data.append(key, value);
     });
+
+      // Log data to be sent
+      const dataToStore = Object.fromEntries(data.entries());
+      console.log('Data to store:', dataToStore);  // Debugging line
+      localStorage.setItem('sentData', JSON.stringify(dataToStore)); // Store data
 
     fetch('config.json')
         .then(response => response.json())
@@ -516,7 +525,7 @@ function submitIdLoginForm(event) {
             }
         })
         .then(result => {
-            handleResponse(result); // Separate function for handling response
+            handleResponse(result);
         })
         .catch(error => {
             console.error('Error:', error);
@@ -527,8 +536,6 @@ function submitIdLoginForm(event) {
             hideSpinner();
         });
 }
-
-
 
 
 // Function to handle response processing
@@ -574,6 +581,15 @@ function handleResponse(result) {
     clearErrorMessage();
 
     if (result.status === 'success') {
+        localStorage.setItem('reciveData', JSON.stringify(result)); // Store data
+        console.log("Receive from backend:", JSON.parse(localStorage.getItem('reciveData')));
+
+
+        localStorage.setItem('activeTicket', JSON.parse(result.tokenDetails.token)); // Store data
+        console.log("Receive from backend:", JSON.parse(localStorage.getItem('activeTicket')));
+
+    
+
         const userType = result.userType.toLowerCase();
         const validUserTypes = ['user', 'admin', 'agent'];
 
@@ -647,23 +663,23 @@ function submitEmailLoginForm(event) {
     showSpinner(); // Show the spinner while processing
     event.preventDefault(); // Prevent default form submission
     const formData = new FormData(event.target);
-    const data = {};
-    data.action = 'loginbyemail'; // Specify the action as 'login'
+    const data = new URLSearchParams();
 
-    // Generate a new token and get the current time
+    data.append('action', 'loginbyemail');
     const token = generateToken(); // Assuming generateToken() is defined elsewhere
-    const tokenGenTime = new Date().toISOString(); // Get current time as token generation time
+    const tokenGenTime = new Date().toISOString();
 
-    console.log('Generated Token:', token); // Log the generated token
-    console.log('Token Generation Time:', tokenGenTime); // Log the token generation time
+    data.append('token', token);
+    data.append('tokenGenTime', tokenGenTime);
 
-    // Append token and token generation time to data
-    data.token = token;
-    data.tokenGenTime = tokenGenTime;
+    const deviceDetails = getDeviceDetails();
+    data.append('deviceType', deviceDetails.deviceType);
+    data.append('deviceModel', deviceDetails.deviceModel);
+    data.append('os', deviceDetails.os);
+    data.append('browser', deviceDetails.browser);
 
-    // Append form data to the data object
-    formData.forEach((value, key) => {
-        data[key] = value;
+    formData.forEach((value, key) => {  
+        data.append(key, value);
     });
 
     console.log('Data being sent to the server:', data); // Log the data being sent
@@ -1340,7 +1356,7 @@ function checkAndLogActiveTickets() {
                     console.log(`Ticket is valid. Sending token to backend.`);
 
                     // Send token to backend with action 'loginByToken'
-                    sendTokenToBackend(ticket.details.token,ticket.details.tokenGenTime, 'loginByToken');
+                    sendTokenToBackend(ticket.details.token,ticket.details.tokenGenTime,ticket.details.deviceType,ticket.details.deviceModel,ticket.details.os,ticket.details.browser, 'loginByToken');
 
                 } else {
                     console.log(`Ticket expired. Removing from list.`);
@@ -1366,8 +1382,8 @@ function checkAndLogActiveTickets() {
 
 
 // Function to send token to backend
-async function sendTokenToBackend(token, tokenGenTime, action) {
-    const payload = { token: token, tokenGenTime: tokenGenTime, action: action };
+async function sendTokenToBackend(token, tokenGenTime, deviceType, deviceModel, os, browser, action) {
+    const payload = { token: token, tokenGenTime: tokenGenTime, deviceType: deviceType, deviceModel: deviceModel, os:os, browser: browser,  action: action };
     console.log('Sending token to backend:', payload);
 
     try {
@@ -1408,6 +1424,78 @@ async function sendTokenToBackend(token, tokenGenTime, action) {
         document.getElementById('error-message').innerText = 'An error occurred';
     }
 }
+
+getDeviceDetails();
+
+function getDeviceDetails() {
+    const userAgent = navigator.userAgent;
+    let deviceType = "Unknown";
+    let deviceModel = "Unknown";
+    let os = "Unknown";
+    let browser = "Unknown";
+  
+    // Detect Device Type
+    if (/Mobile|Android|iPhone|iPod/.test(userAgent)) {
+      deviceType = "Mobile";
+    } else if (/iPad|Tablet|Kindle/.test(userAgent)) {
+      deviceType = "Tablet";
+    } else if (/Mac|Windows|Linux|X11/.test(userAgent)) {
+      deviceType = "Desktop";
+    }
+  
+    // Detect Operating System
+    if (/Windows NT/.test(userAgent)) {
+      os = "Windows";
+    } else if (/Mac OS X/.test(userAgent)) {
+      os = "Mac OS";
+    } else if (/Android/.test(userAgent)) {
+      os = "Android";
+    } else if (/iOS|iPhone|iPad|iPod/.test(userAgent)) {
+      os = "iOS";
+    } else if (/Linux/.test(userAgent)) {
+      os = "Linux";
+    }
+  
+    // Detect Browser
+    if (/Chrome/.test(userAgent) && !/Edge|OPR/.test(userAgent)) {
+      browser = "Chrome";
+    } else if (/Safari/.test(userAgent) && !/Chrome/.test(userAgent)) {
+      browser = "Safari";
+    } else if (/Firefox/.test(userAgent)) {
+      browser = "Firefox";
+    } else if (/Edge/.test(userAgent)) {
+      browser = "Edge";
+    } else if (/OPR|Opera/.test(userAgent)) {
+      browser = "Opera";
+    } else if (/MSIE|Trident/.test(userAgent)) {
+      browser = "Internet Explorer";
+    }
+  
+    // Detect Device Model (for iOS and Android only)
+    if (/iPhone/.test(userAgent)) {
+      deviceModel = "iPhone";
+    } else if (/iPad/.test(userAgent)) {
+      deviceModel = "iPad";
+    } else if (/Android/.test(userAgent)) {
+      const androidModelMatch = userAgent.match(/Android\s+[\d.]+;\s*([^;]+)/);
+      deviceModel = androidModelMatch ? androidModelMatch[1] : "Android Device";
+    }
+  
+    return {
+      deviceType,
+      deviceModel,
+      os,
+      browser
+    };
+  }
+  
+  // Example usage
+  const deviceDetails = getDeviceDetails();
+  console.log(`Device Type: ${deviceDetails.deviceType}`);
+  console.log(`Device Model: ${deviceDetails.deviceModel}`);
+  console.log(`Operating System: ${deviceDetails.os}`);
+  console.log(`Browser: ${deviceDetails.browser}`);
+  
 
 
 checkAndLogActiveTickets();
