@@ -581,13 +581,14 @@ function handleResponse(result) {
     clearErrorMessage();
 
     if (result.status === 'success') {
-        localStorage.setItem('reciveData', JSON.stringify(result)); // Store data
-        console.log("Receive from backend:", JSON.parse(localStorage.getItem('reciveData')));
-
-
-        localStorage.setItem('activeTicket', JSON.parse(result.tokenDetails.token)); // Store data
-        console.log("Receive from backend:", JSON.parse(localStorage.getItem('activeTicket')));
-
+        if (result.status === 'success') {
+            localStorage.setItem('reciveData', JSON.stringify(result)); // Store data
+            console.log("Receive from backend:", JSON.parse(localStorage.getItem('reciveData')));
+        
+            // Store the token directly if it's already a string
+            localStorage.setItem('activeTicket', result.tokenDetails.token);
+        }
+         // Store data
     
 
         const userType = result.userType.toLowerCase();

@@ -4,7 +4,7 @@
     
     console.log("Data sent to backend:", sentData);
     console.log("Receive from backend:", JSON.parse(localStorage.getItem('reciveData')));
-    console.log("Active Ticket:", JSON.parse(localStorage.getItem('activeTicket')));
+    console.log("Active Ticket:", localStorage.getItem('activeTicket'));
 
 
     // Retrieve token details from localStorage
