@@ -16,7 +16,7 @@
 
     if (activeTicket) {
 
-        
+
 
 
     const tktuserName = activeTicket.userName; // Access userName from activeTicket
@@ -109,5 +109,5 @@ displayLocalStorageAsObject();
 
 
 function logout(){
-    window.location.href = '/app/login.html';
+    window.location.href = '/TFC-Connect/app/login.html';
 }
