@@ -109,5 +109,5 @@ displayLocalStorageAsObject();
 
 
 function logout(){
-    window.location.href = '/TFC-Connect/app/login.html';
+    window.location.href = '/TFC-Connect/index.html';
 }
