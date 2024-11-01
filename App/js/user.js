@@ -14,8 +14,9 @@
     const activeTicket = JSON.parse(localStorage.getItem('reciveData'));
     console.log("active Ticket", activeTicket);
 
-    if (activeTicket.isActive == true) {
+    if (activeTicket) {
 
+        
 
 
     const tktuserName = activeTicket.userName; // Access userName from activeTicket
@@ -49,7 +50,7 @@
     
 } else {
     console.log("No token details found.");
-    window.location.href = "/index.html";
+    window.location.href = "/app/login.html";
 }
 
 
