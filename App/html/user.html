@@ -10,10 +10,64 @@
 </head>
 <body>
    <nav>
+     <div class="prf-card flex-coloum">
+        <img class="userImage" src="/App//assets/user.png" alt="">
+        <h3 class="userName"></h3>
+        <div class="usrDtl flex-row">
+            <p class="userId"></p>
+            <span></span>
+            <p class="userType"></p>
+        </div>
+     </div>
+    <div class="menu-card">
+        <div class="menu-opn">
+            <p>Menu</p>
+            <ul id="menu-opn">
+                <li class="active">
+                    <span class="active"></span>
+                    <i class="fa-solid fa-chart-pie"></i>
+                    Dashboard</li>
+                <li>
+                    <span></span>
+                    <i class="fa-solid fa-fingerprint"></i>
+                    Attendance</li>
+                <li>
+                    <span></span>
+                    <i class="fa-solid fa-folder-open"></i>
+                    Payment Grid</li>
+                <li>
+                    <span></span>
+                    <i class="fa-solid fa-file-lines"></i>
+                    Report</li>
+                <li>
+                    <span></span>
+                    <i class="fa-solid fa-wallet"></i>
+                    Wallet</li>
+            </ul>
+        </div>
+    </div>
+    <div class="logout-card">
+
+        <button  class="button2">
+
+            <i class="fa-solid fa-user"></i>
+                <a href="#Profile">Profile</a>
+
+        </button>
+       
+                
+           
+        <button class="button1">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <a href="#">Logout</a>
+        </button>
+        <p>See All Loged Account</p>
+    </div>
     
    </nav>
    <main></main>
 
     <script src="/App/js/user.js"></script>
+    <script src="https://kit.fontawesome.com/ff989e0e08.js" crossorigin="anonymous"></script>
 </body>
 </html>

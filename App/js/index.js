@@ -582,11 +582,11 @@ function handleResponse(result) {
 
     if (result.status === 'success') {
         if (result.status === 'success') {
-            localStorage.setItem('reciveData', JSON.stringify(result)); // Store data
+            localStorage.setItem('reciveData', JSON.stringify(result.tokenDetails)); // Store data
             console.log("Receive from backend:", JSON.parse(localStorage.getItem('reciveData')));
         
             // Store the token directly if it's already a string
-            localStorage.setItem('activeTicket', result.tokenDetails.token);
+            // localStorage.setItem('activeTicket',  JSON.stringify(result));
         }
          // Store data
     
@@ -1387,6 +1387,7 @@ async function sendTokenToBackend(token, tokenGenTime, deviceType, deviceModel, 
     const payload = { token: token, tokenGenTime: tokenGenTime, deviceType: deviceType, deviceModel: deviceModel, os:os, browser: browser,  action: action };
     console.log('Sending token to backend:', payload);
 
+
     try {
         // Load the config.json file to get the script URL
         const configResponse = await fetch('config.json');
@@ -1425,6 +1426,9 @@ async function sendTokenToBackend(token, tokenGenTime, deviceType, deviceModel, 
         document.getElementById('error-message').innerText = 'An error occurred';
     }
 }
+
+
+
 
 getDeviceDetails();
 

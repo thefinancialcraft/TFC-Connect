@@ -1,8 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Noto+Sans+Carian&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Noto+Sans+Carian&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 @import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css');
-@import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css');
-
  /* General Styles */
 
 
@@ -11,6 +8,55 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+
+
+:root{
+
+
+    /* color pattels */
+
+    --first-color:  #4931e7;
+    --title-color: #25333a;
+    --text-color:  #2632388d;
+    --shadow-color: #4931e71a;
+    --body-color: #fbfaff;
+    --light-text-color: #847fa5;
+    --extra-light-color: #263238aa;
+    --weight-color: #ffffff;
+    --black-color: #000000;
+    --background-color: #E6E2FF;
+
+
+
+    /* font & typography */
+
+    --nunito-font: "Nunito Sans", sans-serif;
+    --roboto-font: "roboto", sans-serif;
+    --poppin-font: "poppins", sans-serif;
+
+
+    /* font weight */
+
+    --font-weight-800: 800;
+    --font-weight-600: 600;
+    --font-weight-500: 500;
+    --font-weight-400: 400;
+    --font-weight-300: 300;
+
+
+    /*  border curve  */
+
+    --border-radius-24: 24px;
+    --border-radius-20: 20px;
+    --border-radius-18: 18px;
+    --border-radius-16: 16px;
+    --border-radius-14: 14px;
+    --border-radius-10: 10px;
+
+
+}
+
 
 
 body{
@@ -25,10 +71,20 @@ body{
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+
+
+    font-family: var(--poppin-font);
       
 }
 
 
+a{
+    text-decoration: none;
+}
+
+li{
+    list-style: none;
+}
 
 
 body::-webkit-scrollbar{
@@ -55,16 +111,213 @@ body::-webkit-scrollbar{
 
 nav{
     width: 200px;
-    height: 90%;
+    height: 95vh;
     background-color: rgb(255, 255, 255);
-    border-radius: 20px;
+    border-radius: 16px;
     box-shadow: 1px 2px 30px #4931e71a;
     /* border: 2px solid white; */
+    overflow: hidden;
+    /* padding: 10px; */
+    justify-content: space-evenly;
+
 }
 
 main{
     width: calc(100% - 280px);
-    height: 95%;
-    /* background-color: aqua; */
+    height: 90%;
+    /* background-color: aqua;   */
     
+}
+
+.prf-card{
+        width: 100%;
+        height: 30%;
+        /* background-color: #4931e7; */
+        justify-content: center;
+        user-select: none;
+
+
+
+        img{
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #E6E2FF;
+        }
+
+        h3{
+            font-family: var(--roboto-font);
+            margin-top: 10px;
+            text-shadow: 1px 1px 10px #3b373734;
+            font-size: 20px;
+            color: var(--title-color);
+        }
+
+        p{
+            font-size: 11px;
+            font-family: var(--poppin-font);
+            color: var(--light-text-color);
+
+        }
+
+        span{
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background-color: var(--first-color);
+            margin: 0 5px;
+        }
+
+
+
+        .usrDtl{
+            padding-top: 3px;
+            /* opacity: .6 */
+        }
+}
+
+.menu-card{
+    height: 48%;
+    width: 100%;
+    padding-left: 10px;
+    /* background-color: #25333a; */
+    position: relative;
+
+    p{
+        font-size: 10px;
+        font-family: var(--poppin-font);
+        color: var(--light-text-color);
+        /* padding-top: 10px; */
+        /* padding-bottom: 10px; */
+        padding-left: 10px;
+        cursor: pointer;
+    }
+
+    ul{
+        font-size: 12px;
+        width: 100%;
+        height: 100%;
+        user-select: none;
+
+        li{
+            color: var(--extra-light-color);
+            margin-top: 15px;
+            padding-left: 10px;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+            i{
+              padding-right: 10px;
+            }
+
+            .active{
+                position: absolute;
+                width: 4px;
+                left: 0;
+                height: 20px;
+                background-color: #4931e7;
+                border-radius: 5px;
+                transition: .3s fade ease-in-out;
+            }
+
+        }
+        li:hover{
+            color: #7762ff;
+        }
+
+        li:active{
+            color: var(--first-color);
+
+        }
+        .active{
+            color: var(--first-color);
+            font-size: 14px;
+
+        }
+
+        .active:hover{
+            color: var(--first-color);
+          
+            
+        }
+
+    }
+
+}
+
+
+
+.logout-card{
+    width: 100%;
+    height: 22%;
+    /* background-color: #4931e7; */
+    align-items: center;
+    /* padding-left: 10px; */
+    /* gap: 15px; */
+    justify-content: center;
+ 
+    text-align: center;
+
+    p{
+        font-size: 10px;
+        font-family: var(--poppin-font);
+        color: var(--light-text-color);
+        cursor: pointer;
+        user-select: none;
+    
+    }
+    
+}
+
+
+
+
+a{
+    text-decoration: none;
+    
+}
+
+.button1{
+    background-color: #4931e7;
+    font-size: 14px;
+    color: white;
+    /* Text ka color */
+    /* font-weight: 500; */
+    border: none;
+    border-radius: 50px; /* Rounded button */
+    cursor: pointer;
+    /* width: 70% ; */
+    width: 85%;
+    height: 35px; /* Full height button */
+    margin-bottom: 5px;
+    box-shadow: 1px 2px 30px #4931e710;
+    a{
+        color: white;
+        margin-left: 5px;
+    }
+}
+
+
+.button2{
+    background-color: white;
+    font-size: 14px;
+    color: #4931e7; /* Text ka color */
+    /* font-weight: 500; */
+    margin-bottom: 12px;
+ 
+    border: 1px solid #4931e7;
+    border-radius: 50px; /* Rounded button */
+    cursor: pointer;
+    /* width: 70% ; */
+    width: 85%;
+    height: 35px; /* Full height button */
+    /* margin-top: 10px; */
+    box-shadow: 1px 2px 30px #4931e710;
+    user-select: none;
+    user-select: none;
+    a{
+        color: #4931e7;
+        margin-left: 5px;
+    }
 }
