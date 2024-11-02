@@ -538,12 +538,45 @@ function submitIdLoginForm(event) {
 }
 
 
-// Function to handle response processing
 function handleResponse(result) {
     console.log("Server Response:", result);
-    console.log("tokenDetails", result.tokenDetails);
 
-    if (result) {
+    // Sabse pehle tokenmatch ko check karein
+    if (result && result.tokenmatch === false) {
+        if (result && result.token) {
+            // Token mismatch handling
+            let existingTicketDetails = localStorage.getItem('ticketDetails');
+            existingTicketDetails = existingTicketDetails ? JSON.parse(existingTicketDetails) : [];
+
+            console.log("Existing ticket details before removal:", existingTicketDetails); // Debug log
+
+            const tokenToRemove = result.token;
+            const existingTokenIndex = existingTicketDetails.findIndex(ticket => ticket.id === tokenToRemove);
+
+            // Agar token ka index milta hai, toh usko remove karte hain
+            if (existingTokenIndex !== -1) {
+                existingTicketDetails.splice(existingTokenIndex, 1); // Remove the ticket with the specific token ID
+                console.log(`Removed token details for token ID: ${tokenToRemove}. Updated ticketDetails:`, existingTicketDetails); // Debug log
+            } else {
+                console.log(`Token ID: ${tokenToRemove} not found in existing ticket details.`); // Debug log
+            }
+
+            // Update localStorage with the new ticket details
+            localStorage.setItem('ticketDetails', JSON.stringify(existingTicketDetails));
+
+            console.log("Updated ticket details in localStorage:", JSON.parse(localStorage.getItem('ticketDetails'))); // Debug log
+        }
+
+        // Show error message and highlight fields
+        showErrorMessage(document.getElementById('error-message'), 'Invalid session or session expired');
+        highlightInputFields();
+        return; // Stop further processing if token is unmatched
+    }
+
+    // Agar tokenmatch true hai toh baaki ka processing karein
+    if (result && result.tokenDetails && result.tokenDetails.token) {
+        console.log("tokenDetails:", result.tokenDetails);
+
         const tokenDetailsWithId = {
             id: result.tokenDetails.token,
             details: result.tokenDetails
@@ -556,55 +589,45 @@ function handleResponse(result) {
             existingTicketDetails = [];
         }
 
-        // Check if the token already exists
         const existingTokenIndex = existingTicketDetails.findIndex(ticket => ticket.id === tokenDetailsWithId.id);
 
         if (existingTokenIndex !== -1) {
-            // Token exists, update the existing entry
             existingTicketDetails[existingTokenIndex] = tokenDetailsWithId;
             console.log("Updated existing token details:", tokenDetailsWithId);
         } else {
-            // Token does not exist, add new entry
             existingTicketDetails.push(tokenDetailsWithId);
             console.log("Added new token details:", tokenDetailsWithId);
         }
 
-        // Save updated ticket details back to localStorage
         localStorage.setItem('ticketDetails', JSON.stringify(existingTicketDetails));
-        
-        console.log("ticketDetails:", JSON.parse(localStorage.getItem('ticketDetails')));
+        console.log("ticketDetails after processing:", JSON.parse(localStorage.getItem('ticketDetails'))); // Debug log
     } else {
-        console.warn("No logs found in the result.");
+        console.warn("No logs found in the result or token details are undefined.");
+        showErrorMessage(document.getElementById('error-message'), 'Session data missing or invalid response');
     }
 
     resetInputBorders();
     clearErrorMessage();
 
-    if (result.status === 'success') {
-        if (result.status === 'success') {
-            localStorage.setItem('reciveData', JSON.stringify(result.tokenDetails)); // Store data
-            console.log("Receive from backend:", JSON.parse(localStorage.getItem('reciveData')));
-        
-            // Store the token directly if it's already a string
-            // localStorage.setItem('activeTicket',  JSON.stringify(result));
-        }
-         // Store data
-    
+    if (result && result.status === 'success') {
+        localStorage.setItem('reciveData', JSON.stringify(result.tokenDetails));
+        console.log("Receive from backend:", JSON.parse(localStorage.getItem('reciveData')));
 
-        const userType = result.userType.toLowerCase();
+        const userType = result.userType ? result.userType.toLowerCase() : null;
         const validUserTypes = ['user', 'admin', 'agent'];
 
-        if (validUserTypes.includes(userType)) {
+        if (userType && validUserTypes.includes(userType)) {
             window.location.href = `html/${userType}.html`;
         } else {
             showErrorMessage(document.getElementById('error-message'), 'Unexpected user type');
             highlightInputFields();
         }
-    } else {
+    } else if (result) {
         showErrorMessage(document.getElementById('error-message'), result.message);
         highlightInputFields();
     }
 }
+
 
     
     

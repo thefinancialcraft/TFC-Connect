@@ -23,10 +23,12 @@
     const tktuserId = activeTicket.userId; // Access userName from activeTicket
     const tktuserType = activeTicket.userType; // Access userName from activeTicket
     const tktuserImg = activeTicket.userImage; // Access userName from activeTicket
+    const tktuserToken = activeTicket.token; // Access userName from activeTicket
 
     console.log("Username:", tktuserName); // Log the username
     console.log("UserId:", tktuserId);
     console.log("UserType:", tktuserType);
+    console.log("token:", tktuserToken);
   
     const userName = document.querySelectorAll(".userName");
     const userId = document.querySelectorAll(".userId");
@@ -108,6 +110,58 @@ displayLocalStorageAsObject();
 
 
 
-function logout(){
-    window.location.href = '/TFC-Connect/index.html';
+function logout() {
+    // Retrieve and parse the active ticket data from localStorage
+    const activeTicket = JSON.parse(localStorage.getItem('reciveData'));
+    if (!activeTicket) {
+        console.error("No active ticket found.");
+        return;
+    }
+
+    // Extract token and userId from the activeTicket object
+    const tktuserToken = activeTicket.token;
+    const tktuserId = activeTicket.userId;
+
+    console.log("Token:", tktuserToken);
+    console.log("UserId:", tktuserId);
+
+    // Create data object to send to the backend, with action included
+    const data = new URLSearchParams();
+    data.append('action', 'logoutSingle');
+    data.append('token', tktuserToken);
+    data.append('userId', tktuserId);
+
+  // Log the data being sent to the server as a JSON object
+console.log('Data being sent to the server:', data);
+
+    // Fetch scriptUrl from config.json and then make the logout request
+    fetch('/app/config.json')
+    .then(response => response.json())
+    .then(config => {
+        const scriptUrl = config.scriptUrl; // Get the script URL from config
+
+        // Make the POST request to the App Script endpoint
+        return fetch(scriptUrl, {
+            method: 'POST',
+            body: new URLSearchParams(data) // Send form data
+        });
+    })
+    .then(response => {
+        if (response.headers.get('content-type')?.includes('application/json')) {
+            
+            return response.json();
+
+        } else {
+            throw new Error("Invalid JSON response");
+        }
+    })
+    .then(data => {
+        console.log("Logout successful:", data);
+        // Clear localStorage or perform other actions after logout
+        // localStorage.removeItem('reciveData');
+    })
+    .catch(error => {
+        console.error("Error during logout:", error);
+    });
 }
+
