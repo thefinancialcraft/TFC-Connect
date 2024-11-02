@@ -109,7 +109,6 @@ displayLocalStorageAsObject();
 
 
 
-
 function logout() {
     // Retrieve and parse the active ticket data from localStorage
     const activeTicket = JSON.parse(localStorage.getItem('reciveData'));
@@ -131,37 +130,147 @@ function logout() {
     data.append('token', tktuserToken);
     data.append('userId', tktuserId);
 
-  // Log the data being sent to the server as a JSON object
-console.log('Data being sent to the server:', data);
+    console.log('Data being sent to the server:', data);
 
     // Fetch scriptUrl from config.json and then make the logout request
     fetch('/app/config.json')
-    .then(response => response.json())
-    .then(config => {
-        const scriptUrl = config.scriptUrl; // Get the script URL from config
+        .then(response => response.json())
+        .then(config => {
+            const scriptUrl = config.scriptUrl;
 
-        // Make the POST request to the App Script endpoint
-        return fetch(scriptUrl, {
-            method: 'POST',
-            body: new URLSearchParams(data) // Send form data
+            // Make the POST request to the App Script endpoint
+            return fetch(scriptUrl, {
+                method: 'POST',
+                body: data
+            });
+        })
+        .then(response => {
+            if (response.headers.get('content-type')?.includes('application/json')) {
+                return response.json();
+            } else {
+                throw new Error("Invalid JSON response");
+            }
+        })
+        .then(data => {
+            console.log("Logout successful:", data);
+
+            // Update the specific ticket in localStorage's ticketDetails array
+            if (data.userDetails) {
+                // Get ticketDetails array from localStorage
+                const ticketDetails = JSON.parse(localStorage.getItem('ticketDetails')) || [];
+
+                // Find index of the ticket with matching token
+                const ticketIndex = ticketDetails.findIndex(ticket => ticket.id === data.userDetails.token);
+
+                if (ticketIndex !== -1) {
+                    // Update the matching ticket's details
+                    ticketDetails[ticketIndex].details = {
+                        browser: data.userDetails.browser,
+                        deviceModel: data.userDetails.deviceModel,
+                        deviceType: data.userDetails.deviceType,
+                        expiryTimestamp: data.userDetails.expiryTimestamp,
+                        isActive: data.userDetails.isActive,
+                        lastLoginTime: data.userDetails.lastLoginTime,
+                        os: data.userDetails.os,
+                        password: data.userDetails.password,
+                        token: data.userDetails.token,
+                        tokenGenTime: data.userDetails.tokenGenTime,
+                        userId: data.userDetails.userId,
+                        userImage: data.userDetails.userImage,
+                        userName: data.userDetails.userName,
+                        userType: data.userDetails.userType
+                    };
+
+                    // Save updated ticketDetails array back to localStorage
+                    localStorage.removeItem('reciveData');
+                    localStorage.setItem('ticketDetails', JSON.stringify(ticketDetails));
+                    console.log("Updated ticket in localStorage:", ticketDetails
+                    [ticketIndex]);
+                } else {
+                    console.warn("No matching ticket found for token:", data.userDetails.token);
+                }
+
+                // Redirect to /login.html after updating localStorage
+                window.location.href = '/App/login.html';
+            } else {
+                console.warn("No userDetails found in the response.");
+            }
+        })
+        .catch(error => {
+            console.error("Error during logout:", error);
         });
-    })
-    .then(response => {
-        if (response.headers.get('content-type')?.includes('application/json')) {
-            
-            return response.json();
-
-        } else {
-            throw new Error("Invalid JSON response");
-        }
-    })
-    .then(data => {
-        console.log("Logout successful:", data);
-        // Clear localStorage or perform other actions after logout
-        // localStorage.removeItem('reciveData');
-    })
-    .catch(error => {
-        console.error("Error during logout:", error);
-    });
 }
 
+
+setInterval(monitorToken(), 1000);
+ 
+function monitorToken() {
+    // Retrieve active ticket from localStorage
+    const activeTicket = JSON.parse(localStorage.getItem('reciveData'));
+    if (!activeTicket) {
+        console.error("No active ticket found.");
+        return;
+    }
+
+    const tktuserToken = activeTicket.token;
+
+    // Set interval to check token validity every second
+    const intervalId = setInterval(() => {
+        // Create data object to send to the backend for token validity check
+        const data = new URLSearchParams();
+        data.append('action', 'checkToken');
+        data.append('token', tktuserToken);
+
+        // Fetch the backend URL from config.json
+        fetch('/app/config.json')
+            .then(response => response.json())
+            .then(config => {
+                const scriptUrl = config.scriptUrl;
+
+                // Make a POST request to check token validity
+                return fetch(scriptUrl, {
+                    method: 'POST',
+                    body: data
+                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Check if the token is still valid
+                if (data.isValid) {
+                    console.log("Token valid");
+                } else {
+                    console.warn("Token no longer valid");
+
+                    // Clear the token details in localStorage and stop monitoring
+                    removeInvalidTicket(tktuserToken);
+                    clearInterval(intervalId); // Stop further monitoring
+
+                    // Redirect to login page
+                    window.location.href = '/app/login.html';
+                }
+            })
+            .catch(error => {
+                console.error("Error checking token validity:", error);
+            });
+    }, 1000); // Check every second
+}
+
+function removeInvalidTicket(token) {
+    // Retrieve ticketDetails from localStorage
+    const ticketDetails = JSON.parse(localStorage.getItem('ticketDetails')) || [];
+
+    // Find index of the ticket with matching token
+    const ticketIndex = ticketDetails.findIndex(ticket => ticket.id === token);
+
+    if (ticketIndex !== -1) {
+        // Remove the invalid ticket from ticketDetails
+        ticketDetails.splice(ticketIndex, 1);
+
+        // Update localStorage with the modified ticketDetails array
+        localStorage.setItem('ticketDetails', JSON.stringify(ticketDetails));
+        console.log(`Removed invalid ticket with token: ${token}`);
+    }
+
+    // Clear the active ticket as well
+    localStorage.removeItem('reciveData');
+}

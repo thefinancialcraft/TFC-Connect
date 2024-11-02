@@ -408,6 +408,9 @@ function initializeSlider() {
         nextBtn.style.display = tcurrentIndex === ttotalSlides - 1 ? 'none' : 'block'; // Hide or show the next button
     }
 
+
+
+
     // Function to update the token ID link
     function updateTokenId() {
         const activeSlide = tslides[tcurrentIndex]; // Get the currently active slide
@@ -423,6 +426,8 @@ function initializeSlider() {
         tokenIdLink.textContent = token; // Set text to the extracted token
 
         console.log(`Updated ID: ${tokenIdLink.id}, Token: ${token}`); // Log the updated values
+        localStorage.setItem("isActivefalseId",token);
+        console.log("Updated token_id Value", localStorage.getItem("isActivefalseId:",token))
     }
 
     // Function to show the next slide
@@ -477,6 +482,9 @@ function initializeSlider() {
     updateButtonVisibility();
     updateTokenId(); // Set the initial token ID and text
 }
+
+
+
 
 
 function submitIdLoginForm(event) {
@@ -627,6 +635,8 @@ function handleResponse(result) {
         highlightInputFields();
     }
 }
+
+
 
 
     
@@ -1405,6 +1415,14 @@ function checkAndLogActiveTickets() {
 
 
 
+function loginSavedId(){
+
+}
+
+
+
+
+
 // Function to send token to backend
 async function sendTokenToBackend(token, tokenGenTime, deviceType, deviceModel, os, browser, action) {
     const payload = { token: token, tokenGenTime: tokenGenTime, deviceType: deviceType, deviceModel: deviceModel, os:os, browser: browser,  action: action };
@@ -1528,3 +1546,65 @@ function getDeviceDetails() {
 
 checkAndLogActiveTickets();
 
+// Run checkAllTicketsValidity every second
+setInterval(checkAllTicketsValidity, 1000); // 1000 milliseconds = 1 second
+
+function checkAllTicketsValidity() {
+    // Retrieve all ticket details from localStorage
+    const ticketDetails = JSON.parse(localStorage.getItem('ticketDetails')) || [];
+
+    // Extract tokens from ticket details
+    const tokens = ticketDetails.map(ticket => ticket.id);
+
+    if (tokens.length === 0) {
+        console.log("No tokens found in ticketDetails.");
+        return;
+    }
+
+    // Prepare data for backend request
+    const data = new URLSearchParams();
+    data.append('action', 'checkAllTokens');
+    data.append('tokens', JSON.stringify(tokens)); // Send all tokens as a JSON array
+
+    // Fetch the backend URL from config.json
+    fetch('/app/config.json')
+        .then(response => response.json())
+        .then(config => {
+            const scriptUrl = config.scriptUrl;
+
+            // Make a POST request to check all token validity at once
+            return fetch(scriptUrl, {
+                method: 'POST',
+                body: data
+            });
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok: " + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Check if the response has validTokens
+            if (!Array.isArray(data.validTokens)) {
+                console.error("Invalid response format from backend: expected an array of valid tokens.");
+                return;
+            }
+
+            // Filter out invalid tokens from `ticketDetails`
+            const validTokensSet = new Set(data.validTokens); // Convert to Set for quick lookup
+            const updatedTicketDetails = ticketDetails.filter(ticket => validTokensSet.has(ticket.id));
+
+            // Update localStorage with only valid tokens
+            localStorage.setItem('ticketDetails', JSON.stringify(updatedTicketDetails));
+            console.log("Updated ticket details with valid tokens only.");
+        })
+        .catch(error => {
+            console.error("Error checking all tokens' validity:", error);
+        });
+}
+
+
+function loginbyIsActive(){
+
+}
