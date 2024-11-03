@@ -1477,6 +1477,7 @@ function checkAndLogActiveTickets() {
   
                       // Redirect to login page
                       window.location.href = '/app/login.html';
+                      
                 } else {
                     console.warn("Token no longer valid Already");
 
@@ -1619,6 +1620,7 @@ async function sendTokenToBackend(token, tokenGenTime, deviceType, deviceModel, 
 
 
 getDeviceDetails();
+
 
 function getDeviceDetails() {
     const userAgent = navigator.userAgent;

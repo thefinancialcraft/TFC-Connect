@@ -278,9 +278,10 @@ function removeInvalidTicket(token) {
 }
 
 
+
 function switchMenu() {
     document.getElementById("menuCard").style.display = "none";
-    document.getElementById("logDetails").style.display = "flex";
+    document.getElementById("logDetails").style.display = "block";
     document.getElementById("switchMenuBack").style.display = "flex";
     document.getElementById("switchMenu").style.display = "none";
 }
@@ -291,4 +292,229 @@ function switchMenuBack() {
     document.getElementById("logDetails").style.display = "none";
     document.getElementById("switchMenuBack").style.display = "none";
     document.getElementById("switchMenu").style.display = "flex";
+}
+
+setInterval(displayLoggedAccount, 1000);
+displayLoggedAccount();
+
+
+function displayLoggedAccount() {
+    // Retrieve and parse `reciveData` from localStorage
+    const activeTicket = JSON.parse(localStorage.getItem('reciveData'));
+    if (!activeTicket) {
+        console.error("No active ticket found.");
+        return;
+    }
+
+    // Extract `token` from the activeTicket object
+    const tktuserToken = activeTicket.token;
+    console.log("Check Token:", tktuserToken);
+
+    // Create a data object to send to the backend, including action
+    const data = new URLSearchParams();
+    data.append('action', 'displayLoggedAccount');
+    data.append('token', tktuserToken);
+    console.log('Data being sent to the server:', data);
+
+    // Fetch config.json to get the script URL
+    fetch('/app/config.json')
+        .then(response => response.json())
+        .then(config => {
+            const scriptUrl = config.scriptUrl;
+
+            // Send POST request to the Apps Script endpoint
+            return fetch(scriptUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: data
+            });
+        })
+        .then(response => {
+            if (response.headers.get('content-type')?.includes('application/json')) {
+                return response.json();
+            } else {
+                throw new Error("Invalid JSON response");
+            }
+        })
+        .then(result => {
+            console.log("Server response:", result);
+            if (result.status) {
+                console.log("All Accounts Received successfully.");
+
+                const allAccounts = result.matchedAccounts;
+                console.log("All Accounts:", allAccounts);
+
+                // Clear previous contents if needed
+                const deviceOpnContainer = document.getElementById('device-opn');
+                deviceOpnContainer.innerHTML = '';
+
+                // Loop through all matched accounts
+                allAccounts.forEach((account, index) => {
+                    // Create the device info container
+                    const deviceInfoDiv = document.createElement('div');
+                    deviceInfoDiv.className = 'device-info flex-row';
+
+                    // Add device type
+                    const deviceTypeDiv = document.createElement('div');
+                    deviceTypeDiv.id = `deviceType-${index}`;
+                    deviceTypeDiv.className = 'deviceType flex';
+                    const icon = document.createElement('i');
+                    icon.className = account.deviceType === 'Mobile' ? 'fi fi-rr-mobile-notch' : 'fi fi-rr-computer';
+                    deviceTypeDiv.appendChild(icon);
+                    deviceInfoDiv.appendChild(deviceTypeDiv);
+
+                    // Add device details
+                    const deviceDetailsDiv = document.createElement('div');
+                    deviceDetailsDiv.className = 'deviceDetails flex-column';
+
+                    // Device Model with Check Icon for Current Session
+                    const deviceModelDiv = document.createElement('div');
+                    deviceModelDiv.className = 'deviceModel';
+                    const deviceModelText = document.createElement('div');
+                    deviceModelText.id = `deviceModel-${index}`;
+                    deviceModelText.className = 'deviceModel';
+                    deviceModelText.innerHTML = account.deviceModel;
+
+                    if (account.token === tktuserToken) {
+                        deviceModelText.innerHTML += ' <i class="fi fi-ss-badge-check"></i>'; // Add the check icon for current session
+                    }
+                    deviceModelDiv.appendChild(deviceModelText);
+                    deviceDetailsDiv.appendChild(deviceModelDiv);
+
+                    // Device OS and Registration Time
+                    const deviceOsRegDiv = document.createElement('div');
+                    deviceOsRegDiv.className = 'deviceOsReg flex-row';
+                    
+                    const deviceBrowserDiv = document.createElement('div');
+                    deviceBrowserDiv.id = `deviceBrowser-${index}`;
+                    deviceBrowserDiv.className = 'deviceOs';
+                    deviceBrowserDiv.innerText = account.deviceBrowser;
+                    deviceOsRegDiv.appendChild(deviceBrowserDiv);
+
+                    const spanElement = document.createElement('span');
+                    deviceOsRegDiv.appendChild(spanElement);
+
+                    const firstTokenGenTime = new Date(account.firstTokenGenTime);
+                    const formattedFirstTokenGenTime = `${firstTokenGenTime.getDate().toString().padStart(2, '0')} ${firstTokenGenTime.toLocaleString('default', { month: 'short' })}`;
+                    const tokenGenTimeDiv = document.createElement('div');
+                    tokenGenTimeDiv.id = `firstTokenGenTime-${index}`;
+                    tokenGenTimeDiv.className = 'devicReg';
+                    tokenGenTimeDiv.innerText = formattedFirstTokenGenTime;
+                    deviceOsRegDiv.appendChild(tokenGenTimeDiv);
+                    deviceDetailsDiv.appendChild(deviceOsRegDiv);
+
+                    // Device Activity
+                    const deviceActivityDiv = document.createElement('div');
+                    deviceActivityDiv.className = 'deviceActivity flex-row';
+                    const isActiveSpan = document.createElement('span');
+                    isActiveSpan.id = `isActive-${index}`;
+                    isActiveSpan.className = account.isActive ? 'active' : 'inactive';
+                    
+                    const activeText = document.createElement('p');
+                    const lastLoginDate = new Date(account.lastLoginTimestamp);
+                    const formattedLastLoginTime = formatRelativeTime(lastLoginDate);
+                    activeText.innerHTML = account.isActive 
+                        ? `Active for <span id="lastLoginTimestamp-${index}">${formattedLastLoginTime}</span>` 
+                        : `Inactive for <span id="lastLoginTimestamp-${index}">${formattedLastLoginTime}</span>`;
+                    
+                    deviceActivityDiv.appendChild(isActiveSpan);
+                    deviceActivityDiv.appendChild(activeText);
+                    deviceDetailsDiv.appendChild(deviceActivityDiv);
+                    deviceInfoDiv.appendChild(deviceDetailsDiv);
+
+                    // Delete Device Icon with Click Event to Call removeTokenFromBackend
+                    const delDeviceDiv = document.createElement('div');
+                    delDeviceDiv.id = `delDevice-${index}`;
+                    delDeviceDiv.className = 'delDevice';
+                    const deleteIcon = document.createElement('i');
+                    deleteIcon.className = 'fi flex fi-rr-cross-small';
+                    delDeviceDiv.appendChild(deleteIcon);
+
+                    // Add click event listener to delete button
+                    delDeviceDiv.addEventListener('click', () => {
+                        removeTokenFromBackend(account.token); // Pass account.token to the function
+                    });
+
+                    deviceInfoDiv.appendChild(delDeviceDiv);
+                    deviceOpnContainer.appendChild(deviceInfoDiv);
+                });
+            } else {
+                console.log("No Record Found.");
+            }
+        })
+        .catch(error => {
+            console.error("Error occurred:", error);
+        });
+}
+
+function removeTokenFromBackend(token) {
+    console.log("Removing token:", token);
+
+    // Create data object to send to the backend
+    const data = new URLSearchParams();
+    data.append('action', 'removeCheckToken');
+    data.append('token', token);
+
+    // Fetch backend URL from config.json
+    fetch('/app/config.json')
+        .then(response => response.json())
+        .then(config => {
+            const scriptUrl = config.scriptUrl;
+
+            // Make POST request to remove the token
+            return fetch(scriptUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: data
+            });
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.status === "sucess") {
+                console.log("Token removal successful.");
+                console.log("message:", result.message);
+            } else {
+                console.log("Token removal failed or token not found.");
+            }
+        })
+        .catch(error => {
+            console.error("Error occurred during token removal:", error);
+        });
+}
+
+
+
+
+
+
+// Helper function to format dates to "04 Nov" format
+function formatDate(date) {
+    const options = { day: '2-digit', month: 'short' }; // Formatting options
+    return date.toLocaleDateString('en-US', options);
+}
+
+// Helper function to format relative time
+function formatRelativeTime(date) {
+    const now = new Date();
+    const secondsDiff = Math.floor((now - date) / 1000);
+    let timeAgo = '';
+
+    if (secondsDiff < 60) {
+        timeAgo = `${secondsDiff} Sec`;
+    } else if (secondsDiff < 3600) {
+        const minutes = Math.floor(secondsDiff / 60);
+        timeAgo = `${minutes} Min${minutes > 1 ? 's' : ''}`;
+    } else if (secondsDiff < 86400) {
+        const hours = Math.floor(secondsDiff / 3600);
+        timeAgo = `${hours} Hour${hours > 1 ? 's' : ''}`;
+    } else {
+        const days = Math.floor(secondsDiff / 86400);
+        timeAgo = `${days} Day${days > 1 ? 's' : ''}`;
+    }
+
+    return timeAgo;
 }
