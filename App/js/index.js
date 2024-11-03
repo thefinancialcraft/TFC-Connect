@@ -519,7 +519,7 @@ function submitIdLoginForm(event) {
       localStorage.setItem('sentData', JSON.stringify(dataToStore)); // Store data
 
     // fetch('config.json')
-    fetch('/TFC-Connect/app/config.json')
+    fetch('/TFC-Connect/config.json')
         .then(response => response.json())
         .then(config => {
             const scriptUrl = config.scriptUrl;
@@ -722,7 +722,7 @@ function submitEmailLoginForm(event) {
     console.log('Data being sent to the server:', data); // Log the data being sent
 
     // fetch('config.json')
-    fetch('/TFC-Connect/app/config.json')
+    fetch('/TFC-Connect/config.json')
         .then(response => response.json())
         .then(config => {
             const scriptUrl = config.scriptUrl; // Get the script URL from config
@@ -802,7 +802,7 @@ async function sendOtpid() {
     try {
         // Load the config.json file to get the script URL
         // const configResponse = await fetch('config.json');
-        const configResponse = await fetch('/TFC-Connect/app/config.json');
+        const configResponse = await fetch('/TFC-Connect/config.json');
         const config = await configResponse.json();
         const scriptUrl = config.scriptUrl; // Get the script URL from config
         console.log('Script URL loaded:', scriptUrl);
@@ -955,7 +955,7 @@ async function submitIdOtp(event) {
         console.log("Fetching config.json...");
         // Fetch the script URL from config.json
         // const configResponse = await fetch('config.json');
-        const configResponse = await fetch('/TFC-Connect/app/config.json');
+        const configResponse = await fetch('/TFC-Connect/config.json');
         const config = await configResponse.json();
         const scriptUrl = config.scriptUrl;
         console.log("Config loaded, script URL:", scriptUrl);
@@ -1082,7 +1082,7 @@ async function sendPassOtp() {
     try {
         // Load the config.json file to get the script URL
         // const configResponse = await fetch('config.json');
-        const configResponse = await fetch('/TFC-Connect/app/config.json');
+        const configResponse = await fetch('/TFC-Connect/config.json');
         const config = await configResponse.json();
         const scriptUrl = config.scriptUrl; // Get the script URL from config
         console.log('Script URL loaded:', scriptUrl);
@@ -1203,7 +1203,7 @@ async function submitPassOtp(event) {
         console.log("Fetching config.json...");
         // Fetch the script URL from config.json
         // const configResponse = await fetch('config.json');
-        const configResponse = await fetch('/TFC-Connect/app/config.json');
+        const configResponse = await fetch('/TFC-Connect/config.json');
         const config = await configResponse.json();
         const scriptUrl = config.scriptUrl;
         console.log("Config loaded, script URL:", scriptUrl);
@@ -1310,7 +1310,7 @@ async function submitNewPassword(event) {
     try {
         console.log("Fetching config.json...");
         // const configResponse = await fetch('config.json');
-        const configResponse = await fetch('/TFC-Connect/app/config.json');
+        const configResponse = await fetch('/TFC-Connect/config.json');
         if (!configResponse.ok) {
             throw new Error("Failed to load config.json");
         }
@@ -1475,7 +1475,7 @@ async function sendTokenToBackend(token, tokenGenTime, deviceType, deviceModel, 
     try {
         // Load the config.json file to get the script URL
         // const configResponse = await fetch('config.json');
-        const configResponse = await fetch('/TFC-Connect/app/config.json');
+        const configResponse = await fetch('/TFC-Connect/config.json');
         const config = await configResponse.json();
         const scriptUrl = config.scriptUrl; // Get the script URL from config
         console.log('Script URL loaded:', scriptUrl);
