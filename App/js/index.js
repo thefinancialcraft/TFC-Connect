@@ -356,6 +356,8 @@ function createSlidesFromLocalStorage() {
 
             // Create the inner content for the slide
             slide.innerHTML = `
+            
+                <div class="remIdBtn flex" onclick="remIdBtn()"><i class="fi fi-rr-trash"></i></div>
                 <img id="token_userImg_${ticketDetailsArray.length - index}" src="${userDetails.userImage}" alt="${userDetails.userName}">
                 <div class="token_details flex-coloum">
                     <h2 id="token_userName_${ticketDetailsArray.length - index}">${userDetails.userName}</h2>
@@ -1415,6 +1417,115 @@ function checkAndLogActiveTickets() {
 }
 
 
+
+ function remIdBtn(){
+
+    const token = JSON.parse(localStorage.getItem("isActivefalseId"));
+    console.log("token for remove", token);
+
+    const allSavedDetails = JSON.parse(localStorage.getItem("ticketDetails"));
+    console.log("token Saved details", allSavedDetails);
+
+    // Find the index of the ticket where the id matches the token
+    const ticketIndex = allSavedDetails.findIndex(ticket => ticket.id === token);
+    console.log("matched Saved details index", ticketIndex);
+
+    if (ticketIndex !== -1) {
+        // Retrieve the matched ticket details
+        const matchedTicket = allSavedDetails[ticketIndex];
+        console.log("Matched ticket details:", matchedTicket);
+
+
+       const token =  matchedTicket.details.token;
+      
+    //    const action =  matchedTicket.details.action;
+
+
+        // Check if isActive is false, and update it to true if so
+        if (matchedTicket.details.isActive === false) {
+            // Update isActive directly on the object
+
+           console.log(`Ticket is false removing `, token);
+            
+                // Set interval to check token validity every second
+              const intervalId = setInterval(() => {
+              // Create data object to send to the backend for token validity check
+              const data = new URLSearchParams();
+              data.append('action', 'removeCheckToken');
+              data.append('token', token);
+
+            // Fetch the backend URL from config.json
+            fetch('/app/config.json')
+                .then(response => response.json())
+                .then(config => {
+                    const scriptUrl = config.scriptUrl;
+    
+                    // Make a POST request to check token validity
+                    return fetch(scriptUrl, {
+                        method: 'POST',
+                        body: data
+                    });
+                })
+                .then(response => response.json())
+                .then(data => {
+                // Check if the token is still valid
+                if (data.isValid) {
+                    console.log("Token valid");
+                      // Clear the token details in localStorage and stop monitoring
+                      removeInvalidTicket(token);
+                      clearInterval(intervalId); // Stop further monitoring
+  
+                      // Redirect to login page
+                      window.location.href = '/app/login.html';
+                } else {
+                    console.warn("Token no longer valid Already");
+
+                  
+                }
+            })
+            .catch(error => {
+                console.error("Error checking token validity:", error);
+            });
+    }, 1000); // Check every second
+           
+            
+           
+        } else {
+            console.log("isActive is already true");
+        }
+    } else {
+        console.log("No matching ticket found.");
+    }
+    
+ }
+
+
+
+ function removeInvalidTicket(token) {
+    // Retrieve ticketDetails from localStorage
+    const ticketDetails = JSON.parse(localStorage.getItem('ticketDetails')) || [];
+
+    // Find index of the ticket with matching token
+    const ticketIndex = ticketDetails.findIndex(ticket => ticket.id === token);
+
+    if (ticketIndex !== -1) {
+        // Remove the invalid ticket from ticketDetails
+        ticketDetails.splice(ticketIndex, 1);
+
+        // Update localStorage with the modified ticketDetails array
+        localStorage.setItem('ticketDetails', JSON.stringify(ticketDetails));
+        console.log(`Removed invalid ticket with token: ${token}`);
+    }
+
+    // Clear the active ticket as well
+    localStorage.removeItem('reciveData');
+}
+
+
+
+
+
+
 function loginSavedId() {
     const token = JSON.parse(localStorage.getItem("isActivefalseId"));
     console.log("login token for Saved details", token);
@@ -1515,61 +1626,67 @@ function getDeviceDetails() {
     let deviceModel = "Unknown";
     let os = "Unknown";
     let browser = "Unknown";
-  
+
     // Detect Device Type
     if (/Mobile|Android|iPhone|iPod/.test(userAgent)) {
-      deviceType = "Mobile";
+        deviceType = "Mobile";
     } else if (/iPad|Tablet|Kindle/.test(userAgent)) {
-      deviceType = "Tablet";
+        deviceType = "Tablet";
     } else if (/Mac|Windows|Linux|X11/.test(userAgent)) {
-      deviceType = "Desktop";
+        deviceType = "Desktop";
     }
-  
+
     // Detect Operating System
     if (/Windows NT/.test(userAgent)) {
-      os = "Windows";
+        os = "Windows";
     } else if (/Mac OS X/.test(userAgent)) {
-      os = "Mac OS";
+        os = "Mac OS";
     } else if (/Android/.test(userAgent)) {
-      os = "Android";
+        os = "Android";
     } else if (/iOS|iPhone|iPad|iPod/.test(userAgent)) {
-      os = "iOS";
+        os = "iOS";
     } else if (/Linux/.test(userAgent)) {
-      os = "Linux";
+        os = "Linux";
     }
-  
+
     // Detect Browser
     if (/Chrome/.test(userAgent) && !/Edge|OPR/.test(userAgent)) {
-      browser = "Chrome";
+        browser = "Chrome";
     } else if (/Safari/.test(userAgent) && !/Chrome/.test(userAgent)) {
-      browser = "Safari";
+        browser = "Safari";
     } else if (/Firefox/.test(userAgent)) {
-      browser = "Firefox";
+        browser = "Firefox";
     } else if (/Edge/.test(userAgent)) {
-      browser = "Edge";
+        browser = "Edge";
     } else if (/OPR|Opera/.test(userAgent)) {
-      browser = "Opera";
+        browser = "Opera";
     } else if (/MSIE|Trident/.test(userAgent)) {
-      browser = "Internet Explorer";
+        browser = "Internet Explorer";
     }
-  
-    // Detect Device Model (for iOS and Android only)
+
+    // Detect Device Model (for iOS, Android, and Windows)
     if (/iPhone/.test(userAgent)) {
-      deviceModel = "iPhone";
+        deviceModel = "iPhone";
     } else if (/iPad/.test(userAgent)) {
-      deviceModel = "iPad";
+        deviceModel = "iPad";
     } else if (/Android/.test(userAgent)) {
-      const androidModelMatch = userAgent.match(/Android\s+[\d.]+;\s*([^;]+)/);
-      deviceModel = androidModelMatch ? androidModelMatch[1] : "Android Device";
+        const androidModelMatch = userAgent.match(/Android\s+\d+\.\d+;\s*([^;]+)/);
+        deviceModel = androidModelMatch ? androidModelMatch[1].trim() : "Android Device";
+    } else if (/Windows/.test(userAgent)) {
+        const windowsModelMatch = userAgent.match(/Windows\s+NT\s+\d+\.\d+\s*;\s*([^;]+)/);
+        deviceModel = windowsModelMatch ? windowsModelMatch[1].trim() : "Windows Device";
     }
-  
+
     return {
-      deviceType,
-      deviceModel,
-      os,
-      browser
+        deviceType,
+        deviceModel,
+        os,
+        browser
     };
-  }
+}
+
+
+
   
   // Example usage
   const deviceDetails = getDeviceDetails();

@@ -203,6 +203,8 @@ function logout() {
 
 
 setInterval(monitorToken(), 1000);
+
+
  
 function monitorToken() {
     // Retrieve active ticket from localStorage
@@ -273,4 +275,20 @@ function removeInvalidTicket(token) {
 
     // Clear the active ticket as well
     localStorage.removeItem('reciveData');
+}
+
+
+function switchMenu() {
+    document.getElementById("menuCard").style.display = "none";
+    document.getElementById("logDetails").style.display = "flex";
+    document.getElementById("switchMenuBack").style.display = "flex";
+    document.getElementById("switchMenu").style.display = "none";
+}
+
+
+function switchMenuBack() {
+    document.getElementById("menuCard").style.display = "block";
+    document.getElementById("logDetails").style.display = "none";
+    document.getElementById("switchMenuBack").style.display = "none";
+    document.getElementById("switchMenu").style.display = "flex";
 }

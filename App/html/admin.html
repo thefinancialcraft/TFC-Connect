@@ -24,7 +24,7 @@
             <p class="userType"></p>
         </div>
      </div>
-    <div class="menu-card">
+    <div id="menuCard" class="menu-card">
         <div class="menu-opn">
             <p>Menu</p>
             <ul id="menu-opn">
@@ -51,6 +51,12 @@
             </ul>
         </div>
     </div>
+    <div style="display: none;" id="logDetails" class="menu-card">
+        <div class="menu-opn">
+            <p>All Loged Details</p>
+            
+        </div>
+    </div>
     <div class="logout-card">
 
         <button  class="button2">
@@ -66,15 +72,22 @@
             <i class="fa-solid fa-right-from-bracket"></i>
            Logout
         </button>
-        <p>See All Loged Account</p>
+        <p id="switchMenu" class="switchMenu flex" onclick="switchMenu()" >All Loged Account 
+            <span><i class="fi fi-rr-angle-small-right"></i></span>
+            <!--  -->
+        </p>
+
+        <p id="switchMenuBack"  style="display: none;" class="switchMenu flex" onclick="switchMenuBack()" > <span><i class="fi fi-rr-angle-small-left"></i></span> Back to Menu
+        </p>
+      
     </div>
     
    </nav>
    <main></main>
 
     <!-- <script src="/TFC-Connect/App/js/user.js"></script> -->
-    <script src="/App/js/user.js"></script>
-
     <script src="https://kit.fontawesome.com/ff989e0e08.js" crossorigin="anonymous"></script>
+    <script src="/App/js/user.js"></script>
+    
 </body>
 </html>

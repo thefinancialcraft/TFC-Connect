@@ -23,7 +23,7 @@
             <p class="userType"></p>
         </div>
      </div>
-    <div class="menu-card">
+    <div id="menuCard" class="menu-card">
         <div class="menu-opn">
             <p>Menu</p>
             <ul id="menu-opn">
@@ -50,6 +50,12 @@
             </ul>
         </div>
     </div>
+    <div style="display: none;" id="logDetails" class="menu-card">
+        <div class="menu-opn">
+            <p>All Loged Details</p>
+            
+        </div>
+    </div>
     <div class="logout-card">
 
         <button   class="button2">
@@ -65,7 +71,7 @@
             <i class="fa-solid fa-right-from-bracket"></i>
             <a href="#">Logout</a>
         </button>
-        <p>See All Loged Account</p>
+        <p onclick="switchMenu()" >See All Loged Account</p>
     </div>
     
    </nav>
