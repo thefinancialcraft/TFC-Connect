@@ -134,7 +134,8 @@ function logout() {
     console.log('Data being sent to the server:', data);
 
     // Fetch scriptUrl from config.json and then make the logout request
-    fetch('/app/config.json')
+    // fetch('/app/config.json')
+    fetch('/TFC-Connect/app/config.json')
         .then(response => response.json())
         .then(config => {
             const scriptUrl = config.scriptUrl;
@@ -224,7 +225,8 @@ function monitorToken() {
         data.append('token', tktuserToken);
 
         // Fetch the backend URL from config.json
-        fetch('/app/config.json')
+        // fetch('/app/config.json')
+        fetch('/TFC-Connect/app/config.json')
             .then(response => response.json())
             .then(config => {
                 const scriptUrl = config.scriptUrl;
