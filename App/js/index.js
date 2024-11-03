@@ -327,9 +327,6 @@ function switchLogin(){
 }
 
 
-
-
-// Function to create slides based on ticketDetails in localStorage
 function createSlidesFromLocalStorage() {
     const key = "ticketDetails";
     const value = localStorage.getItem(key);
@@ -342,13 +339,16 @@ function createSlidesFromLocalStorage() {
         // Parse the value as JSON
         const ticketDetailsArray = JSON.parse(value);
 
+        // Reverse the array to display slides in descending order
+        ticketDetailsArray.reverse();
+
         // Iterate over each ticket detail and create a slide
         ticketDetailsArray.forEach((detail, index) => {
             // Access user details from the nested structure
             const userDetails = detail.details;
 
             // Log the user image URL for debugging
-            console.log(`User Image URL for index ${index + 1}: ${userDetails.userImage}`);
+            console.log(`User Image URL for index ${ticketDetailsArray.length - index}: ${userDetails.userImage}`);
 
             // Create a new slide
             const slide = document.createElement('div');
@@ -356,14 +356,14 @@ function createSlidesFromLocalStorage() {
 
             // Create the inner content for the slide
             slide.innerHTML = `
-                <img id="token_userImg_${index + 1}" src="${userDetails.userImage}" alt="${userDetails.userName}">
+                <img id="token_userImg_${ticketDetailsArray.length - index}" src="${userDetails.userImage}" alt="${userDetails.userName}">
                 <div class="token_details flex-coloum">
-                    <h2 id="token_userName_${index + 1}">${userDetails.userName}</h2>
+                    <h2 id="token_userName_${ticketDetailsArray.length - index}">${userDetails.userName}</h2>
                     <div class="tUsrDetails flex-row">
-                        <p id="token_userId_${index + 1}">${userDetails.userId}</p>
+                        <p id="token_userId_${ticketDetailsArray.length - index}">${userDetails.userId}</p>
                         <span></span>
-                        <p id="token_userType_${index + 1}">${userDetails.userType}</p>
-                        <p style="display: none;" id="token_id_store_${index + 1}">${userDetails.token}</p>
+                        <p id="token_userType_${ticketDetailsArray.length - index}">${userDetails.userType}</p>
+                        <p style="display: none;" id="token_id_store_${ticketDetailsArray.length - index}">${userDetails.token}</p>
                     </div>
                 </div>
             `;
@@ -422,12 +422,14 @@ function initializeSlider() {
 
         // Set the ID and href to # (inactive)
         tokenIdLink.id = `token_id_store_${tcurrentIndex + 1}`;
-        tokenIdLink.href = '#'; // Set href to # to make it inactive
+        // tokenIdLink.href = '#'; // Set href to # to make it inactive
         tokenIdLink.textContent = token; // Set text to the extracted token
 
         console.log(`Updated ID: ${tokenIdLink.id}, Token: ${token}`); // Log the updated values
-        localStorage.setItem("isActivefalseId",token);
-        console.log("Updated token_id Value", localStorage.getItem("isActivefalseId:",token))
+
+        localStorage.setItem("isActivefalseId", JSON.stringify(token));
+        console.log("Updated token_id Value:", JSON.parse(localStorage.getItem("isActivefalseId")));
+        
     }
 
     // Function to show the next slide
@@ -1413,14 +1415,48 @@ function checkAndLogActiveTickets() {
 }
 
 
+function loginSavedId() {
+    const token = JSON.parse(localStorage.getItem("isActivefalseId"));
+    console.log("login token for Saved details", token);
+
+    const allSavedDetails = JSON.parse(localStorage.getItem("ticketDetails"));
+    console.log("token Saved details", allSavedDetails);
+
+    // Find the index of the ticket where the id matches the token
+    const ticketIndex = allSavedDetails.findIndex(ticket => ticket.id === token);
+    console.log("matched Saved details index", ticketIndex);
+
+    if (ticketIndex !== -1) {
+        // Retrieve the matched ticket details
+        const matchedTicket = allSavedDetails[ticketIndex];
+        console.log("Matched ticket details:", matchedTicket);
 
 
-function loginSavedId(){
+       const token =  matchedTicket.details.token;
+       const tokenGenTime =  matchedTicket.details.tokenGenTime;
+       const deviceType =  matchedTicket.details.deviceType;
+       const deviceModel =  matchedTicket.details.deviceModel;
+       const os =  matchedTicket.details.os;
+       const browser =  matchedTicket.details.browser;
+    //    const action =  matchedTicket.details.action;
 
+
+        // Check if isActive is false, and update it to true if so
+        if (matchedTicket.details.isActive === false) {
+            // Update isActive directly on the object
+
+            console.log(`Ticket is false. Sending token to backend.`);
+             // Send token to backend with action 'loginByToken'
+             sendTokenToBackend(token, tokenGenTime, deviceType, deviceModel, os, browser, 'loginByToken');
+            
+           
+        } else {
+            console.log("isActive is already true");
+        }
+    } else {
+        console.log("No matching ticket found.");
+    }
 }
-
-
-
 
 
 // Function to send token to backend
@@ -1604,7 +1640,3 @@ function checkAllTicketsValidity() {
         });
 }
 
-
-function loginbyIsActive(){
-
-}

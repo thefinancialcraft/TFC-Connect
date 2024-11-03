@@ -52,7 +52,8 @@
     
 } else {
     console.log("No token details found.");
-    window.location.href = "/app/login.html";
+    window.location.href = "/TFC-Connect/app/login.html";
+    // window.location.href = "/app/login.html";
 }
 
 
@@ -191,7 +192,8 @@ function logout() {
                 }
 
                 // Redirect to /login.html after updating localStorage
-                window.location.href = '/App/login.html';
+                // window.location.href = '/App/login.html';
+                window.location.href = '/TFC-Connect/App/login.html';
             } else {
                 console.warn("No userDetails found in the response.");
             }
@@ -246,7 +248,8 @@ function monitorToken() {
                     clearInterval(intervalId); // Stop further monitoring
 
                     // Redirect to login page
-                    window.location.href = '/app/login.html';
+                    // window.location.href = '/app/login.html';
+                    window.location.href = '/TFC-Connect/app/login.html';
                 }
             })
             .catch(error => {
