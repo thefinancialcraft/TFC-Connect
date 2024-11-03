@@ -1612,7 +1612,7 @@ function checkAllTicketsValidity() {
 
     // Fetch the backend URL from config.json
     // fetch('/app/config.json')
-    fetch('/TFC-Connect/app/config.json')
+    fetch('/TFC-Connect/config.json')
         .then(response => response.json())
         .then(config => {
             const scriptUrl = config.scriptUrl;
