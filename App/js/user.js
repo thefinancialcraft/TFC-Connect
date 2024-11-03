@@ -52,8 +52,7 @@
     
 } else {
     console.log("No token details found.");
-    window.location.href = "/TFC-Connect/app/login.html";
-    // window.location.href = "/app/login.html";
+    window.location.href = "/app/login.html";
 }
 
 
@@ -134,8 +133,7 @@ function logout() {
     console.log('Data being sent to the server:', data);
 
     // Fetch scriptUrl from config.json and then make the logout request
-    // fetch('/app/config.json')
-    fetch('/TFC-Connect/app/config.json')
+    fetch('/app/config.json')
         .then(response => response.json())
         .then(config => {
             const scriptUrl = config.scriptUrl;
@@ -193,8 +191,7 @@ function logout() {
                 }
 
                 // Redirect to /login.html after updating localStorage
-                // window.location.href = '/App/login.html';
-                window.location.href = '/TFC-Connect/App/login.html';
+                window.location.href = '/App/login.html';
             } else {
                 console.warn("No userDetails found in the response.");
             }
@@ -225,8 +222,7 @@ function monitorToken() {
         data.append('token', tktuserToken);
 
         // Fetch the backend URL from config.json
-        // fetch('/app/config.json')
-        fetch('/TFC-Connect/app/config.json')
+        fetch('/app/config.json')
             .then(response => response.json())
             .then(config => {
                 const scriptUrl = config.scriptUrl;
@@ -250,8 +246,7 @@ function monitorToken() {
                     clearInterval(intervalId); // Stop further monitoring
 
                     // Redirect to login page
-                    // window.location.href = '/app/login.html';
-                    window.location.href = '/TFC-Connect/app/login.html';
+                    window.location.href = '/app/login.html';
                 }
             })
             .catch(error => {
