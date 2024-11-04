@@ -971,6 +971,22 @@ box-shadow: 1px 2px 30px #4931e71a;
 }
 
 
+.token-container{
+    height: 80%;
+    width: 100%;
+    /* background-color: #4931e7; */
+    border-radius: 20px;
+    position: relative;
+}
+
+.token-slider-container{
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+
+
 
 }
 
