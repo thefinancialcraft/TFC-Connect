@@ -284,7 +284,7 @@ body::-webkit-scrollbar{
     /* background-color: #4931e7; */
 }
 
-.find-userid {
+.find-userid{
     display: none;
 }
 
@@ -398,7 +398,7 @@ body::-webkit-scrollbar{
     cursor: pointer;
     width: 70% ;
     height: 35px; /* Full height button */
-    margin-top: 10px;
+    /* margin-top: 10px; */
     box-shadow: 1px 2px 30px #4931e710;
 }
 
@@ -516,7 +516,7 @@ body::-webkit-scrollbar{
 
 
 .token-slider-container{
-    height: 75%;
+    height: 80%;
     width: 90%;
     overflow: hidden;
 }
@@ -622,6 +622,10 @@ body::-webkit-scrollbar{
     /* background-color: #263238; */
 }
 
+.token-container .token_id{
+ margin-bottom: 5px;
+}
+
 
 .spinner {
     border: 2px solid rgba(0, 0, 0, 0.1);
@@ -659,6 +663,57 @@ body::-webkit-scrollbar{
     border-radius: 10px;
     animation: moveDown .4s forwards; /* Animation duration and movement */
 }
+
+
+@media only screen and (min-width: 1200px) {
+
+
+    .login-form input {
+        width: 100%;
+        height: 42px;
+        border-radius: 30px;
+        border: 1.5px solid #8773da8e;
+        padding: 0 15px;
+    }
+
+    .login-form button, .login-button2 {
+        background-color: #4931e7;
+        font-size: 1.1vw;
+        color: white;
+        /* font-weight: 500; */
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        width: 70%;
+        height: 42px;
+        /* margin-top: 10px; */
+        box-shadow: 1px 2px 30px #4931e710;
+    }
+    
+    .sign-opn .switch-btn {
+        height: 40px;
+        font-size: 1vw;
+    }
+
+    .container .sign-opn{
+        height: 15%;
+    }
+
+    .input-group label{
+        margin-bottom: 5px;
+    }
+
+    .container .login-form{
+        height: 42%;
+    }
+
+    .container .welcome-msg{
+        height: 10%;
+    }
+}
+
+
+
 
 
 
@@ -980,12 +1035,69 @@ box-shadow: 1px 2px 30px #4931e71a;
 }
 
 .token-slider-container{
-    height: 100%;
+    height: 90%;
     width: 100%;
     overflow: hidden;
 }
 
+.login-button2{
+    height: 50px;
+    font-size: 4vw;
+}
+.token_id{
+    font-size: 3vw;
+    margin-bottom: 10px;
+}
 
+.token-slide img{
+    width: 160px;
+    height: 160px;
+    
+}
+
+.token-slide{
+    .remIdBtn{
+        width: 40px;
+        height: 40px;
+        right: 8%;
+        font-size: 15px;
+    }
+    
+}
+
+
+.token_details{
+    
+    h2{
+        font-size: 8vw;
+        margin-bottom: 5px;
+    }
+
+    .tUsrDetails p{
+        font-size: 4vw;
+        color: #263238a9;
+    }
+    span{
+        width: 8px;
+        height: 8px;
+        margin: 0 10px;
+        
+    }
+
+ 
+  
+}
+
+.nav-btn-tkn-sld button{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background-color: #E6E2FF;
+    margin-bottom: 30px;
+    color: #4931e7;
+    transition: .03s ease-in-out;
+}
 
 
 }
@@ -1055,6 +1167,74 @@ box-shadow: 1px 2px 30px #4931e71a;
     width: 90% ;  
     height: 42px; /* Full height button */
 }
+
+
+
+/* .token-slider-container{
+    height: 90%;
+    width: 100%;
+    overflow: hidden;
+} */
+
+.login-button2{
+    height: 45px;
+    font-size: 4vw;
+}
+.token_id{
+    font-size: 3vw;
+    margin-bottom: 10px;
+}
+
+.token-slide img{
+    width: 140px;
+    height: 140px;
+    
+}
+
+.token-slide{
+    .remIdBtn{
+        width: 30px;
+        height: 30px;
+        right: 8%;
+        font-size: 12px;
+    }
+    
+}
+
+
+.token_details{
+    
+    h2{
+        font-size: 7vw;
+        margin-bottom: 3px;
+    }
+
+    .tUsrDetails p{
+        font-size: 3.5vw;
+        color: #263238a9;
+    }
+    span{
+        width: 6px;
+        height: 6px;
+        margin: 0 6px;
+        
+    }
+
+ 
+  
+}
+
+.nav-btn-tkn-sld button{
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: none;
+    background-color: #E6E2FF;
+    margin-bottom: 30px;
+    color: #4931e7;
+    transition: .03s ease-in-out;
+}
+
 
 
 
