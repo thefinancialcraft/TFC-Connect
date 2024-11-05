@@ -72,6 +72,8 @@ body::-webkit-scrollbar{
     border-radius: 25px 0 0 25px;
     overflow: hidden;
     position: relative;
+
+    
 }
 
 .hero-container img {
@@ -665,7 +667,7 @@ body::-webkit-scrollbar{
 }
 
 
-@media only screen and (min-width: 1200px) {
+@media only screen and (min-width: 1300px) {
 
 
     .login-form input {
@@ -740,8 +742,12 @@ body::-webkit-scrollbar{
         display: flex;
         /* align-items: center; */
         /* justify-content: space-evenly; */
-        padding-top: 10%;
+        padding-top: 20px;
         flex-direction: column;
+
+        .slider{
+            height: 70svh;
+        }
 
     }
     .slide img {
@@ -916,6 +922,7 @@ body::-webkit-scrollbar{
     height: 45%;
     /* display: none; */
     justify-content: space-around;
+    gap: 20px;
     /* background-color: #4931e7; */
 }
 
