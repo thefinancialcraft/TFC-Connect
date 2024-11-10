@@ -622,22 +622,40 @@ function handleResponse(result) {
     clearErrorMessage();
 
     if (result && result.status === 'success') {
-        localStorage.setItem('reciveData', JSON.stringify(result.tokenDetails));
-        console.log("Receive from backend:", JSON.parse(localStorage.getItem('reciveData')));
+        // Store the token details in localStorage
+        localStorage.setItem('receiveData', JSON.stringify(result.tokenDetails));
+        console.log("Received from backend:", JSON.parse(localStorage.getItem('receiveData')));
+    
+        const loginData =  JSON.parse(localStorage.getItem('receiveData'));
 
+        // Normalize and validate user type and device type
         const userType = result.userType ? result.userType.toLowerCase() : null;
+        const userDevice = loginData.deviceType ? loginData.deviceType.toLowerCase() : null;
         const validUserTypes = ['user', 'admin', 'agent'];
-
-        if (userType && validUserTypes.includes(userType)) {
-            window.location.href = `html/${userType}.html`;
+        const validUserDevices = ['desktop', 'mobile'];
+        console.log("userrrrr:",userType);
+        console.log("userrrrr:", userDevice);
+    
+        // Check if userType and userDevice are valid
+        if (userType && validUserTypes.includes(userType) && userDevice && validUserDevices.includes(userDevice)) {
+            console.log("Validation successful:", userDevice);
+    
+            // Redirect based on device and user type
+            window.location.href = `/App/${userDevice}/html/${userType}.html`;
         } else {
-            showErrorMessage(document.getElementById('error-message'), 'Unexpected user type');
+            showErrorMessage(document.getElementById('error-message'), 'Unexpected user type or device');
             highlightInputFields();
         }
     } else if (result) {
-        showErrorMessage(document.getElementById('error-message'), result.message);
+        // Display error message from result if it exists
+        showErrorMessage(document.getElementById('error-message'), result.message || 'An error occurred');
+        highlightInputFields();
+    } else {
+        // Handle case when result is null or undefined
+        showErrorMessage(document.getElementById('error-message'), 'No response received');
         highlightInputFields();
     }
+    
 }
 
 

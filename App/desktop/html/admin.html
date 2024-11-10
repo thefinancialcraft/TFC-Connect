@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Page</title>
     <link rel="icon" href="path/to/favicon.ico" type="image/x-icon">
-    
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.5.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.5.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.5.0/uicons-solid-straight/css/uicons-solid-straight.css">
+
     
     <!-- <link rel="stylesheet" href="/TFC-Connect/App/css/user.css"> -->
-    <link rel="stylesheet" href="/App/css/user.css">
+    <link rel="stylesheet" href="/App/desktop/css/user.css">
 
 
     <meta name="description" content="Welcome to the user page where you can manage your account.">
@@ -34,23 +37,23 @@
             <ul id="menu-opn">
                 <li class="active">
                     <span class="active"></span>
-                    <i class="fa-solid fa-chart-pie"></i>
+                    <i class="fi fi-rr-home"></i>
                     Dashboard</li>
                 <li>
                     <span></span>
-                    <i class="fa-solid fa-fingerprint"></i>
+                    <i class="fi fi-rr-fingerprint"></i>
                     Attendance</li>
                 <li>
                     <span></span>
-                    <i class="fa-solid fa-folder-open"></i>
+                    <i class="fi fi-rr-folder-open"></i>
                     Payment Grid</li>
                 <li>
                     <span></span>
-                    <i class="fa-solid fa-file-lines"></i>
+                    <i class="fi fi-rr-chart-pie-alt"></i>
                     Report</li>
                 <li>
                     <span></span>
-                    <i class="fa-solid fa-wallet"></i>
+                    <i class="fi fi-rr-wallet-income"></i>
                     Wallet</li>
             </ul>
         </div>
@@ -104,11 +107,51 @@
     </div>
     
    </nav>
-   <main></main>
+   <main>
+    <div class="main-top flex-row ">
+        <div class="welcome-box-cont flex-coloum">
+                
+            <p>
+                <i id="wlcHand" class="fi fi-sr-hand-wave"></i>
+                Welcome Back, <span class="firstName"></span>
+            </p>
+            <div class="dashboard-title-container flex-row">
+            <h2 class="h-styling" id="dashbord">Dashboard</h2>
+
+            
+           
+           </div>
+</div>
+
+<div class="sideLogo flex">
+    <div class="logo flex">
+        <div class="logo-icon-box flex">
+            <img src="https://lh3.googleusercontent.com/d/1ac7vZtb76pk7Xy3a3PtfrxYVPUOpF5Zd" alt="">
+        </div>
+        <h1>tfc<span>Connect</span></h1>
+        </div>
+        <div class="user-prf-pic-cont flex sideBackBtn">
+           
+            <i class="fi flex fi-rr-bell-notification-social-media"></i>
+         </div>
+</div>
+
+    </div>
+
+    <div class="notify-panel"></div>
+
+    <div class="main-body">
+
+       
+
+
+    </div>
+    
+   </main>
 
     <!-- <script src="/TFC-Connect/App/js/user.js"></script> -->
     <script src="https://kit.fontawesome.com/ff989e0e08.js" crossorigin="anonymous"></script>
-    <script src="/App/js/user.js"></script>
+    <script src="/App/desktop/js/user.js"></script>
     
 </body>
 </html>

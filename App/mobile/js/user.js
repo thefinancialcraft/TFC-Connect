@@ -2,16 +2,16 @@
 
 
 
- window.onload = function() {
+window.onload = function() {
     const sentData = JSON.parse(localStorage.getItem('sentData'));
     
     console.log("Data sent to backend:", sentData);
-    console.log("Receive from backend:", JSON.parse(localStorage.getItem('reciveData')));
+    console.log("Receive from backend:", JSON.parse(localStorage.getItem('receiveData')));
 
 
 
   // Retrieve token details from localStorage
-    const activeTicket = JSON.parse(localStorage.getItem('reciveData'));
+    const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
     console.log("active Ticket", activeTicket);
 
     if (activeTicket) {
@@ -19,7 +19,8 @@
 
 
 
-    const tktuserName = activeTicket.userName; // Access userName from activeTicket
+    const tktuserName = activeTicket.userName; // Access userName from activeTicket // Full name from activeTicket
+    const tktfirstName = tktuserName.split(" ")[0];
     const tktuserId = activeTicket.userId; // Access userName from activeTicket
     const tktuserType = activeTicket.userType; // Access userName from activeTicket
     const tktuserImg = activeTicket.userImage; // Access userName from activeTicket
@@ -30,7 +31,9 @@
     console.log("UserType:", tktuserType);
     console.log("token:", tktuserToken);
   
+  
     const userName = document.querySelectorAll(".userName");
+    const firstName = document.querySelectorAll(".firstName");
     const userId = document.querySelectorAll(".userId");
     const userType = document.querySelectorAll(".userType");
     const userImage = document.querySelectorAll(".userImage");
@@ -43,6 +46,9 @@
     userName.forEach(function(userNameElement) {
         userNameElement.innerHTML = tktuserName; // Set innerHTML for each element
     });
+    firstName.forEach(function(firstNameElement) {
+        firstNameElement.innerHTML = tktfirstName; // Set innerHTML for each element
+    });
     userType.forEach(function(userTypeElement) {
         userTypeElement.innerHTML = tktuserType; // Set innerHTML for each element
     });
@@ -52,7 +58,7 @@
     
 } else {
     console.log("No token details found.");
-    window.location.href = "/app/login.html";
+    // window.location.href = "/app/login.html";
 }
 
 
@@ -60,6 +66,7 @@
     // localStorage.removeItem('loginLogs');
     // localStorage.removeItem('tokenDetails');
 };
+
 
 
 
@@ -111,7 +118,8 @@ displayLocalStorageAsObject();
 
 function logout() {
     // Retrieve and parse the active ticket data from localStorage
-    const activeTicket = JSON.parse(localStorage.getItem('reciveData'));
+    const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
+     
     if (!activeTicket) {
         console.error("No active ticket found.");
         return;
@@ -208,7 +216,7 @@ setInterval(monitorToken(), 1000);
  
 function monitorToken() {
     // Retrieve active ticket from localStorage
-    const activeTicket = JSON.parse(localStorage.getItem('reciveData'));
+    const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
     if (!activeTicket) {
         console.error("No active ticket found.");
         return;
@@ -300,7 +308,7 @@ displayLoggedAccount();
 
 function displayLoggedAccount() {
     // Retrieve and parse `reciveData` from localStorage
-    const activeTicket = JSON.parse(localStorage.getItem('reciveData'));
+    const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
     if (!activeTicket) {
         console.error("No active ticket found.");
         return;
@@ -518,3 +526,88 @@ function formatRelativeTime(date) {
 
     return timeAgo;
 }
+
+
+let inactivityTime = 0;
+const navBar = document.getElementById('navBar');
+
+// Reset timer and apply bounce effect when activity is detected
+const resetInactivityTime = () => {
+    inactivityTime = 0;
+    if (navBar.classList.contains('hide')) {
+        navBar.classList.remove('hide');
+        navBar.classList.add('show');  // Add the bounce-back effect
+        setTimeout(() => navBar.classList.remove('show'), 500); // Remove show after animation ends
+    }
+};
+
+// Every second, check if 15 seconds have passed without activity
+setInterval(() => {
+    inactivityTime++;
+    if (inactivityTime >= 6) { // Check for 15 seconds of inactivity
+        navBar.classList.add('hide');
+    }
+}, 1000);
+
+// Listen to user interactions to reset timer
+window.addEventListener('mousemove', resetInactivityTime);
+window.addEventListener('keydown', resetInactivityTime);
+window.addEventListener('scroll', resetInactivityTime);
+
+
+
+
+function hideSideBar() {
+    const sidebar = document.getElementById('sidebar');
+    
+    if (sidebar) {
+        sidebar.classList.remove('visible'); // Slide out to hide
+    }
+}
+
+function showSideBar() {
+    const sidebar = document.getElementById('sidebar');
+    
+    if (sidebar) {
+        sidebar.classList.add('visible'); // Slide in to show
+    }
+}
+
+
+// For expanding .info-detail
+document.querySelectorAll('.dtl-dwn').forEach(function(button) {
+    button.addEventListener('click', function() {
+        // Find the closest .prfInfo container and then find its .info-detail section
+        var prfInfoContainer = this.closest('.prfInfo');
+        var infoDetail = prfInfoContainer.querySelector('.info-detail');
+        
+        // Toggle the .dtl-dwn and .dtl-up icons within the same container
+        prfInfoContainer.querySelector('.dtl-dwn').style.display = 'none';
+        prfInfoContainer.querySelector('.dtl-up').style.display = 'flex';
+
+        // Show the .info-detail with smooth transition
+        infoDetail.style.display = 'block';  // First, make it visible
+        setTimeout(function() {
+            infoDetail.style.maxHeight = infoDetail.scrollHeight + 'px'; // Expand smoothly to the content height
+        }, 10); // Small delay to trigger the transition
+    });
+});
+
+// For collapsing .info-detail
+document.querySelectorAll('.dtl-up').forEach(function(button) {
+    button.addEventListener('click', function() {
+        // Find the closest .prfInfo container and then find its .info-detail section
+        var prfInfoContainer = this.closest('.prfInfo');
+        var infoDetail = prfInfoContainer.querySelector('.info-detail');
+        
+        // Toggle the .dtl-up and .dtl-dwn icons within the same container
+        prfInfoContainer.querySelector('.dtl-up').style.display = 'none';
+        prfInfoContainer.querySelector('.dtl-dwn').style.display = 'flex';
+
+        // Collapse the .info-detail smoothly
+        infoDetail.style.maxHeight = '0'; // Collapse to zero height
+        setTimeout(function() {
+            infoDetail.style.display = 'none';  // Completely hide after transition
+        }, 500); // Delay to match the transition duration
+    });
+});
