@@ -641,7 +641,7 @@ function handleResponse(result) {
             console.log("Validation successful:", userDevice);
     
             // Redirect based on device and user type
-            window.location.href = `/App/${userDevice}/html/${userType}.html`;
+            window.location.href = `/TFC-Connect/App/${userDevice}/html/${userType}.html`;
         } else {
             showErrorMessage(document.getElementById('error-message'), 'Unexpected user type or device');
             highlightInputFields();
@@ -1473,7 +1473,7 @@ function checkAndLogActiveTickets() {
               data.append('token', token);
 
             // Fetch the backend URL from config.json
-            fetch('/app/config.json')
+            fetch('/TFC-Connect/App/config.json')
                 .then(response => response.json())
                 .then(config => {
                     const scriptUrl = config.scriptUrl;
@@ -1494,7 +1494,7 @@ function checkAndLogActiveTickets() {
                       clearInterval(intervalId); // Stop further monitoring
   
                       // Redirect to login page
-                      window.location.href = '/app/login.html';
+                      window.location.href = '/TFC-Connect/App/login.html';
                       
                 } else {
                     console.warn("Token no longer valid Already");
@@ -1740,7 +1740,7 @@ function checkAllTicketsValidity() {
     data.append('tokens', JSON.stringify(tokens)); // Send all tokens as a JSON array
 
     // Fetch the backend URL from config.json
-    fetch('/app/config.json')
+    fetch('/TFC-Connect/App/config.json')
         .then(response => response.json())
         .then(config => {
             const scriptUrl = config.scriptUrl;

@@ -70,8 +70,33 @@ window.onload = function() {
 
 
 
+// // Get all <li> elements
+// const menuItems = document.querySelectorAll('#menu-opn li');
+
+// // Function to handle click event on <li> items
+// menuItems.forEach((item) => {
+//     item.addEventListener('click', () => {
+//         // Remove active class from all <li> and <span> elements
+//         menuItems.forEach((li) => {
+//             li.classList.remove('active');
+//             li.querySelector('span').classList.remove('active');
+//         });
+
+//         // Add active class to clicked <li> and its child <span>
+//         item.classList.add('active');
+//         item.querySelector('span').classList.add('active');
+//     });
+// });
+
+
 // Get all <li> elements
 const menuItems = document.querySelectorAll('#menu-opn li');
+
+// Get all widget divs inside mainBody except welcome-box-cont
+const widgets = document.querySelectorAll('.mainBody .widget');
+
+// Select the <h2> element inside the welcome box
+const headerTitle = document.querySelector('.dashboard-title-container h2');
 
 // Function to handle click event on <li> items
 menuItems.forEach((item) => {
@@ -85,10 +110,41 @@ menuItems.forEach((item) => {
         // Add active class to clicked <li> and its child <span>
         item.classList.add('active');
         item.querySelector('span').classList.add('active');
+
+        // Get the value of the clicked <li> (e.g., "dashbord-widget")
+        const widgetClass = item.getAttribute('value');
+
+        // Set all widgets to display none, then display the selected one
+        widgets.forEach((widget) => {
+            if (widget.classList.contains(widgetClass)) {
+                widget.style.display = 'block';  // Show the selected widget
+            } else {
+                widget.style.display = 'none';  // Hide other widgets
+            }
+        });
+
+        // Update the <h2> text based on the selected slide
+        switch (widgetClass) {
+            case 'dashbord-widget':
+                headerTitle.textContent = 'Dashboard';
+                break;
+            case 'attendance-widget':
+                headerTitle.textContent = 'Attendance';
+                break;
+            case 'payment-grid-widget':
+                headerTitle.textContent = 'Payment Grid';
+                break;
+            case 'report-widget':
+                headerTitle.textContent = 'Report';
+                break;
+            case 'wallet-widget':
+                headerTitle.textContent = 'Wallet';
+                break;
+            default:
+                headerTitle.textContent = 'Dashboard';
+        }
     });
 });
-
-
 
 
 function displayLocalStorageAsObject() {
@@ -611,3 +667,61 @@ document.querySelectorAll('.dtl-up').forEach(function(button) {
         }, 500); // Delay to match the transition duration
     });
 });
+
+
+
+function sendApiRequest() {
+  var url = "https://web.betyphon.in/api/action/getdata";  // Corrected endpoint
+
+  // JSON payload (adjust data as required)
+  var data = {
+    "root": "Configuration",
+    "con": {
+      "admin": "smilingajai@gmail.com"
+    },
+    "cols": {}
+  };
+
+  // Headers for the request
+  var headers = {
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzAzNSwiY2FsbGVyIjoic21pbGluZ2FqYWlAZ21haWwuY29tIiwiYWRtaW4iOiJzbWlsaW5nYWphaUBnbWFpbC5jb20iLCJpYXQiOjE3MzE0MTcyOTN9.IbbYkhX-rYgK6F2OQbpkjYqZMBRClp39fGllh_b0bAU",
+    "Content-Type": "application/json;charset=utf-8",
+    "Accept": "application/json, text/plain, */*"
+  };
+
+  // Options for the POST request
+  var options = {
+    "method": "post",
+    "headers": headers,
+    "payload": JSON.stringify(data),  // Convert the data to JSON format
+    "muteHttpExceptions": true  // To handle HTTP errors gracefully
+  };
+
+  try {
+    // Send the request and capture the response
+    var response = UrlFetchApp.fetch(url, options);
+
+    // Parse the response JSON
+    var jsonResponse = JSON.parse(response.getContentText());
+
+    // Log the entire parsed response for inspection
+    Logger.log(jsonResponse);
+
+    // Access specific data points from the response
+    if (jsonResponse.status === 200) {
+      Logger.log('Success: ' + jsonResponse.message);
+      
+      // Assuming 'con' is a nested object, you can access it like this:
+      Logger.log('Admin Email: ' + jsonResponse.con.admin);
+
+      // If there are other fields you want to access, replace the below with those fields
+      // Example: jsonResponse.cols.someField
+    } else {
+      Logger.log('Error: ' + jsonResponse.message);
+    }
+
+  } catch (e) {
+    Logger.log("Error: " + e.message);  // Log any errors
+  }
+}
+

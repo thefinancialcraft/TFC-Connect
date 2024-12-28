@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
     <title>Admin Page</title>
     <link rel="icon" href="path/to/favicon.ico" type="image/x-icon">
     
@@ -174,70 +175,93 @@
            
             <i class="fi fi-rr-leave"></i>
           </div>
-      </div>
+    </div>
 
-
-
-
-
-
-    <div class="mainBody flex-coloum">
-
-
-
-        <!-- navbar -->
-         <div id="navBar" class="menu-card navbar box-styling ">
+              <!-- navbar -->
+   <div id="navBar" class="menu-card navbar box-styling ">
          
                 <div class="menu-opn flex menu-card">
                     <ul id="menu-opn">
-                        <li class="active">
+                        <li value="dashbord-widget" class="active">
                             <span class="active"></span>
-                            <!-- <i class="fa-solid fa-chart-pie"></i> -->
                             <i class="fi fi-rr-home"></i>
                           
                             </li>
-                        <li>
+                        <li value="attendance-widget">
                             <span></span>
                             <i class="fi fi-rr-fingerprint"></i>
                             </li>
-                        <li>
+                        <li value="payment-grid-widget">
                             <span></span>
                             <i class="fi fi-rr-folder-open"></i>
                             </li>
-                        <li>
+                        <li value="report-widget">
                             <span></span>
                             <i class="fi fi-rr-chart-pie-alt"></i>
                             </li>
-                        <li>
+                        <li value="wallet-widget">
                             <span></span>
                             <i class="fi fi-rr-wallet-income"></i>
                             </li>
                     </ul>
                 </div>
            
-         </div>
+   </div>
 
-                     <!-- welcome note -->
-        <div class="welcome-box-cont flex-coloum">
-                
-                        <p>
-                            <i id="wlcHand" class="fi fi-sr-hand-wave"></i>
-                            Welcome Back, <span class="firstName"></span>
-                        </p>
-                        <div class="dashboard-title-container flex-row">
-                        <h2 class="h-styling" id="dashbord">Dashboard</h2>
-
-                        
-                       
-                       </div>
-        </div>
 
         
+
+    <div class="mainBody">
+
+        
+                     <!-- welcome note -->
+         <div class="welcome-box-cont flex-coloum">
+                
+        <p>
+            <i id="wlcHand" class="fi fi-sr-hand-wave"></i>
+            Welcome Back, <span class="firstName"></span>
+        </p>
+        <div class="dashboard-title-container flex-row">
+        <h2 class="h-styling" id="dashbord">Dashboard</h2>
+
+        
+       
+       </div>
+         </div>
+
+        <div class="dashbord-widget widget">
+            
+        </div>
+
+        <div class="attendance-widget widget">
+        
+        </div>
+
+        <div class="payment-grid-widget widget">
+            
+        </div>
+
+        <div class="report-widget widget">
+            
+        </div>
+
+        <div class="wallet-widget widget">
+            
+        </div>
+
+
+
+
+
 
 
 
          
     </div>
+
+
+
+
 
     <!-- Log Details -->
 
