@@ -58,7 +58,7 @@ window.onload = function() {
     
 } else {
     console.log("No token details found.");
-    // window.location.href = "/app/login.html";
+    // window.location.href = "/TFC-Connect/App/login.html";
 }
 
 
@@ -197,7 +197,7 @@ function logout() {
     console.log('Data being sent to the server:', data);
 
     // Fetch scriptUrl from config.json and then make the logout request
-    fetch('/app/config.json')
+    fetch('/TFC-Connect/App/config.json')
         .then(response => response.json())
         .then(config => {
             const scriptUrl = config.scriptUrl;
@@ -255,7 +255,7 @@ function logout() {
                 }
 
                 // Redirect to /login.html after updating localStorage
-                window.location.href = '/App/login.html';
+                window.location.href = '/TFC-Connect/App/login.html';
             } else {
                 console.warn("No userDetails found in the response.");
             }
@@ -288,7 +288,7 @@ function monitorToken() {
         data.append('token', tktuserToken);
 
         // Fetch the backend URL from config.json
-        fetch('/app/config.json')
+        fetch('/TFC-Connect/App/config.json')
             .then(response => response.json())
             .then(config => {
                 const scriptUrl = config.scriptUrl;
@@ -312,7 +312,7 @@ function monitorToken() {
                     clearInterval(intervalId); // Stop further monitoring
 
                     // Redirect to login page
-                    window.location.href = '/app/login.html';
+                    window.location.href = '/TFC-Connect/App/login.html';
                 }
             })
             .catch(error => {
@@ -381,7 +381,7 @@ function displayLoggedAccount() {
     console.log('Data being sent to the server:', data);
 
     // Fetch config.json to get the script URL
-    fetch('/app/config.json')
+    fetch('/TFC-Connect/App/config.json')
         .then(response => response.json())
         .then(config => {
             const scriptUrl = config.scriptUrl;
@@ -522,7 +522,7 @@ function removeTokenFromBackend(token) {
     data.append('token', token);
 
     // Fetch backend URL from config.json
-    fetch('/app/config.json')
+    fetch('/TFC-Connect/App/config.json')
         .then(response => response.json())
         .then(config => {
             const scriptUrl = config.scriptUrl;
