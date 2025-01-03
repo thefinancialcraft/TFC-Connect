@@ -1310,6 +1310,10 @@ header{
                 color: #fff;
                 padding-right: 5px;
             }
+
+            .on-mnth{
+                width: 100% !important;
+            }
           }
     }
 
@@ -1319,7 +1323,49 @@ header{
 
     .act-card{
         width: 100%;
-        height: 80px;
+        height: 70px;
+        margin-bottom: 10px;
+        justify-content: space-between;
+        padding: 0 10px;
+
+        .act-cd-prf{
+            width: 50px;
+            border-radius: 10px;
+            height: 50px;
+            background-color: #ffd606;
+        }
+
+        .act-txt-bx{
+            width: calc(100% - 70px);
+            height: 65px;
+            /* background-color: #06acff; */
+            justify-content: space-between;
+
+
+            .sts-cd{
+                width: 100px;
+                height: 100%;
+                /* background-color: #06acff; */
+                display: flex;
+                flex-direction: column;
+                align-items: start;
+                justify-content: center;
+                color: #1E3653;
+
+
+                h3{
+                    font-size: 18px;
+                    /* background-color: #06acff; */
+                    font-weight: 600;
+                }
+
+                p{
+                    font-size: 12px;
+                    margin-top: -3px;
+                    /* background-color: #06ff5d; */
+                }
+            }
+        }
     }
 }
    
@@ -1337,7 +1383,7 @@ header{
 
         
             h2{
-                margin-top: 12px;
+                margin-top: 20px;
                 font-weight: 600;
                 color: #1E3653;
             }
@@ -1345,21 +1391,22 @@ header{
             p{
                 font-weight: 500;
                 color: #182536ab;
-                font-size: 13px;
-                margin-top: 2px;
+                font-size: 12px;
+                margin-top: -2px;
             }
 
             .bsc-title{
                 width: 100%;
 
                 .icon-bx{
-                    width: 35px;
-                    height: 35px;
-                    border-radius: 8px;
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 6px;
                     background-color: #e8e5ff;
 
                     i{
                         padding-top: 4px;
+                        font-size: 15px;
                         transform: rotate(180deg);
                         color: #4931e7;
                     }
@@ -1369,8 +1416,8 @@ header{
                     }
                 }
                 p{
-                    padding-left: 10px;
-                    font-weight: 500;
+                    padding-left: 6px;
+                    font-weight: 400;
                     color: #1e3653ab;
                     font-size: 15px;
                 }
@@ -1379,6 +1426,253 @@ header{
         }
     }
 }
+
+
+.atn-rcrd-card{
+    width: 100%;
+    height: 380px;
+    margin-bottom: 100px;
+
+    .atn-ovr-vw{
+        width: 100%;
+        height: 55%;
+        /* background-color: #06acff; */
+
+        .ovr-vw-bar{
+            width: 52%;
+            height: 100%;
+            /* background-color: #06ff5d; */
+        }
+
+        .ovr-vw-dta{
+            width: 48%;
+            height: 100%;
+            /* background-color: #1E3653; */
+
+
+            .ln{
+                width: 2px;
+                height: 70%;
+                background-color: #1e36534a;
+                border-radius: 50px;
+            }
+
+            .col-dta{
+                width: 90%;
+                height: 100%;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                /* background-color: #06acff; */
+
+                .col-titl{
+                    font-size: 13px;
+                    color: #1E3653;
+                    margin-bottom: 15px;
+                }
+
+                .col-val{
+                    font-size: 22px;
+                    font-weight: 600;
+                    color: #4931e7;
+                    
+                }
+            }
+        }
+
+    }
+
+    .atn-brk-dwn{
+        width: 95%;
+        height: 45%;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        background-color: #fff;
+        box-shadow: none;
+        justify-content: space-evenly;
+
+
+        .atn-prm-cnt{
+            width: 95%;
+            height: 40%;
+            justify-content: space-between;
+            /* background-color: #06acff; */
+
+            .atn-sc-cnt{
+                height: 100%;
+                width: 49%;
+                /* background-color: #06ff5d; */
+
+                
+                .data-ov-box{
+                    width: 100%;
+                    height: 100%;
+                    align-items: start;
+                    padding-left: 3px;
+                    justify-content: start;
+
+                    h4{
+                        margin-top: 6px;
+                        font-weight: 600;
+                    }
+
+                    p{
+                        font-size: 12px;
+                        color: #1E3653;
+                    }
+                }
+
+
+                .sng-ov-box{
+                    width: 80px;
+                    height: 60px;
+                    /* background-color: #0659ff; */
+                    /* padding: 10px; */
+
+                    .progress-ring {
+                        position: relative;
+                        width: 60px;
+                        height: 60px;
+                    }
+                    
+                    .progress-ring svg {
+                        transform: rotate(-90deg);
+                        width: 60px;
+                        height: 60px;
+                    }
+                    
+                    .progress-ring circle {
+                        fill: none;
+                        stroke-width: 6;
+                    }
+                    
+                    .progress-ring .bg {
+                        stroke: #e6e6e673;
+                    }
+                    
+                    .progress-ring .progress {
+                        stroke: #31e774; /* Default color */
+                        stroke-dasharray: 157; /* Circumference for radius 25 */
+                        stroke-dashoffset: 157; /* Initial offset */
+                        transition: stroke-dashoffset .5s ease-in; /* Apply smooth transition for the stroke offset */
+                    }
+                    
+                    .progress-ring .progress-value {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        font-size: 12px;
+                        font-weight: bold;
+                        color: #333;
+                    }
+                    
+                      
+                    
+                }
+
+                .data-ov-box{
+                    width: calc(100% - 80px);
+                    height: 100%;
+                }
+            }
+        }
+    }
+}
+
+.progress-container {
+    position: relative;
+    width: 180px;
+    height: 180px;
+  }
+  
+  .progress-svg {
+    transform: rotate(-90deg); /* Rotate for correct starting point */
+  }
+  
+  .bg-circle {
+    fill: none;
+    stroke: #e0e0e05a;
+    stroke-width: 12;
+  }
+
+
+  .progress-circle {
+    fill: none;
+    stroke: #4931e7;
+    stroke-width: 12;
+    stroke-linecap: round; /* Makes the ends rounded */
+    stroke-dasharray: 439.82; /* Circumference of the circle (2 * π * r, r = 80) */
+    stroke-dashoffset: 439.82; /* Initial offset to hide the progress */
+    transition: stroke-dashoffset 0.3s linear; /* Smooth transition for progress */
+  }
+  
+  .progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+
+    p{
+        font-size: 8px;
+        margin-top: -5px;
+        font-weight: 400;
+    }
+  }
+
+  .chld-bar{
+    position: absolute;
+    height: 120px;
+    width: 120px;
+    /* background-color: #06acff1a; */
+    /* top: 0; */
+    border-radius: 50%;
+
+  }
+  
+
+
+  .progress-wrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+  }
+  
+  circle {
+    fill: none;
+    stroke-width: 12;
+    stroke-linecap: round;
+    transform: rotate(-90deg); /* Rotate so that the progress starts from the top */
+    transform-origin: 50% 50%;
+  }
+  
+
+  .circle-background {
+    fill: none;
+    stroke: #e0e0e05a; /* Light grey for the background circle */
+    stroke-width: 20;
+  }
+  
+  .circle-foreground {
+    fill: none;
+    stroke-width: 20;
+    stroke-linecap: round;
+    stroke-dasharray: 502.65; /* Circumference of the circle (2 * π * r) */
+    stroke-dashoffset: 502.65; /* Initially hide the progress */
+    transition: stroke-dashoffset 1s ease, transform 1s ease;
+  }
+  
+  .segment1 { stroke: #31e774; }
+  .segment2 { stroke: #ffd606; }
+  .segment3 { stroke: #ffa033; }
+  .segment4 { stroke: #ff4000; }
+  
+  
 
 .sts-crd{
     background-color: #2811bc ;

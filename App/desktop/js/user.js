@@ -385,7 +385,7 @@ function displayLoggedAccount() {
                     deviceModelText.innerHTML = account.deviceModel;
 
                     if (account.token === tktuserToken) {
-                        deviceModelText.innerHTML += ' <i class="fi fi-ss-badge-check"></i>'; // Add the check icon for current session
+                        deviceModelText.innerHTML += ' <i class="fi fi-rr-badge-check"></i>'; // Add the check icon for current session
                     }
                     deviceModelDiv.appendChild(deviceModelText);
                     deviceDetailsDiv.appendChild(deviceModelDiv);
