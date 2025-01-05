@@ -44,7 +44,7 @@ function generateDates() {
         const colorIndex = (i - 1) % colors.length; // Rotate through colors
         indicator.style.cssText = `
           display: inline-block;
-          width: 8px;
+          width: 10px;
           height: 3px;
           background-color: ${colors[colorIndex]};
           border-radius: 4px;
@@ -62,47 +62,167 @@ function generateDates() {
   generateDates();
   
 
-
-
-
   const slider = document.getElementById('slider');
   const camCont = document.getElementById('cam-cnt');
   const checkinCont = document.getElementById('chknBtn');
   const actionCont = document.getElementById('actBtn');
   const sliderText = document.getElementById('sliderText');
   const switchContainer = document.querySelector('.atn-switch');
-
+  let videoElement; // Store the video element
+  let mediaStream; // Store the media stream for stopping the camera
+  
   let isTouching = false;
   let startX = 0;
   let sliderLeft = 0;
-
+  
+  // Start camera function
+  function startCamera() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          console.error("getUserMedia is not supported in your browser.");
+          alert("Your browser does not support camera access. Please try using a modern browser like Chrome, Firefox, or Safari.");
+          return;
+      }
+  
+      // Try to access the camera
+      navigator.mediaDevices.getUserMedia({
+          video: {
+              width: 1920,  // Increase resolution for a wider field of view
+              height: 1080  // Adjust height accordingly
+          }
+      })
+      .then((stream) => {
+          console.log("Camera stream started successfully.");
+          videoElement = document.getElementById('videoElement');
+          videoElement.srcObject = stream;
+          videoElement.autoplay = true;
+          videoElement.style.width = '100%';
+          videoElement.style.height = '100%';
+          videoElement.style.objectFit = 'cover';
+          videoElement.style.transform = 'scaleX(-1)'; // Flip video horizontally if needed
+  
+          mediaStream = stream; // Store the media stream for stopping it later
+  
+          camCont.style.perspective = '1500px'; // Optional styling for camera container
+      })
+      .catch((err) => {
+          console.error('Error accessing the camera: ', err);
+          alert("Error accessing the camera. Please try again.");
+      });
+  }
+  
+  // Stop the camera and take a snapshot when the #cam-stp button is clicked
+  document.getElementById('cam-stp').addEventListener('click', () => {
+      if (videoElement && mediaStream) {
+          // Capture a snapshot from the video
+          const canvas = document.createElement('canvas');
+          canvas.width = videoElement.videoWidth;  // Set canvas width to video width
+          canvas.height = videoElement.videoHeight;  // Set canvas height to video height
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);  // Draw the current frame of the video onto the canvas
+  
+          // Convert the canvas to an image (base64 format)
+          const snapshot = canvas.toDataURL('image/png');
+          
+          // Display the snapshot image
+          const snapshotImage = document.getElementById('snapshotImage');
+          snapshotImage.src = snapshot; // Set the src of the snapshot image
+          snapshotImage.style.display = 'block';
+          snapshotImage.style.width = '100%';
+          snapshotImage.style.height = '100%';
+          snapshotImage.style.objectFit = 'cover';
+          snapshotImage.style.transform = 'scaleX(-1)'; // Show the snapshot image
+          
+          // Stop the video and hide the video element
+          videoElement.pause();  // Pause the video
+          videoElement.srcObject = null;  // Disconnect the video stream
+          videoElement.style.display = 'none'; // Hide the video element
+  
+          // Optionally stop the camera tracks
+          mediaStream.getTracks().forEach(track => track.stop());  // Stop all media tracks
+  
+          // Hide the camCancel button and show the bcToDash and SnapWhts buttons
+          document.getElementById('cam-stp').style.display = 'none';
+          document.getElementById('camCancel').style.display = 'none';
+          document.getElementById('bcToDash').style.display = 'block';
+          document.getElementById('SnapWhts').style.display = 'block';
+  
+          // alert('Camera stopped and snapshot taken!');
+      } else {
+          // alert("No active camera stream found.");
+      }
+  });
+  
+  // camCancel button functionality: Simply stop the stream and hide the cam-cnt
+  document.getElementById('camCancel').addEventListener('click', () => {
+      if (mediaStream) {
+          mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
+      }
+      camCont.style.display = 'none';
+      slider.style.left = '0px'; // Snap back to the left
+          sliderText.classList.remove('wait-animate'); // Remove animation
+          sliderText.textContent = 'Check In'; // Reset the text
+          checkinCont.style.display = "flex";
+          actionCont.style.display = "none";
+         
+  });
+  
+  // bcToDash button functionality: Stop the stream and hide cam-cnt, reset UI
+  document.getElementById('bcToDash').addEventListener('click', () => {
+      // Stop the camera stream and hide video container
+      if (mediaStream) {
+          mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
+      }
+      camCont.style.display = 'none'; // Hide video container
+  
+      // Reset UI elements
+      checkinCont.style.display = "none";
+      actionCont.style.display = "flex";
+  });
+  
+  // SnapWhts button functionality: Stop the stream, hide cam-cnt, and redirect to WhatsApp
+  document.getElementById('SnapWhts').addEventListener('click', () => {
+      // Stop the camera stream and hide video container
+      if (mediaStream) {
+          mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
+      }
+      camCont.style.display = 'none'; // Hide video container
+  
+      // Reset UI elements
+      checkinCont.style.display = "none";
+      actionCont.style.display = "flex";
+  
+      // Redirect to WhatsApp (can replace with specific link or action)
+      window.location.href = "https://wa.me/"; // Redirect to WhatsApp (you can customize the link)
+  });
+  
+  // Slider functionality
   slider.addEventListener('touchstart', (e) => {
       isTouching = true;
       startX = e.touches[0].clientX;
       sliderLeft = parseInt(getComputedStyle(slider).left, 10);
   });
-
+  
   slider.addEventListener('touchmove', (e) => {
       if (!isTouching) return;
-
+  
       const deltaX = e.touches[0].clientX - startX;
       let newLeft = sliderLeft + deltaX;
-
+  
       // Constrain the slider within the container
       const maxLeft = switchContainer.offsetWidth - slider.offsetWidth;
       if (newLeft < 0) newLeft = 0;
       if (newLeft > maxLeft) newLeft = maxLeft;
-
+  
       slider.style.left = `${newLeft}px`;
   });
-
+  
   slider.addEventListener('touchend', () => {
       if (!isTouching) return;
-
+  
       isTouching = false;
       const maxLeft = switchContainer.offsetWidth - slider.offsetWidth;
       const currentLeft = parseInt(getComputedStyle(slider).left, 10);
-
+  
       // If slider is dragged more than halfway, complete the slide
       if (currentLeft > maxLeft / 2) {
           slider.style.left = `${maxLeft}px`; // Snap to the right
@@ -114,61 +234,14 @@ function generateDates() {
           startCamera();
       } else {
           slider.style.left = '0px'; // Snap back to the left
-          // sliderText.textContent = 'Check In ';
           sliderText.classList.remove('wait-animate'); // Remove animation
+          sliderText.textContent = 'Check In'; // Reset the text
           checkinCont.style.display = "flex";
           actionCont.style.display = "none";
           camCont.style.display = "none";
       }
   });
-
-
-  function startCamera() {
-    // Check if the browser supports getUserMedia
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        console.error("getUserMedia is not supported in your browser.");
-        alert("Your browser does not support camera access. Please try using a modern browser like Chrome, Firefox, or Safari.");
-        return;
-    }
-
-    // Try to access the camera
-    navigator.mediaDevices.getUserMedia({
-        video: {
-            width: 1920,  // Increase resolution for a wider field of view
-            height: 1080  // Adjust height accordingly
-        }
-    })
-    .then((stream) => {
-        console.log("Camera stream started successfully.");
-        const videoElement = document.createElement('video');
-        videoElement.srcObject = stream;
-        videoElement.autoplay = true;
-        videoElement.style.width = '100%'; // Adjust video width to 100% of parent
-        videoElement.style.height = '100%'; // Adjust video height to 100% of parent
-        videoElement.style.objectFit = 'cover'; // Ensures the video covers the entire parent container
-        videoElement.style.transform = 'scaleX(-1)'; // Flip video horizontally if needed
-
-        // Apply CSS perspective to the camera container for a wider effect
-        camCont.style.perspective = '1500px'; // 3D perspective effect
-        camCont.innerHTML = ''; // Clear any previous content inside camCont
-        camCont.appendChild(videoElement); // Add the video stream
-
-        // Optionally, you can stop the camera when not needed
-        // videoElement.onpause = function() {
-        //     stream.getTracks().forEach(track => track.stop());
-        // }
-    })
-    .catch((err) => {
-        console.error('Error accessing the camera: ', err);
-        if (err.name === 'NotAllowedError') {
-            alert("Camera permission denied. Please allow camera access to proceed.");
-        } else if (err.name === 'NotFoundError') {
-            alert("No camera found. Please make sure your device has a camera.");
-        } else {
-            alert("Error accessing the camera. Please try again.");
-        }
-    });
-}
+  
 
 
 

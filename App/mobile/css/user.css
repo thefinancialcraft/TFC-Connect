@@ -327,6 +327,31 @@ body::-webkit-scrollbar{
     padding-top: 3px;
 }
 
+.button1{
+    width: 48%;
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid #4931e7;
+    background-color: #4931e7;
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+
+}
+
+.button2{
+    width: 48%;
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid #4931e7;
+    background-color: #fff;
+    color: #4931e7;
+    font-size: 15px;
+    font-weight: 500;
+
+}
+
+
 
 /* ------------------------------------------ */
 
@@ -341,13 +366,48 @@ body::-webkit-scrollbar{
     overflow: hidden;
     perspective: 1500px;
     object-fit: cover;
+
+
+    .cm-info-bx{
+        width: 90%;
+        height: 300px;
+        position: absolute;
+        bottom: 40px;
+        z-index: 99999;
+        border-radius: 20px;
+        background-color: white;
+        justify-content: space-evenly;
+        align-items: center;
+
+        .inf-bx{
+            width: 90%;
+            height: 200px;
+            /* background-color: #06acff; */
+        }
+
+        .cam-btn-cnts{
+            width: 90%;
+            height: 60px;
+            justify-content: space-between;
+        }
+    }
    
 }
 
 #cam-cnt video {
-    transform: scale(1.2); /* Make video appear wider */
+    transform: scale(-2); /* Make video appear wider */
     transform-origin: center;
     width: 100%;
+    z-index: -1;
+    height: 100%;
+    object-fit: cover;
+}
+
+#snapshotImage{
+    transform: scale(2); /* Make video appear wider */
+    transform-origin: center;
+    width: 100%;
+    z-index: -1;
     height: 100%;
     object-fit: cover;
 }
@@ -1945,8 +2005,9 @@ header{
         width: 30px;
         height: 30px;
         border: 1px solid #4931e751;
-        background-color: #f1f1f180;
+        background-color: #e2deff2f;
         border-radius: 8px;
+        color: #4931e7;
     
     
     }

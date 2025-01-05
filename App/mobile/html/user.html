@@ -18,7 +18,34 @@
 </head>
 <body>
 
-    <div id="cam-cnt" class="cmr-cnt"></div>
+    <div id="cam-cnt" class="flex cmr-cnt">
+       
+        <video id="videoElement" autoplay></video>
+    
+       
+        <img id="snapshotImage" style="display: none; width: 100%;" alt="Snapshot">
+    
+      
+        <div class="cm-info-bx flex-coloum">
+            <div class="inf-bx">
+            </div>
+
+            <div class="cam-btn-cnts flex-row">
+
+                <button style="color: #e73d31; border: 1px solid #e73d31;" id="camCancel"  class="button2">Back</button>
+
+                <button style="display: none;"  id="bcToDash" class="button2">Dashboard</button>
+
+                <button id="cam-stp" class="button1">Punch In</button>
+
+                <button  style="display: none; background-color: #31e774; border: 1px solid #31e774;"  id="SnapWhts" class="button1">WhatsApp</button>
+            </div>
+            
+          
+        </div>
+    </div>
+    
+    
 
     <div id="sidebar" class="sidebar  box-styling">
         <div class="sideLogo flex-row">
@@ -587,6 +614,7 @@ Welcome Back, <span class="firstName"></span>
         
         
             </div>
+
 
             <div class="block mnth-rcrd">
                 <div class="title flex-row">
