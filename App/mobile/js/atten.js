@@ -1,5 +1,43 @@
 // Function to generate dates
 
+function updateTime() {
+  const now = new Date();
+  let hours = now.getHours();
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  const seconds = now.getSeconds().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  const time = `${hours}:${minutes}:${seconds} ${ampm}`;
+  document.getElementById("currentTime").textContent = time;
+}
+
+
+function updateDateAndWeek() {
+  const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const monthsOfYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const currentDate = new Date();
+  
+  const weekName = daysOfWeek[currentDate.getDay()];
+  const day = currentDate.getDate().toString().padStart(2, '0'); // Add leading zero for single-digit days
+  const month = monthsOfYear[currentDate.getMonth()];
+  const year = currentDate.getFullYear();
+
+  const formattedDate = `${day} ${month} ${year}`;
+
+  const weekElement = document.querySelector('.crn-wek');
+  const dateElement = document.querySelector('.crn-date');
+
+  weekElement.textContent = weekName;
+  dateElement.textContent = formattedDate;
+}
+
+updateDateAndWeek(); 
+
+
+setInterval(updateTime, 1000);
+updateTime(); // Initial call to display time immediately
+
 function generateDates() {
     const dateContainer = document.getElementById("dateContainer");
     const today = new Date();
@@ -15,11 +53,11 @@ function generateDates() {
   
       // Create the date box
       const atnBox = document.createElement("div");
-      atnBox.classList.add("atn-bx", "flex-coloum");
+      atnBox.classList.add("atn-bx",  "flex-coloum");
   
       // Add 'bx-anm' class to the first div only
       if (i === 0) {
-        atnBox.classList.add("bx-anm");
+        atnBox.classList.add("bx-anm", "atn-bx-sp");
       }
   
       // Add the day and month
@@ -44,11 +82,11 @@ function generateDates() {
         const colorIndex = (i - 1) % colors.length; // Rotate through colors
         indicator.style.cssText = `
           display: inline-block;
-          width: 10px;
+          width: 12px;
           height: 3px;
           background-color: ${colors[colorIndex]};
           border-radius: 4px;
-          margin-top: -2px;
+          margin-top: -1px;
         `;
         atnBox.appendChild(indicator);
       }
@@ -74,41 +112,101 @@ function generateDates() {
   let isTouching = false;
   let startX = 0;
   let sliderLeft = 0;
-  
-  // Start camera function
-  function startCamera() {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          console.error("getUserMedia is not supported in your browser.");
-          alert("Your browser does not support camera access. Please try using a modern browser like Chrome, Firefox, or Safari.");
-          return;
-      }
-  
-      // Try to access the camera
-      navigator.mediaDevices.getUserMedia({
-          video: {
-              width: 1920,  // Increase resolution for a wider field of view
-              height: 1080  // Adjust height accordingly
+ // OpenCageData API key
+const apiKey = 'ce06c4af81284473b967280cd317765f';
+
+// Function to fetch area name from coordinates
+async function getAreaName(lat, lng) {
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${apiKey}`;
+    
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.results && data.results.length > 0) {
+            // Extract formatted address from response
+            const areaName = data.results[0].formatted; // Full address
+            return areaName;
+        } else {
+            throw new Error("No results found.");
+        }
+    } catch (error) {
+        console.error("Error fetching area name:", error);
+        return "Unable to fetch area name.";
+    }
+}
+
+// Fetch and update location
+function updateLocation() {
+  const locationElement = document.getElementById('location');
+
+  if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+          async (position) => {
+              const latitude = position.coords.latitude.toFixed(6);
+              const longitude = position.coords.longitude.toFixed(6);
+              
+              // Call getAreaName to fetch the address
+              const areaName = await getAreaName(latitude, longitude);
+              
+              // Update the location element with address
+              locationElement.textContent = `${areaName}`;
+          },
+          (error) => {
+              console.error("Error fetching location: ", error);
+              locationElement.textContent = "Unable to fetch location.";
+          },
+          {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 0
           }
-      })
-      .then((stream) => {
-          console.log("Camera stream started successfully.");
-          videoElement = document.getElementById('videoElement');
-          videoElement.srcObject = stream;
-          videoElement.autoplay = true;
-          videoElement.style.width = '100%';
-          videoElement.style.height = '100%';
-          videoElement.style.objectFit = 'cover';
-          videoElement.style.transform = 'scaleX(-1)'; // Flip video horizontally if needed
-  
-          mediaStream = stream; // Store the media stream for stopping it later
-  
-          camCont.style.perspective = '1500px'; // Optional styling for camera container
-      })
-      .catch((err) => {
-          console.error('Error accessing the camera: ', err);
-          alert("Error accessing the camera. Please try again.");
-      });
+      );
+  } else {
+      console.error("Geolocation is not supported in this browser.");
+      locationElement.textContent = "Geolocation is not supported by your browser.";
   }
+}
+
+// Modify startCamera function to update location
+function startCamera() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.error("getUserMedia is not supported in your browser.");
+      alert("Your browser does not support camera access. Please try using a modern browser like Chrome, Firefox, or Safari.");
+      return;
+  }
+
+  // Update location
+  updateLocation();
+
+  // Try to access the camera
+  navigator.mediaDevices.getUserMedia({
+      video: {
+          width: 1920, // Increase resolution for a wider field of view
+          height: 1080 // Adjust height accordingly
+      }
+  })
+  .then((stream) => {
+      console.log("Camera stream started successfully.");
+      videoElement = document.getElementById('videoElement');
+      videoElement.srcObject = stream;
+      videoElement.autoplay = true;
+      videoElement.style.width = '100%';
+      videoElement.style.height = '100%';
+      videoElement.style.objectFit = 'cover';
+      videoElement.style.transform = 'scaleX(-1)'; // Flip video horizontally if needed
+
+      mediaStream = stream; // Store the media stream for stopping it later
+
+      camCont.style.perspective = '1500px'; // Optional styling for camera container
+  })
+  .catch((err) => {
+      console.error('Error accessing the camera: ', err);
+      alert("Error accessing the camera. Please try again.");
+  });
+}
+
+
   
   // Stop the camera and take a snapshot when the #cam-stp button is clicked
   document.getElementById('cam-stp').addEventListener('click', () => {
@@ -145,6 +243,7 @@ function generateDates() {
           document.getElementById('camCancel').style.display = 'none';
           document.getElementById('bcToDash').style.display = 'block';
           document.getElementById('SnapWhts').style.display = 'block';
+          document.getElementById('stsBx').style.display = 'flex';
   
           // alert('Camera stopped and snapshot taken!');
       } else {
@@ -177,6 +276,7 @@ function generateDates() {
       // Reset UI elements
       checkinCont.style.display = "none";
       actionCont.style.display = "flex";
+      document.getElementById('stsBx').style.display = 'none';
   });
   
   // SnapWhts button functionality: Stop the stream, hide cam-cnt, and redirect to WhatsApp
