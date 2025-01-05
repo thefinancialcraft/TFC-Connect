@@ -234,3 +234,84 @@ updateBar(0, 25, '#31e774'); // 25% progress, green color
 updateBar(1, 50, '#ffd606'); // 50% progress, yellow color
 updateBar(2, 75, '#ffa033'); // 75% progress, orange color
 updateBar(3, 90, '#ff4000'); // 90% progress, red color
+
+
+let currentIndex = 0;
+const slides = document.querySelectorAll('.carousel .slide');
+const totalSlides = slides.length;
+const carousel = document.querySelector('.carousel');
+
+// Function to move carousel automatically forward
+function moveCarousel() {
+    currentIndex++;
+    if (currentIndex >= totalSlides) {
+        currentIndex = 0; // Loop back to the first slide after the last slide
+    }
+    const translateY = -currentIndex * 140; // Moves the carousel by 140px per slide
+    carousel.style.transform = `translateY(${translateY}px)`;
+}
+
+// Start the automatic sliding interval
+function startAutoSlide() {
+    setInterval(moveCarousel, 5000); // Move the carousel every 3 seconds
+}
+
+// Start the automatic sliding on page load
+startAutoSlide();
+function createCalendar(year, month) {
+    const calendar = document.getElementById('calendar');
+    const currentDate = new Date();
+    const today = currentDate.getDate();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDay = new Date(year, month, 1).getDay();
+
+    // Define colors for the spans
+    const colors = ['#31e774', '#ffd606', '#ffa033', '#ff4000'];
+
+    let table = `<table>
+        <thead>
+            <tr>
+                <th>Su</th>
+                <th>Mo</th>
+                <th>Tu</th>
+                <th>We</th>
+                <th>Th</th>
+                <th>Fr</th>
+                <th>Sa</th>
+            </tr>
+        </thead>
+        <tbody>`;
+    
+    let date = 1;
+    for (let i = 0; i < 6; i++) {
+        table += '<tr>';
+        for (let j = 0; j < 7; j++) {
+            if (i === 0 && j < firstDay) {
+                table += '<td></td>';
+            } else if (date > daysInMonth) {
+                break;
+            } else {
+                const isToday = date === today && month === currentMonth && year === currentYear;
+                const colorIndex = (date - 1) % colors.length; // Rotate through colors
+                
+                table += `<td class="${isToday ? 'current-day bx-anm' : ''}">
+                    <div class="tc-c" style="text-align: center;">
+                        ${!isToday ? `<span style="display: inline-block; border-radius: 12px; width: 10px; height: 3px; background-color: ${colors[colorIndex]};"></span>` : ''}
+                        <div>${date}</div>
+                    </div>
+                </td>`;
+                date++;
+            }
+        }
+        table += '</tr>';
+    }
+
+    table += '</tbody></table>';
+    calendar.innerHTML = table;
+}
+
+// Initialize the calendar
+createCalendar(new Date().getFullYear(), new Date().getMonth());
