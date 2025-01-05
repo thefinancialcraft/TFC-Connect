@@ -122,6 +122,7 @@ function generateDates() {
       }
   });
 
+
   function startCamera() {
     // Check if the browser supports getUserMedia
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -131,37 +132,43 @@ function generateDates() {
     }
 
     // Try to access the camera
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then((stream) => {
-            console.log("Camera stream started successfully.");
-            const videoElement = document.createElement('video');
-            videoElement.srcObject = stream;
-            videoElement.autoplay = true;
-            videoElement.style.width = '100%'; // Adjust video width to 100% of parent
-            videoElement.style.height = '100%'; // Adjust video height to 100% of parent
-            videoElement.style.objectFit = 'cover'; // Ensures the video covers the entire parent container
+    navigator.mediaDevices.getUserMedia({
+        video: {
+            width: 1920,  // Increase resolution for a wider field of view
+            height: 1080  // Adjust height accordingly
+        }
+    })
+    .then((stream) => {
+        console.log("Camera stream started successfully.");
+        const videoElement = document.createElement('video');
+        videoElement.srcObject = stream;
+        videoElement.autoplay = true;
+        videoElement.style.width = '100%'; // Adjust video width to 100% of parent
+        videoElement.style.height = '100%'; // Adjust video height to 100% of parent
+        videoElement.style.objectFit = 'cover'; // Ensures the video covers the entire parent container
+        videoElement.style.transform = 'scaleX(-1)'; // Flip video horizontally if needed
 
-            // Append the video element to camCont
-            camCont.innerHTML = ''; // Clear any previous content inside camCont
-            camCont.appendChild(videoElement); // Add the video stream
+        // Apply CSS perspective to the camera container for a wider effect
+        camCont.style.perspective = '1500px'; // 3D perspective effect
+        camCont.innerHTML = ''; // Clear any previous content inside camCont
+        camCont.appendChild(videoElement); // Add the video stream
 
-            // Optionally, you can stop the camera when not needed
-            // videoElement.onpause = function() {
-            //     stream.getTracks().forEach(track => track.stop());
-            // }
-        })
-        .catch((err) => {
-            console.error('Error accessing the camera: ', err);
-            if (err.name === 'NotAllowedError') {
-                alert("Camera permission denied. Please allow camera access to proceed.");
-            } else if (err.name === 'NotFoundError') {
-                alert("No camera found. Please make sure your device has a camera.");
-            } else {
-                alert("Error accessing the camera. Please try again.");
-            }
-        });
+        // Optionally, you can stop the camera when not needed
+        // videoElement.onpause = function() {
+        //     stream.getTracks().forEach(track => track.stop());
+        // }
+    })
+    .catch((err) => {
+        console.error('Error accessing the camera: ', err);
+        if (err.name === 'NotAllowedError') {
+            alert("Camera permission denied. Please allow camera access to proceed.");
+        } else if (err.name === 'NotFoundError') {
+            alert("No camera found. Please make sure your device has a camera.");
+        } else {
+            alert("Error accessing the camera. Please try again.");
+        }
+    });
 }
-
 
 
 

@@ -338,8 +338,18 @@ body::-webkit-scrollbar{
     background-color: #ebebeb;
     position: absolute;
     z-index: 9999;
+    overflow: hidden;
+    perspective: 1500px;
     object-fit: cover;
    
+}
+
+#cam-cnt video {
+    transform: scale(1.2); /* Make video appear wider */
+    transform-origin: center;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .main-section{
