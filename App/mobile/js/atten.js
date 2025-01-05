@@ -137,7 +137,9 @@ function generateDates() {
             const videoElement = document.createElement('video');
             videoElement.srcObject = stream;
             videoElement.autoplay = true;
-            videoElement.style.width = '100%'; // Adjust video size to fit the container
+            videoElement.style.width = '100%'; // Adjust video width to 100% of parent
+            videoElement.style.height = '100%'; // Adjust video height to 100% of parent
+            videoElement.style.objectFit = 'cover'; // Ensures the video covers the entire parent container
 
             // Append the video element to camCont
             camCont.innerHTML = ''; // Clear any previous content inside camCont
