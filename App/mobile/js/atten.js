@@ -1,46 +1,108 @@
-// Function to generate dates
-function generateDates() {
-  const dateContainer = document.getElementById("dateContainer");
-  const today = new Date();
 
-  for (let i = 0; i < 6; i++) {
+ // Camera permission request for mobile
+ document.getElementById("cameraBtn").addEventListener("click", async () => {
+  try {
+      await navigator.mediaDevices.getUserMedia({ video: true });
+      document.getElementById("output").innerText = "Camera permission granted.";
+  } catch (error) {
+      document.getElementById("output").innerText = 
+          "Camera permission denied. Please allow it manually in browser settings.";
+      alert("Camera permission was denied. Please check your browser's settings.");
+      console.error("Camera error:", error.message);
+  }
+});
+
+// Location permission request for mobile
+document.getElementById("locationBtn").addEventListener("click", () => {
+  if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+          (position) => {
+              document.getElementById("output").innerText = 
+                  `Location permission granted. Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
+          },
+          (error) => {
+              document.getElementById("output").innerText = 
+                  "Location permission denied. Please allow it manually in browser settings.";
+              alert("Location permission was denied. Please check your device's settings.");
+              console.error("Location error:", error.message);
+          }
+      );
+  } else {
+      document.getElementById("output").innerText = "Geolocation is not supported by this browser.";
+  }
+});
+
+
+
+
+// Function to generate date
+function generateDates() {
+    const dateContainer = document.getElementById("dateContainer");
+    const today = new Date();
+  
+    const colors = ['#31e774', '#ffd606', '#ffa033', '#ff4000']; // Colors array
+  
+    for (let i = 0; i < 6; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() - i);
-
+  
       const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits (DD)
       const month = date.toLocaleString('default', { month: 'short' }); // Get short month name
-
+  
       // Create the date box
       const atnBox = document.createElement("div");
       atnBox.classList.add("atn-bx", "flex-coloum");
-
+  
       // Add 'bx-anm' class to the first div only
       if (i === 0) {
-          atnBox.classList.add("bx-anm");
+        atnBox.classList.add("bx-anm");
       }
-
+  
       // Add the day and month
       const dateDiv = document.createElement("div");
       dateDiv.classList.add("date", "flex");
       dateDiv.textContent = day;
-
+  
       const monthDiv = document.createElement("div");
       monthDiv.classList.add("month", "flex");
       monthDiv.textContent = month;
-
+  
       // Append to atnBox
       atnBox.appendChild(dateDiv);
       atnBox.appendChild(monthDiv);
-
+  
+      // Add an indicator below dates (except for the current date)
+      if (i !== 0) {
+        const indicator = document.createElement("div");
+        indicator.classList.add("indicator");
+  
+        // Assign color from the array
+        const colorIndex = (i - 1) % colors.length; // Rotate through colors
+        indicator.style.cssText = `
+          display: inline-block;
+          width: 8px;
+          height: 3px;
+          background-color: ${colors[colorIndex]};
+          border-radius: 4px;
+          margin-top: -2px;
+        `;
+        atnBox.appendChild(indicator);
+      }
+  
       // Append to container
       dateContainer.appendChild(atnBox);
+    }
   }
-}
+  
+  // Call the function
+  generateDates();
+  
 
-// Call the function
-generateDates();
+
+
 
 const slider = document.getElementById('slider');
+const camCont = document.getElementById('cam-cnt');
 const checkinCont = document.getElementById('chknBtn');
 const actionCont = document.getElementById('actBtn');
 const sliderText = document.getElementById('sliderText');
@@ -84,14 +146,19 @@ slider.addEventListener('touchend', () => {
         sliderText.classList.add('wait-animate'); // Add animation
         checkinCont.style.display = "none";
         actionCont.style.display = "flex";
+        camCont.style.display = "flex";
     } else {
         slider.style.left = '0px'; // Snap back to the left
         // sliderText.textContent = 'Check In ';
         sliderText.classList.remove('wait-animate'); // Remove animation
         checkinCont.style.display = "flex";
         actionCont.style.display = "none";
+        camCont.style.display = "none";
     }
 });
+
+
+
 
 
 let progress = 0;
