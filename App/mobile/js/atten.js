@@ -12,6 +12,7 @@
   }
 });
 
+
 // Location permission request for mobile
 document.getElementById("locationBtn").addEventListener("click", () => {
   if ("geolocation" in navigator) {
