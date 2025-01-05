@@ -138,10 +138,10 @@ async function getAreaName(lat, lng) {
             const neighborhood = addressComponents.neighborhood || "";
             const city = addressComponents.city || addressComponents.town || "";
             const postalCode = addressComponents.postcode || "";
-            const county = addressComponents.county || "";
+            const country = addressComponents.county || "";
 
             // Construct the detailed address in the required format
-            const detailedAddress = `${building} ${road} ${place} ${locality} ${village} ${city} ${neighborhood}  ${county}  ${postalCode} `;
+            const detailedAddress = `${building} ${road} ${place} ${locality} ${village} ${city} ${neighborhood}  ${country}  ${postalCode} `;
             
             // Remove any unnecessary commas if parts are missing
             return detailedAddress.replace(/,\s*,/g, ',').replace(/,\s*$/, '');
