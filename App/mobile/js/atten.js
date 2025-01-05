@@ -115,76 +115,80 @@ function generateDates() {
 
 
  // OpenCageData API key
-const apiKey = 'ce06c4af81284473b967280cd317765f';
+ const apiKey = 'ce06c4af81284473b967280cd317765f';
 
-// Function to fetch area name from coordinates
-// Function to fetch a detailed address with specified components
-async function getAreaName(lat, lng) {
-    const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${apiKey}`;
-    
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
+ // Function to fetch area name from coordinates
+ // Function to fetch a detailed address with specified components
+ async function getAreaName(lat, lng) {
+     const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${apiKey}`;
+     
+     try {
+         const response = await fetch(url);
+         const data = await response.json();
+ 
+         if (data.results && data.results.length > 0) {
+             const addressComponents = data.results[0].components;
 
-        if (data.results && data.results.length > 0) {
-            const addressComponents = data.results[0].components;
+             console.log("add",  addressComponents);
+ 
+             // Extract the specified components, leave blank if not available
+             
+             const road = addressComponents.road || "";
+             const county = addressComponents.county || "";
+             const postcode = addressComponents.postcode || "";
+             const state_district = addressComponents.state_district|| "";
+             const state = addressComponents.state || "";
+             const country = addressComponents.country || "";
+ 
+             // Construct the detailed address in the required format
+             const detailedAddress = `${road} ${county}  ${state_district} ${state} ${country} ${postcode}  `;
 
-            // Extract the specified components, leave blank if not available
-            const building = addressComponents.building || "";
-            const road = addressComponents.road || "";
-            const place = addressComponents.place || "";
-            const locality = addressComponents.locality || "";
-            const village = addressComponents.village || "";
-            const neighborhood = addressComponents.neighborhood || "";
-            const city = addressComponents.city || addressComponents.town || "";
-            const postalCode = addressComponents.postcode || "";
-            const country = addressComponents.county || "";
-
-            // Construct the detailed address in the required format
-            const detailedAddress = `${building} ${road} ${place} ${locality} ${village} ${city} ${neighborhood}  ${country}  ${postalCode} `;
             
-            // Remove any unnecessary commas if parts are missing
-            return detailedAddress.replace(/,\s*,/g, ',').replace(/,\s*$/, '');
-        } else {
-            throw new Error("No results found.");
-        }
-    } catch (error) {
-        console.error("Error fetching area name:", error);
-        return "Unable to fetch area name.";
-    }
-}
+             
+             // Remove any unnecessary commas if parts are missing
+             return detailedAddress.replace(/,\s*,/g, ',').replace(/,\s*$/, '');
+         } else {
+             throw new Error("No results found.");
+         }
+     } catch (error) {
+         console.error("Error fetching area name:", error);
+         return "Unable to fetch area name.";
+     }
+ }
+ 
+ // Fetch and update location
+ function updateLocation() {
+   const locationElement = document.getElementById('location');
+ 
+   if (navigator.geolocation) {
+       navigator.geolocation.getCurrentPosition(
+           async (position) => {
+               const latitude = position.coords.latitude.toFixed(6);
+               const longitude = position.coords.longitude.toFixed(6);
+               
+               // Call getAreaName to fetch the address
+               const areaName = await getAreaName(latitude, longitude);
+               
+               // Update the location element with address
+               locationElement.textContent = `${areaName}`;
+           },
+           (error) => {
+               console.error("Error fetching location: ", error);
+               locationElement.textContent = "Unable to fetch location.";
+           },
+           {
+               enableHighAccuracy: true,
+               timeout: 10000,
+               maximumAge: 0
+           }
+       );
+   } else {
+       console.error("Geolocation is not supported in this browser.");
+       locationElement.textContent = "Geolocation is not supported by your browser.";
+   }
+ }
+ 
 
-// Fetch and update location
-function updateLocation() {
-  const locationElement = document.getElementById('location');
-
-  if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-          async (position) => {
-              const latitude = position.coords.latitude.toFixed(6);
-              const longitude = position.coords.longitude.toFixed(6);
-              
-              // Call getAreaName to fetch the address
-              const areaName = await getAreaName(latitude, longitude);
-              
-              // Update the location element with address
-              locationElement.textContent = `${areaName}`;
-          },
-          (error) => {
-              console.error("Error fetching location: ", error);
-              locationElement.textContent = "Unable to fetch location.";
-          },
-          {
-              enableHighAccuracy: true,
-              timeout: 10000,
-              maximumAge: 0
-          }
-      );
-  } else {
-      console.error("Geolocation is not supported in this browser.");
-      locationElement.textContent = "Geolocation is not supported by your browser.";
-  }
-}
 
 // Modify startCamera function to update location
 function startCamera() {
