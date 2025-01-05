@@ -112,10 +112,13 @@ function generateDates() {
   let isTouching = false;
   let startX = 0;
   let sliderLeft = 0;
+
+
  // OpenCageData API key
 const apiKey = 'ce06c4af81284473b967280cd317765f';
 
 // Function to fetch area name from coordinates
+// Function to fetch a detailed address including block, phase, area, and locality
 async function getAreaName(lat, lng) {
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${apiKey}`;
     
@@ -124,9 +127,19 @@ async function getAreaName(lat, lng) {
         const data = await response.json();
 
         if (data.results && data.results.length > 0) {
-            // Extract formatted address from response
-            const areaName = data.results[0].formatted; // Full address
-            return areaName;
+            const addressComponents = data.results[0].components;
+
+            // Extract specific address components
+            const block = addressComponents.suburb || "Block not available"; // Block/area
+            const phase = addressComponents.neighborhood || "Phase not available"; // Phase
+            const area = addressComponents.road || "Area not available"; // Road/Area
+            const locality = addressComponents.city_district || "Locality not available"; // Locality/Region
+            const city = addressComponents.city || addressComponents.town || "City not available"; // City
+            const postalCode = addressComponents.postcode || "Postal Code not available"; // Postal code
+
+            // Construct the detailed address in the required format
+            const detailedAddress = `${block}, ${phase}, ${area}, ${locality}, ${city}, ${postalCode}`;
+            return detailedAddress;
         } else {
             throw new Error("No results found.");
         }
