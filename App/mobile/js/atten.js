@@ -1,42 +1,5 @@
+// Function to generate dates
 
- // Camera permission request for mobile
- document.getElementById("cameraBtn").addEventListener("click", async () => {
-  try {
-      await navigator.mediaDevices.getUserMedia({ video: true });
-      document.getElementById("output").innerText = "Camera permission granted.";
-  } catch (error) {
-      document.getElementById("output").innerText = 
-          "Camera permission denied. Please allow it manually in browser settings.";
-      alert("Camera permission was denied. Please check your browser's settings.");
-      console.error("Camera error:", error.message);
-  }
-});
-
-
-// Location permission request for mobile
-document.getElementById("locationBtn").addEventListener("click", () => {
-  if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-          (position) => {
-              document.getElementById("output").innerText = 
-                  `Location permission granted. Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
-          },
-          (error) => {
-              document.getElementById("output").innerText = 
-                  "Location permission denied. Please allow it manually in browser settings.";
-              alert("Location permission was denied. Please check your device's settings.");
-              console.error("Location error:", error.message);
-          }
-      );
-  } else {
-      document.getElementById("output").innerText = "Geolocation is not supported by this browser.";
-  }
-});
-
-
-
-
-// Function to generate date
 function generateDates() {
     const dateContainer = document.getElementById("dateContainer");
     const today = new Date();
@@ -102,61 +65,100 @@ function generateDates() {
 
 
 
-const slider = document.getElementById('slider');
-const camCont = document.getElementById('cam-cnt');
-const checkinCont = document.getElementById('chknBtn');
-const actionCont = document.getElementById('actBtn');
-const sliderText = document.getElementById('sliderText');
-const switchContainer = document.querySelector('.atn-switch');
+  const slider = document.getElementById('slider');
+  const camCont = document.getElementById('cam-cnt');
+  const checkinCont = document.getElementById('chknBtn');
+  const actionCont = document.getElementById('actBtn');
+  const sliderText = document.getElementById('sliderText');
+  const switchContainer = document.querySelector('.atn-switch');
 
-let isTouching = false;
-let startX = 0;
-let sliderLeft = 0;
+  let isTouching = false;
+  let startX = 0;
+  let sliderLeft = 0;
 
-slider.addEventListener('touchstart', (e) => {
-    isTouching = true;
-    startX = e.touches[0].clientX;
-    sliderLeft = parseInt(getComputedStyle(slider).left, 10);
-});
+  slider.addEventListener('touchstart', (e) => {
+      isTouching = true;
+      startX = e.touches[0].clientX;
+      sliderLeft = parseInt(getComputedStyle(slider).left, 10);
+  });
 
-slider.addEventListener('touchmove', (e) => {
-    if (!isTouching) return;
+  slider.addEventListener('touchmove', (e) => {
+      if (!isTouching) return;
 
-    const deltaX = e.touches[0].clientX - startX;
-    let newLeft = sliderLeft + deltaX;
+      const deltaX = e.touches[0].clientX - startX;
+      let newLeft = sliderLeft + deltaX;
 
-    // Constrain the slider within the container
-    const maxLeft = switchContainer.offsetWidth - slider.offsetWidth;
-    if (newLeft < 0) newLeft = 0;
-    if (newLeft > maxLeft) newLeft = maxLeft;
+      // Constrain the slider within the container
+      const maxLeft = switchContainer.offsetWidth - slider.offsetWidth;
+      if (newLeft < 0) newLeft = 0;
+      if (newLeft > maxLeft) newLeft = maxLeft;
 
-    slider.style.left = `${newLeft}px`;
-});
+      slider.style.left = `${newLeft}px`;
+  });
 
-slider.addEventListener('touchend', () => {
-    if (!isTouching) return;
+  slider.addEventListener('touchend', () => {
+      if (!isTouching) return;
 
-    isTouching = false;
-    const maxLeft = switchContainer.offsetWidth - slider.offsetWidth;
-    const currentLeft = parseInt(getComputedStyle(slider).left, 10);
+      isTouching = false;
+      const maxLeft = switchContainer.offsetWidth - slider.offsetWidth;
+      const currentLeft = parseInt(getComputedStyle(slider).left, 10);
 
-    // If slider is dragged more than halfway, complete the slide
-    if (currentLeft > maxLeft / 2) {
-        slider.style.left = `${maxLeft}px`; // Snap to the right
-        sliderText.textContent = 'Wait';
-        sliderText.classList.add('wait-animate'); // Add animation
-        checkinCont.style.display = "none";
-        actionCont.style.display = "flex";
-        camCont.style.display = "flex";
-    } else {
-        slider.style.left = '0px'; // Snap back to the left
-        // sliderText.textContent = 'Check In ';
-        sliderText.classList.remove('wait-animate'); // Remove animation
-        checkinCont.style.display = "flex";
-        actionCont.style.display = "none";
-        camCont.style.display = "none";
+      // If slider is dragged more than halfway, complete the slide
+      if (currentLeft > maxLeft / 2) {
+          slider.style.left = `${maxLeft}px`; // Snap to the right
+          sliderText.textContent = 'Wait';
+          sliderText.classList.add('wait-animate'); // Add animation
+          checkinCont.style.display = "none";
+          actionCont.style.display = "flex";
+          camCont.style.display = "flex";
+          startCamera();
+      } else {
+          slider.style.left = '0px'; // Snap back to the left
+          // sliderText.textContent = 'Check In ';
+          sliderText.classList.remove('wait-animate'); // Remove animation
+          checkinCont.style.display = "flex";
+          actionCont.style.display = "none";
+          camCont.style.display = "none";
+      }
+  });
+
+  function startCamera() {
+    // Check if the browser supports getUserMedia
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.error("getUserMedia is not supported in your browser.");
+        alert("Your browser does not support camera access. Please try using a modern browser like Chrome, Firefox, or Safari.");
+        return;
     }
-});
+
+    // Try to access the camera
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+            console.log("Camera stream started successfully.");
+            const videoElement = document.createElement('video');
+            videoElement.srcObject = stream;
+            videoElement.autoplay = true;
+            videoElement.style.width = '100%'; // Adjust video size to fit the container
+
+            // Append the video element to camCont
+            camCont.innerHTML = ''; // Clear any previous content inside camCont
+            camCont.appendChild(videoElement); // Add the video stream
+
+            // Optionally, you can stop the camera when not needed
+            // videoElement.onpause = function() {
+            //     stream.getTracks().forEach(track => track.stop());
+            // }
+        })
+        .catch((err) => {
+            console.error('Error accessing the camera: ', err);
+            if (err.name === 'NotAllowedError') {
+                alert("Camera permission denied. Please allow camera access to proceed.");
+            } else if (err.name === 'NotFoundError') {
+                alert("No camera found. Please make sure your device has a camera.");
+            } else {
+                alert("Error accessing the camera. Please try again.");
+            }
+        });
+}
 
 
 

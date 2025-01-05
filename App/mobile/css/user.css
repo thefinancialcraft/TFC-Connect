@@ -338,6 +338,8 @@ body::-webkit-scrollbar{
     background-color: #ebebeb;
     position: absolute;
     z-index: 9999;
+    object-fit: cover;
+   
 }
 
 .main-section{
