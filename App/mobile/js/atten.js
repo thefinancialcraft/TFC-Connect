@@ -118,7 +118,7 @@ function generateDates() {
 const apiKey = 'ce06c4af81284473b967280cd317765f';
 
 // Function to fetch area name from coordinates
-// Function to fetch a detailed address including block, phase, area, and locality
+// Function to fetch a detailed address with specified components
 async function getAreaName(lat, lng) {
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${apiKey}`;
     
@@ -129,17 +129,22 @@ async function getAreaName(lat, lng) {
         if (data.results && data.results.length > 0) {
             const addressComponents = data.results[0].components;
 
-            // Extract specific address components
-            const block = addressComponents.suburb || "Block not available"; // Block/area
-            const phase = addressComponents.neighborhood || "Phase not available"; // Phase
-            const area = addressComponents.road || "Area not available"; // Road/Area
-            const locality = addressComponents.city_district || "Locality not available"; // Locality/Region
-            const city = addressComponents.city || addressComponents.town || "City not available"; // City
-            const postalCode = addressComponents.postcode || "Postal Code not available"; // Postal code
+            // Extract the specified components, leave blank if not available
+            const building = addressComponents.building || "";
+            const road = addressComponents.road || "";
+            const place = addressComponents.place || "";
+            const locality = addressComponents.locality || "";
+            const village = addressComponents.village || "";
+            const neighborhood = addressComponents.neighborhood || "";
+            const city = addressComponents.city || addressComponents.town || "";
+            const postalCode = addressComponents.postcode || "";
+            const county = addressComponents.county || "";
 
             // Construct the detailed address in the required format
-            const detailedAddress = `${block}, ${phase}, ${area}, ${locality}, ${city}, ${postalCode}`;
-            return detailedAddress;
+            const detailedAddress = `${building} ${road} ${place} ${locality} ${village} ${city} ${neighborhood}  ${county}  ${postalCode} `;
+            
+            // Remove any unnecessary commas if parts are missing
+            return detailedAddress.replace(/,\s*,/g, ',').replace(/,\s*$/, '');
         } else {
             throw new Error("No results found.");
         }
