@@ -14,7 +14,7 @@ function updateTime() {
 
 
 function updateDateAndWeek() {
-  const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const monthsOfYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const currentDate = new Date();
   
@@ -134,6 +134,9 @@ function generateDates() {
              // Extract the specified components, leave blank if not available
              
              const road = addressComponents.road || "";
+             const suburb = addressComponents.suburb || "";
+             const industrial = addressComponents.industrial || "";
+             const city = addressComponents.city || "";
              const county = addressComponents.county || "";
              const postcode = addressComponents.postcode || "";
              const state_district = addressComponents.state_district|| "";
@@ -141,7 +144,7 @@ function generateDates() {
              const country = addressComponents.country || "";
  
              // Construct the detailed address in the required format
-             const detailedAddress = `${road} ${county}  ${state_district} ${state} ${country} ${postcode}  `;
+             const detailedAddress = `${industrial} ${suburb} ${city}  ${county} ${state} ${country} ${postcode}  `;
 
             
              
