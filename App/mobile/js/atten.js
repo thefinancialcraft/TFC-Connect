@@ -279,8 +279,8 @@ document.getElementById('cam-stp').addEventListener('click', () => {
         // Flip the context horizontally for watermark (before drawing it)
         ctx.save(); // Save the current context state
         ctx.scale(-1, 1); // Flip horizontally (mirror image)
-        ctx.font = '30px Arial'; // Set font size and family
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; // White color with some transparency
+        ctx.font = '14vw Arial'; // Set font size and family
+        ctx.fillStyle = '#4931e7'; // White color with some transparency
         ctx.textAlign = 'center'; // Align text to the center
         ctx.textBaseline = 'middle'; // Center the text vertically
 
