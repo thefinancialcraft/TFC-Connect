@@ -246,30 +246,37 @@ function startCamera() {
 }
 
 
-  
-  // Stop the camera and take a snapshot when the #cam-stp button is clicked
+// Stop the camera and take a snapshot when the #cam-stp button is clicked
 document.getElementById('cam-stp').addEventListener('click', () => {
     // Stop the time update and freeze the current time
     stopTimeUpdate();
 
     // Capture snapshot logic
     if (videoElement && mediaStream) {
-        // Capture a snapshot from the video
+        // Create a new canvas for the snapshot
         const canvas = document.createElement('canvas');
         canvas.width = videoElement.videoWidth;  // Set canvas width to video width
         canvas.height = videoElement.videoHeight;  // Set canvas height to video height
         const ctx = canvas.getContext('2d');
         ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);  // Draw the current frame of the video onto the canvas
 
-        // Get the current date and time for watermark
+        // Get the check-in time for watermark (from element with id 'currentTime')
+        // Get the current date and time
         const currentDate = new Date();
-        const date = currentDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
-        const time = currentDate.toLocaleTimeString(); // Current time in 12-hour format
 
-        // Watermark text (Date and Time)
-        const watermarkText = `${date} ${time}`;
-        
-        // Flip the context horizontally
+        // Format the date as ddmmyy (e.g., 12-01-25 for January 12, 2025)
+        const day = String(currentDate.getDate()).padStart(2, '0'); // Ensure two digits for day
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Ensure two digits for month
+        const year = String(currentDate.getFullYear()).slice(-2); // Last two digits of year
+
+        // Create formatted date string
+        const formattedDate = `${day}/${month}/${year}`;
+        const checkinTime = document.getElementById('currentTime')?.textContent || "Unknown Time"; // Get the check-in time from the DOM
+
+        // Watermark text (using check-in time)
+        const watermarkText = `${formattedDate} ${checkinTime}`;
+
+        // Flip the context horizontally for watermark (before drawing it)
         ctx.save(); // Save the current context state
         ctx.scale(-1, 1); // Flip horizontally (mirror image)
         ctx.font = '30px Arial'; // Set font size and family
@@ -283,37 +290,76 @@ document.getElementById('cam-stp').addEventListener('click', () => {
         // Draw watermark text at the center of the canvas, with margin at the bottom
         ctx.fillText(watermarkText, -canvas.width / 2, canvas.height / 2 + marginBottom);
 
-        // Restore the context to its original state
+        // Restore the context to its original state (undo the flip)
         ctx.restore();
 
-        // Convert the canvas to an image (base64 format)
-        const snapshot = canvas.toDataURL('image/png');
-        
-        // Display the snapshot image
+        // Flip the canvas horizontally for the image download
+        const flipCanvas = document.createElement('canvas');
+        flipCanvas.width = canvas.width;
+        flipCanvas.height = canvas.height;
+        const flipCtx = flipCanvas.getContext('2d');
+
+        // Apply horizontal flip to the entire image on the canvas
+        flipCtx.save();
+        flipCtx.scale(-1, 1); // Flip horizontally
+        flipCtx.drawImage(canvas, -canvas.width, 0); // Draw the original canvas onto the flipped one
+        flipCtx.restore();
+
+        // Convert the flipped canvas to an image (base64 format)
+        const flippedSnapshot = flipCanvas.toDataURL('image/png');
+
+        // Display the flipped snapshot image
         const snapshotImage = document.getElementById('snapshotImage');
-        snapshotImage.src = snapshot; // Set the src of the snapshot image
+        snapshotImage.src = flippedSnapshot; // Set the src of the snapshot image
         snapshotImage.style.display = 'block';
         snapshotImage.style.width = '100%';
         snapshotImage.style.height = '100%';
         snapshotImage.style.objectFit = 'cover';
-        snapshotImage.style.transform = 'scaleX(-1)'; // Show the snapshot image
-    
+        snapshotImage.style.transform = 'scaleX(-1)'; // Display flipped image (optional, for UI)
+
         // Stop the video and hide the video element
         videoElement.pause();  // Pause the video
         videoElement.srcObject = null;  // Disconnect the video stream
         videoElement.style.display = 'none'; // Hide the video element
-    
+
         // Optionally stop the camera tracks
         mediaStream.getTracks().forEach(track => track.stop());  // Stop all media tracks
-    
+
         // Hide the camCancel button and show the bcToDash and SnapWhts buttons
         document.getElementById('cam-stp').style.display = 'none';
         document.getElementById('camCancel').style.display = 'none';
         document.getElementById('bcToDash').style.display = 'block';
         document.getElementById('SnapWhts').style.display = 'block';
-        
-        captureScreenshot();
-    
+
+        // Create a download link for the flipped snapshot image
+        const downloadLink = document.createElement('a');
+        downloadLink.href = flippedSnapshot; // Set the download link to the flipped snapshot
+        downloadLink.download = `snapshot_checkin_${checkinTime}_flipped.png`; // Set the filename with check-in time
+        downloadLink.style.display = 'none'; // Hide the link element
+
+        // Append the download link to the DOM
+        document.body.appendChild(downloadLink);
+
+        // Trigger the download by clicking the link
+        downloadLink.click();
+
+        // Remove the link element from DOM after download
+        document.body.removeChild(downloadLink);
+
+        // Now flip the image back to original orientation (post-download)
+        flipCanvas.width = canvas.width;
+        flipCanvas.height = canvas.height;
+        const restoreCtx = flipCanvas.getContext('2d');
+
+        // Flip back to original orientation (scale to positive)
+        restoreCtx.save();
+        restoreCtx.scale(1, 1); // Restore to normal orientation
+        restoreCtx.drawImage(canvas, 0, 0); // Draw the original image again
+        restoreCtx.restore();
+
+        // Update the displayed image (optional)
+        snapshotImage.src = restoreCtx.canvas.toDataURL('image/png'); // Show restored image
+
         // Call checkInUpdate function for logging data
         checkInUpdate();
     } else {
@@ -321,42 +367,14 @@ document.getElementById('cam-stp').addEventListener('click', () => {
     }
 });
 
-function captureScreenshot() {
-    // Get the element that holds the snapshot image
-    const snapshotImage = document.getElementById('cam-cnt');
-
-    // Use html2canvas to capture a screenshot of the snapshot image
-    html2canvas(snapshotImage, {
-        onrendered: function (canvas) {
-            // Convert the canvas to a downloadable image (PNG format)
-            const screenshot = canvas.toDataURL('image/png');
-            
-            // Create a download link for the screenshot
-            const downloadLink = document.createElement('a');
-            downloadLink.href = screenshot; // Set the screenshot link
-            downloadLink.download = `screenshot_${new Date().toISOString()}.png`; // Set the filename with current date and time
-            downloadLink.style.display = 'none'; // Hide the link element
-            
-            // Append the download link to the DOM
-            document.body.appendChild(downloadLink);
-            
-            // Trigger the download by clicking the link
-            downloadLink.click();
-            
-            // Remove the link element from DOM after download
-            document.body.removeChild(downloadLink);
-        }
-    });
-}
-
-
-
 // Define the checkInUpdate function
 function checkInUpdate() {
+    // Get the check-in time from the element with id 'currentTime'
+    const checkinTime = document.getElementById('currentTime')?.textContent || "Unknown Time"; // Get the check-in time
+
     // Current date and time
     const currentDate = new Date();
     const date = currentDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
-    const time = currentDate.toLocaleTimeString(); // Current time in 12-hour format
 
     // Month names array
     const monthNames = [
@@ -377,7 +395,6 @@ function checkInUpdate() {
     // Other required details
     const atn_type = "checkIn";
     const location = document.getElementById('location')?.value || "Unknown Location"; // From id=location
-    const checkinTime = document.getElementById('currentTime')?.textContent || "Unknown Time"; // From id=currentTime
 
     // Create an object to store the check-in data
     const checkinData = {
@@ -394,6 +411,7 @@ function checkInUpdate() {
     // Display the check-in data object in the console
     console.log("Check-in Data:", checkinData);
 }
+
 
   
   // camCancel button functionality: Simply stop the stream and hide the cam-cnt
