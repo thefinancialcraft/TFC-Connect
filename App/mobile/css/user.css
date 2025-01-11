@@ -359,6 +359,7 @@ body::-webkit-scrollbar{
     border-top: 3px solid #4931e7;
     border-radius: 50%;
     animation: spin 1s linear infinite;
+
   }
 
   @keyframes spin {
@@ -388,7 +389,7 @@ body::-webkit-scrollbar{
     display: none;
     width: 100% ;
     height: 100%;
-    background-color: #ebebeb;
+    background-color: #f2f0ff;
     position: absolute;
     z-index: 9999;
     overflow: hidden;
@@ -512,10 +513,7 @@ body::-webkit-scrollbar{
                 /* justify-content: space-between; */
                 /* background-color: #06acff; */
 
-                .loader{
-
-                    margin-left: 80px;
-                }
+               
 
                 h4{
                     margin-left: 20px;
@@ -581,6 +579,11 @@ body::-webkit-scrollbar{
             height: 60px;
             margin-bottom: 15px;
             justify-content: space-between;
+
+            .loader{
+
+                margin-right: 60px;
+            }
         }
     }
    

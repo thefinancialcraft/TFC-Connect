@@ -248,10 +248,10 @@ function startCamera() {
 
   
   // Stop the camera and take a snapshot when the #cam-stp button is clicked
-  document.getElementById('cam-stp').addEventListener('click', () => {
+document.getElementById('cam-stp').addEventListener('click', () => {
     // Stop the time update and freeze the current time
     stopTimeUpdate();
-  
+
     // Capture snapshot logic
     if (videoElement && mediaStream) {
         // Capture a snapshot from the video
@@ -260,7 +260,32 @@ function startCamera() {
         canvas.height = videoElement.videoHeight;  // Set canvas height to video height
         const ctx = canvas.getContext('2d');
         ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);  // Draw the current frame of the video onto the canvas
-    
+
+        // Get the current date and time for watermark
+        const currentDate = new Date();
+        const date = currentDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+        const time = currentDate.toLocaleTimeString(); // Current time in 12-hour format
+
+        // Watermark text (Date and Time)
+        const watermarkText = `${date} ${time}`;
+        
+        // Flip the context horizontally
+        ctx.save(); // Save the current context state
+        ctx.scale(-1, 1); // Flip horizontally (mirror image)
+        ctx.font = '30px Arial'; // Set font size and family
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; // White color with some transparency
+        ctx.textAlign = 'center'; // Align text to the center
+        ctx.textBaseline = 'middle'; // Center the text vertically
+
+        // Define margin for bottom (19px)
+        const marginBottom = -19;
+
+        // Draw watermark text at the center of the canvas, with margin at the bottom
+        ctx.fillText(watermarkText, -canvas.width / 2, canvas.height / 2 + marginBottom);
+
+        // Restore the context to its original state
+        ctx.restore();
+
         // Convert the canvas to an image (base64 format)
         const snapshot = canvas.toDataURL('image/png');
         
@@ -286,11 +311,89 @@ function startCamera() {
         document.getElementById('camCancel').style.display = 'none';
         document.getElementById('bcToDash').style.display = 'block';
         document.getElementById('SnapWhts').style.display = 'block';
-        // document.getElementById('stsBx').style.display = 'flex';
+        
+        captureScreenshot();
+    
+        // Call checkInUpdate function for logging data
+        checkInUpdate();
     } else {
         // alert("No active camera stream found.");
     }
-  });
+});
+
+function captureScreenshot() {
+    // Get the element that holds the snapshot image
+    const snapshotImage = document.getElementById('cam-cnt');
+
+    // Use html2canvas to capture a screenshot of the snapshot image
+    html2canvas(snapshotImage, {
+        onrendered: function (canvas) {
+            // Convert the canvas to a downloadable image (PNG format)
+            const screenshot = canvas.toDataURL('image/png');
+            
+            // Create a download link for the screenshot
+            const downloadLink = document.createElement('a');
+            downloadLink.href = screenshot; // Set the screenshot link
+            downloadLink.download = `screenshot_${new Date().toISOString()}.png`; // Set the filename with current date and time
+            downloadLink.style.display = 'none'; // Hide the link element
+            
+            // Append the download link to the DOM
+            document.body.appendChild(downloadLink);
+            
+            // Trigger the download by clicking the link
+            downloadLink.click();
+            
+            // Remove the link element from DOM after download
+            document.body.removeChild(downloadLink);
+        }
+    });
+}
+
+
+
+// Define the checkInUpdate function
+function checkInUpdate() {
+    // Current date and time
+    const currentDate = new Date();
+    const date = currentDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    const time = currentDate.toLocaleTimeString(); // Current time in 12-hour format
+
+    // Month names array
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June", 
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    // Get the current month as a string
+    const month = monthNames[currentDate.getMonth()]; // Get the current month's name
+
+    // Generate a random attendance token
+    const atnToken = Math.random().toString(36).substr(2, 10); // Random alphanumeric string
+
+    // Get user details
+    const userId = document.querySelector('.userId')?.textContent || "Unknown UserId"; // From class userId
+    const userName = document.querySelector('.userName')?.textContent || "Unknown UserName"; // From class userName
+
+    // Other required details
+    const atn_type = "checkIn";
+    const location = document.getElementById('location')?.value || "Unknown Location"; // From id=location
+    const checkinTime = document.getElementById('currentTime')?.textContent || "Unknown Time"; // From id=currentTime
+
+    // Create an object to store the check-in data
+    const checkinData = {
+        date: date,
+        month: month,
+        atnToken: atnToken,
+        userId: userId,
+        userName: userName,
+        atn_type: atn_type,
+        location: location,
+        checkinTime: checkinTime
+    };
+
+    // Display the check-in data object in the console
+    console.log("Check-in Data:", checkinData);
+}
 
   
   // camCancel button functionality: Simply stop the stream and hide the cam-cnt
@@ -317,7 +420,7 @@ function startCamera() {
   
       // Reset UI elements
       checkinCont.style.display = "none";
-      actionCont.style.display = "flex";
+      actionCont.style.display = "flex";   
     //   document.getElementById('stsBx').style.display = 'none';
   });
   
@@ -414,6 +517,8 @@ function startCamera() {
                             console.log('Attendance Data for Backend:', attendanceData);
                         
                             document.querySelector(".ent-ext-tim").style.display = "flex";
+                            document.querySelector("#cam-stp").style.display = "block";
+                            document.querySelector(".loader").style.display = "none";
                         
                             // Update entry and exit times in the DOM
                             let entryTime = attendanceData.entryTime;  // Assuming entry time is sent in response
