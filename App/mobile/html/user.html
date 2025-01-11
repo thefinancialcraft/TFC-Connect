@@ -19,6 +19,19 @@
 <body>
 
     <div id="cam-cnt" class="flex cmr-cnt">
+
+        <div class=" ent-ext-tim flex-row">
+
+            <div class="entry-time flex-row show-time">
+                <i class="fi flex fi-rs-arrow-left-from-arc"></i>
+                <p class="flex" id="entry-time"></p>
+            </div>
+            <div class="exit-time flex-row show-time">
+                <i class="fi flex fi-rs-arrow-left-from-arc"></i>
+                <p class="flex" id="exit-time"></p>
+            </div>
+
+        </div>
        
         <video id="videoElement" autoplay></video>
     
@@ -26,13 +39,13 @@
         <img id="snapshotImage" style="display: none; width: 100%;" alt="Snapshot">
     
       
-        <div class="cm-info-bx flex-coloum">
+        <div class="cm-info-bx box-styling flex-coloum">
             <div class="inf-bx">
                 
 
                 <div class="cm-usr-info flex-row">
-                    <div class="userName"></div>
-                    <div class="userId"></div>
+                    <div class="userName bx-an"></div>
+                    <div class="userId bx-an"></div>
                 </div>
                 <div class="cur-time flex-row">
                     <i class="fi flex fi-rs-arrow-left-from-arc"></i>
@@ -48,10 +61,6 @@
                     <p id="location">Fetching...</p>
                 </div>
 
-                <div style="display: none;" id="stsBx" class="sta-bx flex-coloum">
-                    <h4>H</h4>
-                    <p>Halfday</p>
-                </div>
 
                 <div class="alrt-bx flex">
                     <div class="icon-container">

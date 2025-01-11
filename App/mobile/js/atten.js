@@ -1,4 +1,6 @@
 // Function to generate dates
+let timeInterval; // To store the time interval for updating the clock
+let lastTime; // To store the last displayed time
 
 function updateTime() {
   const now = new Date();
@@ -9,12 +11,24 @@ function updateTime() {
   hours = hours % 12;
   hours = hours ? hours : 12; // the hour '0' should be '12'
   const time = `${hours}:${minutes}:${seconds} ${ampm}`;
+  
   document.getElementById("currentTime").textContent = time;
+  
+  lastTime = time; // Store the current time for later use
 }
+
+// Function to stop the clock update and freeze the current time
+function stopTimeUpdate() {
+  clearInterval(timeInterval); // Stop the time update
+  document.getElementById("currentTime").textContent = lastTime; // Display the frozen time
+}
+
+// Start the clock update every second
+timeInterval = setInterval(updateTime, 1000);
 
 
 function updateDateAndWeek() {
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednessday", "Thursday", "Friday", "Saturday"];
   const monthsOfYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const currentDate = new Date();
   
@@ -35,8 +49,8 @@ function updateDateAndWeek() {
 updateDateAndWeek(); 
 
 
-setInterval(updateTime, 1000);
-updateTime(); // Initial call to display time immediately
+// setInterval(updateTime, 1000);
+// updateTime(); 
 
 function generateDates() {
     const dateContainer = document.getElementById("dateContainer");
@@ -235,46 +249,49 @@ function startCamera() {
   
   // Stop the camera and take a snapshot when the #cam-stp button is clicked
   document.getElementById('cam-stp').addEventListener('click', () => {
-      if (videoElement && mediaStream) {
-          // Capture a snapshot from the video
-          const canvas = document.createElement('canvas');
-          canvas.width = videoElement.videoWidth;  // Set canvas width to video width
-          canvas.height = videoElement.videoHeight;  // Set canvas height to video height
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);  // Draw the current frame of the video onto the canvas
+    // Stop the time update and freeze the current time
+    stopTimeUpdate();
   
-          // Convert the canvas to an image (base64 format)
-          const snapshot = canvas.toDataURL('image/png');
-          
-          // Display the snapshot image
-          const snapshotImage = document.getElementById('snapshotImage');
-          snapshotImage.src = snapshot; // Set the src of the snapshot image
-          snapshotImage.style.display = 'block';
-          snapshotImage.style.width = '100%';
-          snapshotImage.style.height = '100%';
-          snapshotImage.style.objectFit = 'cover';
-          snapshotImage.style.transform = 'scaleX(-1)'; // Show the snapshot image
-          
-          // Stop the video and hide the video element
-          videoElement.pause();  // Pause the video
-          videoElement.srcObject = null;  // Disconnect the video stream
-          videoElement.style.display = 'none'; // Hide the video element
-  
-          // Optionally stop the camera tracks
-          mediaStream.getTracks().forEach(track => track.stop());  // Stop all media tracks
-  
-          // Hide the camCancel button and show the bcToDash and SnapWhts buttons
-          document.getElementById('cam-stp').style.display = 'none';
-          document.getElementById('camCancel').style.display = 'none';
-          document.getElementById('bcToDash').style.display = 'block';
-          document.getElementById('SnapWhts').style.display = 'block';
-          document.getElementById('stsBx').style.display = 'flex';
-  
-          // alert('Camera stopped and snapshot taken!');
-      } else {
-          // alert("No active camera stream found.");
-      }
+    // Capture snapshot logic
+    if (videoElement && mediaStream) {
+        // Capture a snapshot from the video
+        const canvas = document.createElement('canvas');
+        canvas.width = videoElement.videoWidth;  // Set canvas width to video width
+        canvas.height = videoElement.videoHeight;  // Set canvas height to video height
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);  // Draw the current frame of the video onto the canvas
+    
+        // Convert the canvas to an image (base64 format)
+        const snapshot = canvas.toDataURL('image/png');
+        
+        // Display the snapshot image
+        const snapshotImage = document.getElementById('snapshotImage');
+        snapshotImage.src = snapshot; // Set the src of the snapshot image
+        snapshotImage.style.display = 'block';
+        snapshotImage.style.width = '100%';
+        snapshotImage.style.height = '100%';
+        snapshotImage.style.objectFit = 'cover';
+        snapshotImage.style.transform = 'scaleX(-1)'; // Show the snapshot image
+    
+        // Stop the video and hide the video element
+        videoElement.pause();  // Pause the video
+        videoElement.srcObject = null;  // Disconnect the video stream
+        videoElement.style.display = 'none'; // Hide the video element
+    
+        // Optionally stop the camera tracks
+        mediaStream.getTracks().forEach(track => track.stop());  // Stop all media tracks
+    
+        // Hide the camCancel button and show the bcToDash and SnapWhts buttons
+        document.getElementById('cam-stp').style.display = 'none';
+        document.getElementById('camCancel').style.display = 'none';
+        document.getElementById('bcToDash').style.display = 'block';
+        document.getElementById('SnapWhts').style.display = 'block';
+        // document.getElementById('stsBx').style.display = 'flex';
+    } else {
+        // alert("No active camera stream found.");
+    }
   });
+
   
   // camCancel button functionality: Simply stop the stream and hide the cam-cnt
   document.getElementById('camCancel').addEventListener('click', () => {
@@ -301,7 +318,7 @@ function startCamera() {
       // Reset UI elements
       checkinCont.style.display = "none";
       actionCont.style.display = "flex";
-      document.getElementById('stsBx').style.display = 'none';
+    //   document.getElementById('stsBx').style.display = 'none';
   });
   
   // SnapWhts button functionality: Stop the stream, hide cam-cnt, and redirect to WhatsApp
@@ -340,33 +357,137 @@ function startCamera() {
   
       slider.style.left = `${newLeft}px`;
   });
-  
+
   slider.addEventListener('touchend', () => {
-      if (!isTouching) return;
-  
-      isTouching = false;
-      const maxLeft = switchContainer.offsetWidth - slider.offsetWidth;
-      const currentLeft = parseInt(getComputedStyle(slider).left, 10);
-  
-      // If slider is dragged more than halfway, complete the slide
-      if (currentLeft > maxLeft / 2) {
-          slider.style.left = `${maxLeft}px`; // Snap to the right
-          sliderText.textContent = 'Wait';
-          sliderText.classList.add('wait-animate'); // Add animation
-          checkinCont.style.display = "none";
-          actionCont.style.display = "flex";
-          camCont.style.display = "flex";
-          startCamera();
-      } else {
-          slider.style.left = '0px'; // Snap back to the left
-          sliderText.classList.remove('wait-animate'); // Remove animation
-          sliderText.textContent = 'Check In'; // Reset the text
-          checkinCont.style.display = "flex";
-          actionCont.style.display = "none";
-          camCont.style.display = "none";
-      }
-  });
-  
+    if (!isTouching) return;
+
+    isTouching = false;
+    const maxLeft = switchContainer.offsetWidth - slider.offsetWidth;
+    const currentLeft = parseInt(getComputedStyle(slider).left, 10);
+
+    // If slider is dragged more than halfway, complete the slide
+    if (currentLeft > maxLeft / 2) {
+        slider.style.left = `${maxLeft}px`; // Snap to the right
+        sliderText.textContent = 'Wait';
+        sliderText.classList.add('wait-animate'); // Add animation
+        checkinCont.style.display = "none";
+        actionCont.style.display = "flex";
+        camCont.style.display = "flex";
+
+        // **Fetch active ticket from local storage**
+        const activeTicket = localStorage.getItem('receiveData');
+        if (activeTicket) {
+            try {
+                const ticketData = JSON.parse(activeTicket); // Parse the JSON string
+                const userId = ticketData.userId || 'N/A'; // Extract userId
+                const token = ticketData.token || 'N/A';   // Extract token
+
+                // Create an object and console log it
+                const ticketObject = { UserId: userId, Token: token };
+                console.log('Active Ticket:', ticketObject);
+
+                // **Fetch backend URL from config.json and send the object**
+                fetch('/TFC-Connect/App/config.json')
+                    .then(response => response.json())
+                    .then(config => {
+                        const scriptUrl = config.scriptUrl;
+
+                        // Create data to send
+                        const data = new URLSearchParams();
+                        data.append('action', 'validTicketForAttendance');
+                        data.append('token', token);
+                        data.append('userId', userId);
+
+                        // Make POST request to the backend
+                        return fetch(scriptUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: data
+                        });
+                    })
+                    .then(response => response.json()) // Parse backend response to JSON
+                    .then(attendanceData => {
+                        // Check if the response indicates success
+                        if (attendanceData.status === "success") {
+                            console.log('Attendance Data for Backend:', attendanceData);
+                        
+                            document.querySelector(".ent-ext-tim").style.display = "flex";
+                        
+                            // Update entry and exit times in the DOM
+                            let entryTime = attendanceData.entryTime;  // Assuming entry time is sent in response
+                            let exitTime = attendanceData.exitTime;    // Assuming exit time is sent in response
+                        
+                            // Remove the quotes around entryTime and exitTime, if any
+                            entryTime = entryTime.replace(/"/g, '').trim();  // Remove quotes
+                            exitTime = exitTime.replace(/"/g, '').trim();    // Remove quotes
+                        
+                            // Set the entry and exit times in the respective DOM elements
+                            document.getElementById('entry-time').textContent = entryTime;
+                            document.getElementById('exit-time').textContent = exitTime;
+                        } else {
+                            console.warn('Backend validation failed:', attendanceData.message);
+                        
+                            // Reset UI and stop stream
+                            resetUI();
+                        }
+                        
+                    })
+                    .catch(error => {
+                        console.error('Error during fetch:', error);
+
+                        // Reset UI and stop stream
+                        resetUI();
+                    });
+            } catch (err) {
+                console.error('Error parsing activeTicket from localStorage:', err);
+
+                // Reset UI and stop stream
+                resetUI();
+            }
+        } else {
+            console.warn('No activeTicket found in local storage.');
+
+            // Reset UI and stop stream
+            resetUI();
+        }
+
+        // Start camera and update location
+        startCamera();
+    } else {
+        resetUI();
+    }
+
+    // Helper function to reset the UI and stop the camera stream
+    function resetUI() {
+        slider.style.left = '0px'; // Snap back to the left
+        sliderText.classList.remove('wait-animate'); // Remove animation
+        sliderText.textContent = 'Check In'; // Reset the text
+        checkinCont.style.display = "flex";
+        actionCont.style.display = "none";
+        camCont.style.display = "none";
+
+        // Stop the camera stream
+        stopCamera();
+    }
+
+    // Function to stop the camera stream
+    function stopCamera() {
+        const videoElement = document.querySelector('video'); // Select the video element
+        if (videoElement && videoElement.srcObject) {
+            const stream = videoElement.srcObject;
+            const tracks = stream.getTracks(); // Get all tracks (audio/video)
+
+            // Stop each track
+            tracks.forEach(track => track.stop());
+
+            // Clear the video source
+            videoElement.srcObject = null;
+        }
+    }
+});
+
 
 
 
