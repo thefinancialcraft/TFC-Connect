@@ -245,8 +245,6 @@ function startCamera() {
   });
 }
 
-
-// Stop the camera and take a snapshot when the #cam-stp button is clicked
 document.getElementById('cam-stp').addEventListener('click', () => {
     // Stop the time update and freeze the current time
     stopTimeUpdate();
@@ -261,156 +259,194 @@ document.getElementById('cam-stp').addEventListener('click', () => {
         ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);  // Draw the current frame of the video onto the canvas
 
         // Get the check-in time for watermark (from element with id 'currentTime')
-        // Get the current date and time
         const currentDate = new Date();
-
-        // Format the date as ddmmyy (e.g., 12-01-25 for January 12, 2025)
-        const day = String(currentDate.getDate()).padStart(2, '0'); // Ensure two digits for day
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Ensure two digits for month
-        const year = String(currentDate.getFullYear()).slice(-2); // Last two digits of year
-
-        // Create formatted date string
+        const day = String(currentDate.getDate()).padStart(2, '0');
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const year = String(currentDate.getFullYear()).slice(-2);
         const formattedDate = `${day}/${month}/${year}`;
-        const checkinTime = document.getElementById('currentTime')?.textContent || "Unknown Time"; // Get the check-in time from the DOM
+        let checkinTime = document.getElementById('currentTime')?.textContent || "Unknown Time";
 
-        // Watermark text (using check-in time)
+        // Remove seconds (ss) part from the time
+        checkinTime = checkinTime.replace(/:\d{2}(\s?[APap][Mm])/, "$1");
         const watermarkText = `${formattedDate} ${checkinTime}`;
 
-        // Flip the context horizontally for watermark (before drawing it)
-        ctx.save(); // Save the current context state
-        ctx.scale(-1, 1); // Flip horizontally (mirror image)
-        ctx.font = '14vw Arial'; // Set font size and family
-        ctx.fillStyle = '#4931e7'; // White color with some transparency
-        ctx.textAlign = 'center'; // Align text to the center
-        ctx.textBaseline = 'middle'; // Center the text vertically
-
-        // Define margin for bottom (19px)
+        // Watermark and flip logic
+        ctx.save();
+        ctx.scale(-1, 1);  // Flip the image horizontally
+        ctx.font = '14vw Arial';
+        ctx.fillStyle = '#4931e7';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
         const marginBottom = -19;
-
-        // Draw watermark text at the center of the canvas, with margin at the bottom
         ctx.fillText(watermarkText, -canvas.width / 2, canvas.height / 2 + marginBottom);
-
-        // Restore the context to its original state (undo the flip)
         ctx.restore();
 
-        // Flip the canvas horizontally for the image download
+        // Create a flipped canvas for the flipped snapshot image
         const flipCanvas = document.createElement('canvas');
         flipCanvas.width = canvas.width;
         flipCanvas.height = canvas.height;
         const flipCtx = flipCanvas.getContext('2d');
-
-        // Apply horizontal flip to the entire image on the canvas
         flipCtx.save();
-        flipCtx.scale(-1, 1); // Flip horizontally
-        flipCtx.drawImage(canvas, -canvas.width, 0); // Draw the original canvas onto the flipped one
+        flipCtx.scale(-1, 1);  // Flip the image horizontally
+        flipCtx.drawImage(canvas, -canvas.width, 0);
         flipCtx.restore();
 
-        // Convert the flipped canvas to an image (base64 format)
+        // Convert the flipped snapshot canvas to a base64 string
         const flippedSnapshot = flipCanvas.toDataURL('image/png');
 
-        // Display the flipped snapshot image
+        // Set the flipped snapshot image to the HTML img element with id 'snapshotImage'
         const snapshotImage = document.getElementById('snapshotImage');
-        snapshotImage.src = flippedSnapshot; // Set the src of the snapshot image
+        snapshotImage.src = flippedSnapshot;
         snapshotImage.style.display = 'block';
         snapshotImage.style.width = '100%';
         snapshotImage.style.height = '100%';
         snapshotImage.style.objectFit = 'cover';
-        snapshotImage.style.transform = 'scaleX(-1)'; // Display flipped image (optional, for UI)
+        snapshotImage.style.transform = 'scaleX(-1)';  // Flip it back for display
 
-        // Stop the video and hide the video element
-        videoElement.pause();  // Pause the video
-        videoElement.srcObject = null;  // Disconnect the video stream
-        videoElement.style.display = 'none'; // Hide the video element
+        // Stop video and hide the video element
+        videoElement.pause();
+        videoElement.srcObject = null;
+        videoElement.style.display = 'none';
 
-        // Optionally stop the camera tracks
-        mediaStream.getTracks().forEach(track => track.stop());  // Stop all media tracks
+        mediaStream.getTracks().forEach(track => track.stop());
 
-        // Hide the camCancel button and show the bcToDash and SnapWhts buttons
+        // Update UI buttons
         document.getElementById('cam-stp').style.display = 'none';
+        document.querySelector('.loader').style.display = 'flex';
+        document.querySelector('.loader').style.marginLeft = '45%';
+        
         document.getElementById('camCancel').style.display = 'none';
-        document.getElementById('bcToDash').style.display = 'block';
-        document.getElementById('SnapWhts').style.display = 'block';
 
         // Create a download link for the flipped snapshot image
         const downloadLink = document.createElement('a');
-        downloadLink.href = flippedSnapshot; // Set the download link to the flipped snapshot
-        downloadLink.download = `snapshot_checkin_${checkinTime}_flipped.png`; // Set the filename with check-in time
-        downloadLink.style.display = 'none'; // Hide the link element
-
-        // Append the download link to the DOM
+        downloadLink.href = flippedSnapshot;
+        downloadLink.download = `snapshot_checkin_${checkinTime}_flipped.png`;
+        downloadLink.style.display = 'none';
         document.body.appendChild(downloadLink);
-
-        // Trigger the download by clicking the link
-        downloadLink.click();
-
-        // Remove the link element from DOM after download
+        // downloadLink.click();
         document.body.removeChild(downloadLink);
 
-        // Now flip the image back to original orientation (post-download)
+        // Now flip the image back to the original orientation (post-download)
         flipCanvas.width = canvas.width;
         flipCanvas.height = canvas.height;
         const restoreCtx = flipCanvas.getContext('2d');
-
-        // Flip back to original orientation (scale to positive)
         restoreCtx.save();
-        restoreCtx.scale(1, 1); // Restore to normal orientation
-        restoreCtx.drawImage(canvas, 0, 0); // Draw the original image again
+        restoreCtx.scale(1, 1);  // Restore the original orientation
+        restoreCtx.drawImage(canvas, 0, 0);
         restoreCtx.restore();
+        snapshotImage.src = restoreCtx.canvas.toDataURL('image/png');
 
-        // Update the displayed image (optional)
-        snapshotImage.src = restoreCtx.canvas.toDataURL('image/png'); // Show restored image
+        // Call checkInUpdate function to get checkinData
+        const checkinData = checkInUpdate(formattedDate, checkinTime);
 
-        // Call checkInUpdate function for logging data
-        checkInUpdate();
+        // Log checkinData and snapshot before sending to backend
+        // console.log("Check-in Data: ", checkinData);
+        // console.log("Flipped Snapshot Data (Base64): ", flippedSnapshot);
+
+        // Upload checkinData and snapshot to the backend
+        uploadCheckinData(checkinData, flippedSnapshot);
     } else {
-        // alert("No active camera stream found.");
+        alert("No active camera stream found.");
     }
 });
 
 // Define the checkInUpdate function
-function checkInUpdate() {
-    // Get the check-in time from the element with id 'currentTime'
-    const checkinTime = document.getElementById('currentTime')?.textContent || "Unknown Time"; // Get the check-in time
-
-    // Current date and time
+function checkInUpdate(formattedDate, checkinTime) {
     const currentDate = new Date();
-    const date = currentDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
-
-    // Month names array
     const monthNames = [
-        "January", "February", "March", "April", "May", "June", 
+        "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
 
-    // Get the current month as a string
-    const month = monthNames[currentDate.getMonth()]; // Get the current month's name
+    
+   
+    
+    const userId = document.querySelector('.userId')?.textContent || "Unknown UserId";
+    const last3Digits = userId.slice(-3); // Get last 3 digits of userId
+    const userName = document.querySelector('.userName')?.textContent || "Unknown UserName";
+    const location = document.getElementById('location')?.textContent || "Unknown Location";
 
-    // Generate a random attendance token
-    const atnToken = Math.random().toString(36).substr(2, 10); // Random alphanumeric string
+     // Get the current date and time components
+     const day = String(currentDate.getDate()).padStart(2, '0');
+     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+     const year = String(currentDate.getFullYear()).slice(-2); // Last two digits of the year
+     const hours = String(currentDate.getHours()).padStart(2, '0');
+     const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+     const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+     
+     // Generate the atn_token
+     const atnToken = `${day}${month}${year}${last3Digits}`;
 
-    // Get user details
-    const userId = document.querySelector('.userId')?.textContent || "Unknown UserId"; // From class userId
-    const userName = document.querySelector('.userName')?.textContent || "Unknown UserName"; // From class userName
-
-    // Other required details
-    const atn_type = "checkIn";
-    const location = document.getElementById('location')?.value || "Unknown Location"; // From id=location
-
-    // Create an object to store the check-in data
-    const checkinData = {
-        date: date,
-        month: month,
+    // Include action field in the checkinData
+    return {
+        date: formattedDate,
+        month: monthNames[currentDate.getMonth()],
         atnToken: atnToken,
         userId: userId,
         userName: userName,
-        atn_type: atn_type,
         location: location,
-        checkinTime: checkinTime
+        checkinTime: checkinTime,
+        action: "uploadCheckinData" // Action to be included in the data
     };
-
-    // Display the check-in data object in the console
-    console.log("Check-in Data:", checkinData);
 }
+
+// Function to upload checkinData and snapshot
+function uploadCheckinData(checkinData, snapshotData) {
+    // Log the data before sending it
+    // console.log("Uploading data...");
+    console.log("Uploading Check-in Data: ", checkinData);
+    console.log("Snapshot Data (Base64): ", snapshotData);
+
+    // Convert checkinData to a URL-encoded string
+    const data = new URLSearchParams(checkinData).toString();
+
+    // Fetch backend URL from config.json
+    fetch('/TFC-Connect/App/config.json')
+        .then(response => response.json())
+        .then(config => {
+            const scriptUrl = config.scriptUrl;
+
+            // Prepare the request data including the snapshot (base64 image)
+            const requestData = {
+                ...checkinData,   // Merge checkinData
+                snapshot: snapshotData // Include the base64 snapshot image
+            };
+
+            // Convert request data to URL-encoded format
+            const requestPayload = new URLSearchParams(requestData).toString();
+
+            // Make POST request to upload the data and snapshot
+            return fetch(scriptUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: requestPayload
+            });
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            
+
+            console.log("attendance Data uploaded successfully:", data);
+            document.getElementById('cam-stp').style.display = 'none';
+            document.getElementById('SnapWhts').style.display = 'block';
+            document.getElementById('bcToDash').style.display = 'block';
+            document.getElementById('camCancel').style.display = 'none';
+            document.querySelector('.loader').style.display = 'none';
+
+            localStorage.setItem('whatsAppData', JSON.stringify(data.uploadedData));
+            
+            
+        })
+        .catch(error => {
+            console.error("attendance Error uploading data:", error);
+        });
+}
+
+
+
 
 
   
@@ -442,20 +478,35 @@ function checkInUpdate() {
     //   document.getElementById('stsBx').style.display = 'none';
   });
   
+
   // SnapWhts button functionality: Stop the stream, hide cam-cnt, and redirect to WhatsApp
   document.getElementById('SnapWhts').addEventListener('click', () => {
       // Stop the camera stream and hide video container
       if (mediaStream) {
           mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
       }
+
       camCont.style.display = 'none'; // Hide video container
   
       // Reset UI elements
       checkinCont.style.display = "none";
       actionCont.style.display = "flex";
+
+      const whatsAppData = JSON.parse(localStorage.getItem('whatsAppData'));
   
-      // Redirect to WhatsApp (can replace with specific link or action)
-      window.location.href = "https://wa.me/"; // Redirect to WhatsApp (you can customize the link)
+      var message = '*Reached*, ' + whatsAppData.userName + '\n' +
+                    'Date: ' + whatsAppData.date + '\n' +
+                    'Time: ' + whatsAppData.checkinTime + '\n' +
+                    'location: *' + whatsAppData.location + '*\n' +
+                    'Image Link: ' + whatsAppData.snapshotLink;
+
+                 
+                    var encodedMessage = encodeURIComponent(message);
+                    var whatsappUrl = 'https://wa.me/?text=' + encodedMessage;
+      
+                    window.open(whatsappUrl, '_blank');
+
+
   });
   
   // Slider functionality
@@ -836,3 +887,69 @@ function createCalendar(year, month) {
 
 // Initialize the calendar
 createCalendar(new Date().getFullYear(), new Date().getMonth());
+
+
+async function getCheckinInfo() {
+    // Retrieve the active ticket from localStorage
+    const activeTicket = localStorage.getItem('receiveData');
+    if (!activeTicket) {
+        console.error('No active ticket found in localStorage.');
+        return;
+    }
+
+    try {
+        // Parse the JSON string from localStorage
+        const ticketData = JSON.parse(activeTicket);
+        const userId = ticketData.userId || 'N/A';
+        const token = ticketData.token || 'N/A';
+
+        // Log the active ticket object
+        const ticketObject = { UserId: userId, Token: token };
+        console.log('Active Ticket:', ticketObject);
+
+        // Fetch the backend URL from config.json
+        const response = await fetch('/TFC-Connect/App/config.json');
+        const config = await response.json();
+        const scriptUrl = config.scriptUrl;
+
+        // Prepare the data to send
+        const data = new URLSearchParams();
+        data.append('action', 'getCheckinInfo');
+        data.append('token', token);
+        data.append('userId', userId);
+
+        // Send the data to the backend via POST
+        const backendResponse = await fetch(scriptUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: data
+        });
+
+       // Parse the backend response
+const result = await backendResponse.json();
+console.log('Backend Response for checkin:', result);
+
+// First, hide the checkDotCont
+document.getElementById('checkDotCont').style.display = 'none';
+
+// Check the result message and perform actions accordingly
+if (result.message === 'showCheckIn') {
+    // Show the check-in button
+    document.getElementById('chknBtn').style.display = 'flex';
+} else if (result.message === 'showCheckOut') {
+    // Show the check-out button
+    document.getElementById('actBtn').style.display = 'flex';
+} else if (result.message === 'moveForward') {
+    // Show the reset container
+    document.getElementById('resetCont').style.display = 'flex';
+}
+
+        return result;
+    } catch (error) {
+        console.error('Error processing active ticket:', error);
+    }
+}
+
+getCheckinInfo();
