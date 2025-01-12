@@ -935,15 +935,29 @@ console.log('Backend Response for checkin:', result);
 document.getElementById('checkDotCont').style.display = 'none';
 
 // Check the result message and perform actions accordingly
-if (result.message === 'showCheckIn') {
+if (result.message === 'hideAll') {
     // Show the check-in button
-    document.getElementById('chknBtn').style.display = 'flex';
+    document.getElementById('atn-switch').style.display = 'none';
 } else if (result.message === 'showCheckOut') {
     // Show the check-out button
+    document.getElementById('atn-switch').style.display = 'flex';
     document.getElementById('actBtn').style.display = 'flex';
+    document.getElementById('chknBtn').style.display = 'none';
+    document.getElementById('resetCont').style.display = 'none';
+
+} else if (result.message === 'showCheckIn') {
+    // Show the check-out button
+    document.getElementById('atn-switch').style.display = 'flex';
+    document.getElementById('actBtn').style.display = 'none';
+    document.getElementById('chknBtn').style.display = 'flex';
+    document.getElementById('resetCont').style.display = 'none';
+
 } else if (result.message === 'moveForward') {
     // Show the reset container
+    document.getElementById('atn-switch').style.display = 'flex';
     document.getElementById('resetCont').style.display = 'flex';
+    document.getElementById('actBtn').style.display = 'none';
+    document.getElementById('chknBtn').style.display = 'none';
 }
 
         return result;
