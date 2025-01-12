@@ -952,4 +952,4 @@ if (result.message === 'showCheckIn') {
     }
 }
 
-getCheckinInfo();
+setInterval(getCheckinInfo, 1000);
