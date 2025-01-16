@@ -1094,14 +1094,24 @@ async function getCheckinInfo() {
 
         const convertTimeFormat = (timeString) => {
             if (!timeString || typeof timeString !== 'string') return 'N/A';
-            
+        
             // Remove "am" or "pm" and trim spaces
-            timeString = timeString.replace(/\s*(am|pm)\s*/i, '').trim();
-            
-            // Add ":00" at the end to form a valid time format
-            return `${timeString}:00`;
+            const match = timeString.match(/(\d{1,2}):(\d{2})\s*(am|pm)/i);
+            if (!match) return 'N/A'; // Invalid format
+        
+            let [_, hours, minutes, modifier] = match;
+        
+            // Convert hours to 24-hour format
+            if (modifier.toLowerCase() === 'pm' && hours !== '12') {
+                hours = (parseInt(hours) + 12).toString(); // Convert PM to 24-hour
+            } else if (modifier.toLowerCase() === 'am' && hours === '12') {
+                hours = '00'; // Midnight case
+            }
+        
+            // Return in 24-hour format with seconds set to '00'
+            return `${hours}:${minutes}:00`;
         };
-
+        
     // Remove quotes around checkinTime and checkoutTime, if any
      let checkinTime = result.checkInTime.replace(/"/g, '').trim();  // Remove quotes and trim 
     let checkoutTime = result.checkOutTime.replace(/"/g, '').trim();  // Remove quotes and trim spaces
@@ -1214,5 +1224,272 @@ async function getAttenData() {
     });
 
     const result = await backendResponse.json();
-    console.log('response from getAttenData', result);
+    
+    let checkinstatusresponse;
+
+    if (!result.data || typeof result.data.Check_in_status === 'undefined') {
+        console.log('Check_in_status is undefined or result.data is missing');
+        checkinstatusresponse = 'Default value';  // Set a default value or handle it accordingly
+    } else if (typeof result.data.Check_in_status === 'string') {
+        // If Check_in_status is a plain string like "Absent", no need to parse it.
+        checkinstatusresponse = result.data.Check_in_status;
+    } else {
+        // If it's an object or needs to be parsed
+        try {
+            checkinstatusresponse = JSON.parse(result.data.Check_in_status);
+        } catch (error) {
+            console.log('Error parsing Check_in_status:', error);
+            checkinstatusresponse = result.data.Check_in_status;  // Fallback to raw value
+        }
+    }
+    
+    localStorage.setItem('Check_in_status', checkinstatusresponse);
+    
+    
+    
+}
+
+
+function showSpinner() {
+    // Get the button element
+    const checkOutBtn = document.getElementById('checkOutBtn');
+
+    // Clear the button's current content
+    checkOutBtn.textContent = "";
+
+    // Create a new div element
+    const spinnerDiv = document.createElement('div');
+
+    // Add classes to the newly created div (optional for additional styling)
+    spinnerDiv.classList.add("spinner", "flex-column");
+
+    // Set inline styles for the spinner
+    spinnerDiv.style.width = "25px"; // Spinner size
+    spinnerDiv.style.height = "25px"; // Spinner size
+    spinnerDiv.style.border = "3px solid #ff0606"; // Solid red border
+    spinnerDiv.style.borderTop = "3px solid #fff"; // White top border for spinning effect
+    spinnerDiv.style.borderRadius = "50%"; // Make it circular
+    spinnerDiv.style.animation = "spin 1s linear infinite"; // Add spinning animation
+
+    // Append the spinner div to the button
+    checkOutBtn.appendChild(spinnerDiv);
+}
+
+function hideSpinner() {
+    // Get the button element
+    const checkOutBtn = document.getElementById('checkOutBtn');
+
+    // Clear the button's content (removing the spinner div)
+    checkOutBtn.textContent = "";
+}
+
+
+
+
+
+// Example checkoutTime input
+async function checkoutFuntion() {
+    showSpinner();
+    const checkinstatusresponse = localStorage.getItem('Check_in_status');
+    console.log(`Data of getAttenData:`, checkinstatusresponse);
+
+    // Ensure the checkinstatusresponse is valid
+    if (!checkinstatusresponse) {
+        console.log('checkinstatusresponse is not defined or is null.');
+        return;
+    }
+    console.log('checkinstatusresponse:', checkinstatusresponse);
+
+    // Get office timing from localStorage
+    const officeTiming = JSON.parse(localStorage.getItem('officeTiming'));
+    if (!officeTiming || !officeTiming.checkoutTime) {
+        console.log('Checkout time not found in localStorage.');
+        return;
+    }
+    
+    const userCheckOut = officeTiming.checkoutTime;
+
+    // Get the current time in IST
+    const currentDate = new Date();
+    const currentTime = currentDate.toLocaleTimeString('en-US', {
+        hour12: false,
+        timeZone: 'Asia/Kolkata', // Indian Standard Time
+    });
+
+    console.log(`Checkout time: ${userCheckOut}, Current time: ${currentTime}`);
+
+    // Calculate the time difference between currentTime and userCheckOut
+    const latediffrence = calculateTimeDifference(currentTime, userCheckOut);
+
+    console.log(`Time difference: ${latediffrence}`);
+
+    // Check if the current time is earlier than the checkout time - 15 minutes
+    const fifteenMinutesBeforeCheckout = subtractTime(userCheckOut, "00:15:00");  // Subtract 15 minutes
+
+    console.log(`Fifteen minutes before checkout: ${fifteenMinutesBeforeCheckout}`);
+
+    let checkOutStatus = "On Time";  // This can be "On Time", "Halfday", "Late", or "Absent"
+let markstatus = "P";
+let markstatusReason = "N/A";
+
+if (checkinstatusresponse === "On Time") {
+    markstatus = "P";  // P for Present
+} else if (checkinstatusresponse === "Halfday") {
+    markstatus = "H";  // H for Halfday
+} else if (checkinstatusresponse === "Late") {
+    markstatus = "L";  // L for Late
+} else if (checkinstatusresponse === "Absent") {
+    markstatus = "A";  // A for Absent
+}
+
+console.log(markstatus);
+
+
+    // Compare the current time and fifteen minutes before checkout directly as strings
+    if (currentTime < fifteenMinutesBeforeCheckout) {
+        console.log(`User is early by ${currentTime} compared to ${fifteenMinutesBeforeCheckout}.`);
+    
+        // Check the value of checkinstatusresponse
+        if (checkinstatusresponse === "On Time") {
+            checkOutStatus = "Halfday";
+            markstatus = "H";
+            markstatusReason = `Due to the early exit by ${latediffrence}`;
+
+            console.log("status update", checkOutStatus);
+        } else if (checkinstatusresponse === "Halfday") {
+            checkOutStatus = "Absent";
+            markstatus = "A";
+            markstatusReason = `Due to the early exit by ${latediffrence}`;
+            console.log("status update", checkOutStatus);
+        } else if (checkinstatusresponse === "Absent") {
+            checkOutStatus = "Absent";
+            markstatus = "A";
+            console.log("status update", checkOutStatus);
+        }
+    
+    } else {
+        // If the user is not early enough, no change
+        console.log(`User is not early enough to trigger status change.`);
+    }
+
+    const activeTicket = localStorage.getItem('receiveData');
+    if (!activeTicket) {
+        console.error('No active ticket found in localStorage.');
+        
+        return;
+
+    }
+
+    const ticketData = JSON.parse(activeTicket);
+    const userId = ticketData.userId || 'N/A';
+    const token = ticketData.token || 'N/A';
+    const last3Digits = userId.slice(-3); // Get last 3 digits of userId
+    
+    // Get the current date and time components
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const year = String(currentDate.getFullYear()).slice(-2); // Last two digits of the year
+    const hours = String(currentDate.getHours()).padStart(2, '0');
+    const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+    const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+    
+    // Generate the atn_token
+    const atnToken = `${day}${month}${year}${last3Digits}`;
+  
+    // Log the active ticket object
+    const ticketObject = { 
+        action: "checkoutFuntion",
+        userId: userId,
+        token: token, 
+        atnToken: atnToken,
+        checkoutTime: currentTime,
+        checkinstatusresponse: checkinstatusresponse,
+        markstatus: markstatus,
+        decision: "By Attendance",
+        markstatusReason: markstatusReason
+    };
+    console.log('checkout reponse sending data:', ticketObject);
+
+    const data = new URLSearchParams(ticketObject);
+
+    // Fetch config
+    const response = await fetch('/TFC-Connect/App/config.json');
+    const config = await response.json();
+    const scriptUrl = config.scriptUrl;
+    
+    // Send the data in the request body to the backend
+    const backendResponse = await fetch(scriptUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: data
+    });
+    
+    // Handle the response if needed
+    const result = await backendResponse.json();
+    console.log('Backend from checkout:', result);
+    const checkOutBtn = document.getElementById('checkOutBtn');
+
+    // Clear the button's current content
+    checkOutBtn.textContent = "";
+
+    // Create the <i> element for the icon
+    const iconElement = document.createElement('i');
+    iconElement.className = "fi fi-rs-arrow-left-from-arc"; // Add classes for the icon
+
+    // Add the icon and "Check Out" text back to the button
+    checkOutBtn.appendChild(iconElement);
+    checkOutBtn.appendChild(document.createTextNode(" Check Out"));
+
+
+}
+
+// Function to calculate time difference in HH:MM format
+function calculateTimeDifference(currentTime, checkOutTime) {
+    const [currentHours, currentMinutes, currentSeconds] = currentTime.split(':').map(Number);
+    const [checkoutHours, checkoutMinutes, checkoutSeconds] = checkOutTime.split(':').map(Number);
+
+    // Convert both times to total seconds for easier comparison
+    const currentTimeInSeconds = (currentHours * 3600) + (currentMinutes * 60) + currentSeconds;
+    const checkOutTimeInSeconds = (checkoutHours * 3600) + (checkoutMinutes * 60) + checkoutSeconds;
+
+    let diffInSeconds = checkOutTimeInSeconds - currentTimeInSeconds;
+
+    // Handle negative difference (if currentTime is after checkOutTime)
+    if (diffInSeconds < 0) {
+        diffInSeconds += 24 * 3600; // Add 24 hours worth of seconds (86400 seconds)
+    }
+
+    const hours = Math.floor(diffInSeconds / 3600);
+    const minutes = Math.floor((diffInSeconds % 3600) / 60);
+    const seconds = diffInSeconds % 60;
+
+    // Return the result as HH:MM:SS
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+
+// Function to subtract time in hh:mm:ss format
+function subtractTime(time, subtract) {
+    const [h1, m1, s1] = time.split(":").map(Number);
+    const [h2, m2, s2] = subtract.split(":").map(Number);
+
+    let seconds = s1 - s2;
+    let minutes = m1 - m2;
+    let hours = h1 - h2;
+
+    if (seconds < 0) {
+        seconds += 60;
+        minutes--;
+    }
+    if (minutes < 0) {
+        minutes += 60;
+        hours--;
+    }
+    if (hours < 0) {
+        hours += 24;  // In case the time goes to the previous day
+    }
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
