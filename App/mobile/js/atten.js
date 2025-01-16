@@ -23,10 +23,6 @@ function stopTimeUpdate() {
   document.getElementById("currentTime").textContent = lastTime; // Display the frozen time
 }
 
-// Start the clock update every second
-timeInterval = setInterval(updateTime, 1000);
-
-
 function updateDateAndWeek() {
   const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednessday", "Thursday", "Friday", "Saturday"];
   const monthsOfYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -204,7 +200,12 @@ function generateDates() {
        locationElement.textContent = "Geolocation is not supported by your browser.";
    }
  }
- 
+
+ function restartTime() {
+    timeInterval = setInterval(updateTime, 1000); // Stop the time update
+   
+  }
+
 
 
 // Modify startCamera function to update location
@@ -214,9 +215,17 @@ function startCamera() {
       alert("Your browser does not support camera access. Please try using a modern browser like Chrome, Firefox, or Safari.");
       return;
   }
-
+  document.getElementById('snapshotImage').style.display = 'none';
+  document.getElementById('videoElement').style.display = 'flex';
+  document.getElementById('camCancel').style.display = 'block';
+  document.getElementById('bcToDash').style.display = 'none';
+  document.getElementById('SnapWhts').style.display = 'none';
+  document.querySelector('.loader').style.display = 'flex';
+  document.querySelector('.loader').style.width = '48%';
+  document.getElementById('location').textContent = "Fetching...";
   // Update location
   updateLocation();
+  restartTime();
 
   // Try to access the camera
   navigator.mediaDevices.getUserMedia({
@@ -225,7 +234,9 @@ function startCamera() {
           height: 1080 // Adjust height accordingly
       }
   })
+
   .then((stream) => {
+     
       console.log("Camera stream started successfully.");
       videoElement = document.getElementById('videoElement');
       videoElement.srcObject = stream;
@@ -313,7 +324,7 @@ document.getElementById('cam-stp').addEventListener('click', () => {
         // Update UI buttons
         document.getElementById('cam-stp').style.display = 'none';
         document.querySelector('.loader').style.display = 'flex';
-        document.querySelector('.loader').style.marginLeft = '45%';
+        document.querySelector('.loader').style.width = '100%';
         
         document.getElementById('camCancel').style.display = 'none';
 
@@ -357,9 +368,6 @@ function checkInUpdate(formattedDate, checkinTime) {
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
-
-    
-   
     
     const userId = document.querySelector('.userId')?.textContent || "Unknown UserId";
     const last3Digits = userId.slice(-3); // Get last 3 digits of userId
@@ -377,6 +385,101 @@ function checkInUpdate(formattedDate, checkinTime) {
      // Generate the atn_token
      const atnToken = `${day}${month}${year}${last3Digits}`;
 
+     const officeTiming = JSON.parse(localStorage.getItem('officeTiming'));
+
+      // Correctly fetch WhatsApp data once
+      const checkInElements = document.querySelectorAll(".checkIn");
+      checkInElements.forEach(element => {
+          element.textContent = checkinTime;
+      });
+
+      const officeCheckIn = officeTiming.checkinTime;
+     
+
+
+     const convertTimeFormat = (timeString) => {
+        if (!timeString || typeof timeString !== 'string') return 'N/A';
+        
+        // Remove "am" or "pm" and trim spaces
+        const match = timeString.match(/(\d{1,2}):(\d{2})\s*(am|pm)/i);
+        
+        if (!match) return 'N/A';
+        
+        let [_, hour, minute, period] = match;
+        
+        // Convert to 24-hour format
+        hour = parseInt(hour, 10);
+        if (period.toLowerCase() === 'am' && hour === 12) {
+            hour = 0;  // Midnight case (12 AM is 00:00)
+        } else if (period.toLowerCase() === 'pm' && hour !== 12) {
+            hour += 12;  // Afternoon case (PM, except 12 PM which remains unchanged)
+        }
+        
+        // Format hour and minute to ensure 2-digit representation and return the result
+        return `${hour.toString().padStart(2, '0')}:${minute}:00`;
+    };
+    
+    const userCheckIn = convertTimeFormat(checkinTime);
+
+    function addTimeToCheckIn(officeCheckIn, timeToAdd) {
+        const [checkInHours, checkInMinutes, checkInSeconds] = officeCheckIn.split(":").map(Number);
+        const [addHours, addMinutes, addSeconds] = timeToAdd.split(":").map(Number);
+
+        const totalSeconds = 
+            checkInSeconds + addSeconds + 
+            (checkInMinutes + addMinutes) * 60 + 
+            (checkInHours + addHours) * 3600;
+
+        const hours = Math.floor(totalSeconds / 3600) % 24;
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        // Format time as "hh:mm:ss"
+        return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    // Create deadlines
+    const truserCheckIn = addTimeToCheckIn(userCheckIn, "00:00:00");
+    const lateDeadline = addTimeToCheckIn(officeCheckIn, "00:16:00");
+    const halfdayDeadline = addTimeToCheckIn(officeCheckIn, "00:46:00");
+    const absentDeadline = addTimeToCheckIn(officeCheckIn, "06:16:00");
+
+    console.log('office Check in Timing', officeCheckIn);
+    console.log('office Check out Timing', officeTiming.checkoutTime);
+    console.log('User Reached at', userCheckIn);
+    
+    // Output the deadlines
+    console.log("Trail time:", truserCheckIn);
+    console.log("Late Deadline:", lateDeadline);
+    console.log("Halfday Deadline:", halfdayDeadline);
+    console.log("Absent Deadline:", absentDeadline);
+
+    // Call updateCheckInStatus with the proper arguments
+    const checkinstatus = updateCheckInStatus(truserCheckIn, lateDeadline, halfdayDeadline, absentDeadline);
+   
+
+   
+    let statusMark; // StatusMark ko initialize karte hain
+
+    // Check checkinstatus aur uske basis par statusMark ko update karte hain
+    if (checkinstatus === "On time") {
+        statusMark = "P"; // "P" ka matlab Present hai
+    } else if (checkinstatus === "Late") {
+        statusMark = "L"; // "L" ka matlab Late hai
+    } else if (checkinstatus === "Absent") {
+        statusMark = "A"; // "A" ka matlab Absent hai
+    } else if (checkinstatus === "Halfday") {
+        statusMark = "H"; // "H" ka matlab Halfday hai
+    }
+
+// Ab `statusMark` ko updated value mil gayi hai
+console.log("Check-in Status:", checkinstatus);
+console.log("Status Mark:", statusMark);
+
+
+
+
+
     // Include action field in the checkinData
     return {
         date: formattedDate,
@@ -386,9 +489,65 @@ function checkInUpdate(formattedDate, checkinTime) {
         userName: userName,
         location: location,
         checkinTime: checkinTime,
+        checkinstatus : checkinstatus,
+        statusMark : statusMark,
         action: "uploadCheckinData" // Action to be included in the data
     };
 }
+
+
+// Function to compare times
+function isTimeGreaterThanOrEqual(time1, time2) {
+    const [h1, m1, s1] = time1.split(":").map(Number);
+    const [h2, m2, s2] = time2.split(":").map(Number);
+
+    if (h1 > h2 || (h1 === h2 && m1 > m2) || (h1 === h2 && m1 === m2 && s1 >= s2)) {
+        return true;
+    }
+    return false;
+}
+
+// Function to compare times
+function isTimeLessThan(time1, time2) {
+    const [h1, m1, s1] = time1.split(":").map(Number);
+    const [h2, m2, s2] = time2.split(":").map(Number);
+
+    if (h1 < h2 || (h1 === h2 && m1 < m2) || (h1 === h2 && m1 === m2 && s1 < s2)) {
+        return true;
+    }
+    return false;
+}
+
+const isTimeGreaterThan = (time1, time2) => {
+    // Convert both times to Date objects for comparison
+    const [h1, m1, s1] = time1.split(':').map(Number);
+    const [h2, m2, s2] = time2.split(':').map(Number);
+
+    const t1 = new Date(0, 0, 0, h1, m1, s1);
+    const t2 = new Date(0, 0, 0, h2, m2, s2);
+
+    return t1 > t2;
+};
+
+
+// Function to update check-in status
+function updateCheckInStatus(truserCheckIn, lateDeadline, halfdayDeadline, absentDeadline) {
+    
+    // If userCheckIn is less than lateDeadline, return "On-time"
+    if (isTimeLessThan(truserCheckIn, lateDeadline) && isTimeGreaterThan(truserCheckIn, "07:00:00")) {
+        return "On time";
+    } else if (isTimeGreaterThanOrEqual(truserCheckIn, absentDeadline)) {
+        return "Absent";
+    } else if (isTimeGreaterThanOrEqual(truserCheckIn, halfdayDeadline)) {
+        return "Halfday";
+    } else if (isTimeGreaterThanOrEqual(truserCheckIn, lateDeadline)) {
+        return "Late";
+    }
+    
+    // Default to "Absent" if no condition matches
+    return "Absent"; // Default condition
+}
+
 
 // Function to upload checkinData and snapshot
 function uploadCheckinData(checkinData, snapshotData) {
@@ -457,10 +616,10 @@ function uploadCheckinData(checkinData, snapshotData) {
       }
       camCont.style.display = 'none';
       slider.style.left = '0px'; // Snap back to the left
-          sliderText.classList.remove('wait-animate'); // Remove animation
-          sliderText.textContent = 'Check In'; // Reset the text
-          checkinCont.style.display = "flex";
-          actionCont.style.display = "none";
+      sliderText.classList.remove('wait-animate'); // Remove animation
+      sliderText.textContent = 'Check In'; // Reset the text
+      checkinCont.style.display = "flex";
+      actionCont.style.display = "none";
          
   });
   
@@ -588,6 +747,7 @@ function uploadCheckinData(checkinData, snapshotData) {
                             document.querySelector(".ent-ext-tim").style.display = "flex";
                             document.querySelector("#cam-stp").style.display = "block";
                             document.querySelector(".loader").style.display = "none";
+                            
                         
                             // Update entry and exit times in the DOM
                             let entryTime = attendanceData.entryTime;  // Assuming entry time is sent in response
@@ -889,6 +1049,7 @@ function createCalendar(year, month) {
 createCalendar(new Date().getFullYear(), new Date().getMonth());
 
 
+
 async function getCheckinInfo() {
     // Retrieve the active ticket from localStorage
     const activeTicket = localStorage.getItem('receiveData');
@@ -927,38 +1088,69 @@ async function getCheckinInfo() {
             body: data
         });
 
-       // Parse the backend response
-const result = await backendResponse.json();
-console.log('Backend Response for checkin:', result);
+        // Parse the backend response
+        const result = await backendResponse.json();
+        console.log('Backend Response for checkin:', result);
 
-// First, hide the checkDotCont
-document.getElementById('checkDotCont').style.display = 'none';
+        const convertTimeFormat = (timeString) => {
+            if (!timeString || typeof timeString !== 'string') return 'N/A';
+            
+            // Remove "am" or "pm" and trim spaces
+            timeString = timeString.replace(/\s*(am|pm)\s*/i, '').trim();
+            
+            // Add ":00" at the end to form a valid time format
+            return `${timeString}:00`;
+        };
 
-// Check the result message and perform actions accordingly
-if (result.message === 'hideAll') {
-    // Show the check-in button
-    document.getElementById('atn-switch').style.display = 'none';
-} else if (result.message === 'showCheckOut') {
-    // Show the check-out button
-    document.getElementById('atn-switch').style.display = 'flex';
-    document.getElementById('actBtn').style.display = 'flex';
-    document.getElementById('chknBtn').style.display = 'none';
-    document.getElementById('resetCont').style.display = 'none';
+    // Remove quotes around checkinTime and checkoutTime, if any
+     let checkinTime = result.checkInTime.replace(/"/g, '').trim();  // Remove quotes and trim 
+    let checkoutTime = result.checkOutTime.replace(/"/g, '').trim();  // Remove quotes and trim spaces
 
-} else if (result.message === 'showCheckIn') {
-    // Show the check-out button
-    document.getElementById('atn-switch').style.display = 'flex';
-    document.getElementById('actBtn').style.display = 'none';
-    document.getElementById('chknBtn').style.display = 'flex';
-    document.getElementById('resetCont').style.display = 'none';
-
-} else if (result.message === 'moveForward') {
-    // Show the reset container
-    document.getElementById('atn-switch').style.display = 'flex';
-    document.getElementById('resetCont').style.display = 'flex';
-    document.getElementById('actBtn').style.display = 'none';
-    document.getElementById('chknBtn').style.display = 'none';
+// Save userId, checkinTime, and checkoutTime in localStorage
+if (result.status === 'success') {
+    const officeTiming = {
+        userId: userId,
+        checkinTime: convertTimeFormat(checkinTime), // Use updated checkinTime
+        checkoutTime: convertTimeFormat(checkoutTime) // Use updated checkoutTime
+    };
+    localStorage.setItem('officeTiming', JSON.stringify(officeTiming));
+    console.log('Office Timing saved to localStorage:', officeTiming);
 }
+
+
+        // First, hide the checkDotCont
+        document.getElementById('checkDotCont').style.display = 'none';
+
+        // Check the result message and perform actions accordingly
+        if (result.message === 'hideAll') {
+            document.getElementById('atn-switch').style.display = 'none';
+        } else if (result.message === 'showCheckOut') {
+            document.getElementById('atn-switch').style.display = 'flex';
+            document.getElementById('actBtn').style.display = 'flex';
+            document.getElementById('chknBtn').style.display = 'none';
+            document.getElementById('resetCont').style.display = 'none';
+        } else if (result.message === 'showCheckIn') {
+            document.getElementById('atn-switch').style.display = 'flex';
+            document.getElementById('actBtn').style.display = 'none';
+            document.getElementById('chknBtn').style.display = 'flex';
+            document.getElementById('resetCont').style.display = 'none';
+            const sliderText = document.getElementById('sliderText');
+            const slider = document.getElementById('slider');
+            slider.style.left = '0px'; // Snap back to the left
+            sliderText.classList.remove('wait-animate'); // Remove animation
+            sliderText.textContent = 'Check In';
+            // Reset the text
+            // document.getElementById('snapshotImage').style.display = 'none';
+            // document.getElementById('videoElement').style.display = 'flex';
+
+            
+
+        } else if (result.message === 'moveForward') {
+            document.getElementById('atn-switch').style.display = 'flex';
+            document.getElementById('resetCont').style.display = 'flex';
+            document.getElementById('actBtn').style.display = 'none';
+            document.getElementById('chknBtn').style.display = 'none';
+        }
 
         return result;
     } catch (error) {
@@ -967,3 +1159,60 @@ if (result.message === 'hideAll') {
 }
 
 setInterval(getCheckinInfo, 1000);
+setInterval(getAttenData, 1000);
+
+
+
+async function getAttenData() {
+    // Retrieve the active ticket from localStorage
+    const activeTicket = localStorage.getItem('receiveData');
+    if (!activeTicket) {
+        console.error('No active ticket found in localStorage.');
+        return;
+    }
+
+    const ticketData = JSON.parse(activeTicket);
+    const userId = ticketData.userId || 'N/A';
+    const token = ticketData.token || 'N/A';
+    const last3Digits = userId.slice(-3); // Get last 3 digits of userId
+    
+
+     // Get the current date and time components
+     const currentDate = new Date();
+     const day = String(currentDate.getDate()).padStart(2, '0');
+     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+     const year = String(currentDate.getFullYear()).slice(-2); // Last two digits of the year
+     const hours = String(currentDate.getHours()).padStart(2, '0');
+     const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+     const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+     
+     // Generate the atn_token
+     const atnToken = `${day}${month}${year}${last3Digits}`;
+   
+      // Log the active ticket object
+      const ticketObject = { UserId: userId, Token: token, atnToken: atnToken};
+      console.log('Active Ticket:', ticketObject);
+
+      // Fetch the backend URL from config.json
+      const response = await fetch('/TFC-Connect/App/config.json');
+      const config = await response.json();
+      const scriptUrl = config.scriptUrl;
+
+      // Prepare the data to send
+      const data = new URLSearchParams();
+      data.append('action', 'getAttenData');
+      data.append('token', token);
+      data.append('userId', userId);
+      data.append('atnToken', atnToken);
+
+      const backendResponse = await fetch(scriptUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: data
+    });
+
+    const result = await backendResponse.json();
+    console.log('response from getAttenData', result);
+}
