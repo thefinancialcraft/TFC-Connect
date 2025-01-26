@@ -824,12 +824,23 @@ main{
 
     p{
         font-size: 20px;
+        margin-bottom: 20px;
     }
     .qr-cont{
+
         width: 90%;
+        justify-content: space-evenly;
+
+        .qr-block{
+            background-color: #25333a15;
+            width: 240px ;
+            height: 240px;
+            border-radius: 30px;
+
+        }
 
         .qr-guide{
-            width: 48%;
+            width: 55%;
 
             p{
                 font-size: 15px;
@@ -846,7 +857,7 @@ main{
 
                 li{
                     margin-bottom: 12px;
-                    font-size: 16px;
+                    font-size: 18px;
                 }
             }
         }
