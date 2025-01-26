@@ -348,12 +348,27 @@ Welcome Back, <span class="firstName"></span>
 
                 <div class="title flex-row">
                  <h3 class="h-styling" >Attendance</h3>
-                  <div class="date-cont flex" >
-                    <div class="date flex">25</div>
-                    <div class="Month flex">AUG</div>
-        
+                  <div class="flex date-picker-container">
+                    <div class="date-display-container">
+                      <span id="checkInOutDate" class="selected-date-text">Select Date</span>
+                    </div>
+                    <div class="calendar-container">
+                      <div class="calendar-header-container">
+                        <button class="calendar-header-button prev-month">&#9664;</button>
+                        <span class="current-month-year"></span>
+                        <button class="calendar-header-button next-month">&#9654;</button>
+                      </div>
+                      <div class="calendar-grid-container"></div>
+                    </div>
+                    <span class="resetDate flex" onclick="resetToCurrentDate()"  id="resetDate" style="display: none;" ><i class="fi flex fi-rr-time-past"></i></span>
                   </div>
                 </div>
+              
+                <div id="noRecd" style="display: none;" class="box-styling no_recd_img_bx">
+                    <img src="/TFC-Connect/App/assets/5928293_2953962.jpg" alt="">
+                </div>
+
+                <div id="crd-bx-cnt" class="crd-bx-cnt">
         
                 <div class="card-box flex-row">
                     <div class="card box-styling">
@@ -363,8 +378,8 @@ Welcome Back, <span class="firstName"></span>
                             </div>
                             <p>Check In</p>
                         </div>
-                        <h2 class="checkIn">--:--</h2>
-                        <p>On Time</p>
+                        <h2 id="checkInTime" class="checkIn">--:--</h2>
+                        <p  id="checkInStatus" class="checkInStatus">------</p>
                        
                     </div>
                     <div class="card box-styling">
@@ -374,8 +389,8 @@ Welcome Back, <span class="firstName"></span>
                             </div>
                             <p>Check Out</p>
                         </div>
-                        <h2>10:10 pm</h2>
-                        <p>Go Home</p>
+                        <h2 id="checkOutTime"  class="checkOut">--:--</h2>
+                        <p id="checkOutStatus" class="checkOutStatus">------</p>
                        
                     </div>
             
@@ -388,8 +403,8 @@ Welcome Back, <span class="firstName"></span>
                             </div>
                             <p>Break Time</p>
                         </div>
-                        <h2>00:30 min</h2>
-                        <p>03 Breaks</p>
+                        <h2 class="breakTiming">--:--</h2>
+                        <p class="nBreak">------</p>
                        
                     </div>
                     <div class="card bx-anm box-styling">
@@ -399,12 +414,14 @@ Welcome Back, <span class="firstName"></span>
                             </div>
                             <p>Status</p>
                         </div>
-                        <h2>Halfday</h2>
-                        <p>By Attendance</p>
+                        <h2 id="finalStatus" class="finalStatus">-----</h2>
+                        <p id="finalDecision" class="finalDecision">------</p>
                        
                     </div>
             
                 </div>
+
+            </div>
         
         
             </div>

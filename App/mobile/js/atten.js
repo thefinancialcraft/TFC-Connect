@@ -1168,8 +1168,15 @@ if (result.status === 'success') {
     }
 }
 
+let noRecd ;
+noRecd = "hide";
+localStorage.setItem('noRecd', noRecd);
+
 setInterval(getCheckinInfo, 1000);
-setInterval(getAttenData, 1000);
+setInterval(getAttenData, 5000);
+setInterval(showRecdfun, 1000);
+setInterval(hideRecdfun, 1000);
+
 
 
 
@@ -1225,6 +1232,17 @@ async function getAttenData() {
 
     const result = await backendResponse.json();
     
+    if (result.status === "error"){
+        resetAttenStatus();
+        let noRecd ;
+        noRecd = "show";
+        localStorage.setItem('noRecd', noRecd);
+     
+    }  
+
+    console.log('data get from getAttenData:', result);
+ 
+    
     let checkinstatusresponse;
 
     if (!result.data || typeof result.data.Check_in_status === 'undefined') {
@@ -1245,7 +1263,7 @@ async function getAttenData() {
     
     localStorage.setItem('Check_in_status', checkinstatusresponse);
     
-    
+    checkInOutDate(result.data);
     
 }
 
@@ -1440,7 +1458,7 @@ console.log(markstatus);
 
     // Add the icon and "Check Out" text back to the button
     checkOutBtn.appendChild(iconElement);
-    checkOutBtn.appendChild(document.createTextNode(" Check Out"));
+    checkOutBtn.appendChild(document.createTextNode("Check Out"));
 
 
 }
@@ -1492,4 +1510,399 @@ function subtractTime(time, subtract) {
     }
 
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+const dateDisplayContainer = document.querySelector(".date-display-container");
+const calendarContainer = document.querySelector(".calendar-container");
+const currentMonthYear = document.querySelector(".current-month-year");
+const calendarGridContainer = document.querySelector(".calendar-grid-container");
+const selectedDateText = document.querySelector(".selected-date-text");
+
+let date = new Date();
+let selectedDate = new Date(); // Default selected date to current date
+
+// Set selected date in display
+selectedDateText.textContent = `${selectedDate.getDate().toString().padStart(2, "0")} ${
+  selectedDate.toLocaleString("default", { month: "short" }).toUpperCase()
+} ${selectedDate.getFullYear()}`;
+
+// Toggle calendar visibility
+dateDisplayContainer.addEventListener("click", () => {
+  calendarContainer.style.display = calendarContainer.style.display === "block" ? "none" : "block";
+});
+
+// Render the calendar
+function renderCalendar() {
+  calendarGridContainer.innerHTML = ""; // Clear previous days
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  
+  // Set current month and year
+  currentMonthYear.textContent = date.toLocaleString("default", {
+    month: "long",
+    year: "numeric",
+  });
+
+  // Get first and last day of the month
+  const firstDay = new Date(year, month, 1).getDay();
+  const lastDate = new Date(year, month + 1, 0).getDate();
+
+  // Add empty slots for previous month
+  for (let i = 0; i < firstDay; i++) {
+    const emptySlot = document.createElement("div");
+    calendarGridContainer.appendChild(emptySlot);
+  }
+
+  // Add days of the month
+  for (let i = 1; i <= lastDate; i++) {
+    const day = document.createElement("div");
+    day.className = "calendar-day";
+    day.textContent = i;
+
+    // Highlight current date by default
+    if (
+      i === selectedDate.getDate() &&
+      year === selectedDate.getFullYear() &&
+      month === selectedDate.getMonth()
+    ) {
+      day.classList.add("calendar-day-selected");
+    }
+
+    // Add click event for selecting a date
+    day.addEventListener("click", () => {
+      selectedDateText.textContent = `${i.toString().padStart(2, "0")} ${
+        date.toLocaleString("default", { month: "short" }).toUpperCase()
+      } ${year}`;
+      updateAttenStatus();
+      const resetDate = document.querySelector(".resetDate");
+      resetDate.style.display = "flex";
+      
+      selectedDate = new Date(year, month, i); // Update selected date
+      calendarContainer.style.display = "none"; // Close calendar after selection
+
+      // Remove selected class from other days and add to the clicked day
+      document.querySelectorAll(".calendar-day").forEach(d => d.classList.remove("calendar-day-selected"));
+      day.classList.add("calendar-day-selected");
+    });
+
+    calendarGridContainer.appendChild(day);
+  }
+}
+
+// Previous and Next Month navigation
+document.querySelector(".prev-month").addEventListener("click", () => {
+  date.setMonth(date.getMonth() - 1);
+  renderCalendar();
+});
+
+document.querySelector(".next-month").addEventListener("click", () => {
+  date.setMonth(date.getMonth() + 1);
+  renderCalendar();
+});
+
+// Function to reset the date picker to the current date
+function resetToCurrentDate() {
+    updateAttenStatus();
+    const resetDate = document.querySelector(".resetDate");
+      resetDate.style.display = "none";
+
+  date = new Date(); // Reset the date to the current date
+  selectedDate = new Date(); // Reset selected date to the current date
+  selectedDateText.textContent = `${selectedDate.getDate().toString().padStart(2, "0")} ${
+    selectedDate.toLocaleString("default", { month: "short" }).toUpperCase()
+  } ${selectedDate.getFullYear()}`;
+  renderCalendar(); // Re-render the calendar
+  let noRecd ;
+  noRecd = "hide";
+  localStorage.setItem('noRecd', noRecd);
+
+}
+
+// Initial Render
+renderCalendar();
+
+// Close calendar if clicked outside
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".date-picker-container")) {
+    calendarContainer.style.display = "none";
+  }
+});
+
+
+function checkInOutDate(data) {
+    console.log("Data received in checkInOutDate: ", data); // Log the data to check what's being passed
+
+    const checkInOutDate = document.getElementById("checkInOutDate");
+
+    // Check if the element exists
+    if (!checkInOutDate) {
+        console.error("Element with ID 'checkInOutDate' not found in the DOM!");
+        return;
+    }
+
+    const dateValue = checkInOutDate.innerText.trim(); // Get the text content of the span
+    if (!dateValue || dateValue === "Select Date") {
+        console.log("No valid date selected.");
+        return;
+    }
+
+    // Try parsing date from '17 JAN 2025' format
+    const parsedDate = parseDate(dateValue);
+
+    if (parsedDate) {
+        const formattedDate = formatDateToDDMMYY(parsedDate);
+        console.log(`Formatted date (dd/mm/yy): ${formattedDate}`);
+
+        // Check if the formatted date matches today's date
+        const currentDate = getCurrentDateInDDMMYY();
+        if (formattedDate === currentDate) {
+            console.log("Formatted date matches the current date. Running function A...");
+            updateAtnCells(data);
+        } else {
+            console.log("Formatted date does not match the current date. Skipping function A.", formattedDate);
+            updateAtnCellsByDate(formattedDate);
+            
+        }
+    } else {
+        console.log("Invalid date format. Please use 'DD MMM YYYY', e.g., 17 JAN 2025.");
+    }
+}
+
+
+function parseDate(input) {
+    // Regex to match DD MMM YYYY format
+    const regex = /^(\d{1,2})\s([A-Za-z]{3})\s(\d{4})$/;
+    const match = input.match(regex);
+
+    if (!match) return null;
+
+    const [_, day, month, year] = match;
+    const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    const monthIndex = months.indexOf(month.toUpperCase());
+
+    if (monthIndex === -1) return null;
+
+    return new Date(year, monthIndex, day);
+}
+
+function formatDateToDDMMYY(date) {
+    const day = String(date.getDate()).padStart(2, "0"); // Get day and add leading zero if needed
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Get month (0-based index) and add leading zero
+    const year = String(date.getFullYear()).slice(-2); // Get last two digits of the year
+    return `${day}/${month}/${year}`;
+}
+
+function getCurrentDateInDDMMYY() {
+    const today = new Date();
+    return formatDateToDDMMYY(today); // Format today's date in dd/mm/yy
+}
+
+function updateAtnCells(data) {
+    
+    if (data !== undefined) {
+        console.log("Data received in updateAtnCells: ", data); // Log the data if it's not undefined
+
+        resetAttenStatus();
+     
+        function formatTime(timeString) {
+            const date = new Date(timeString);
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            const ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            return hours + ':' + minutes + ' ' + ampm;
+        }
+        
+
+        if (data.Check_in_time && data.Check_in_time.trim() !== "") {
+           
+            document.getElementById("checkInTime").textContent = formatTime(data.Check_in_time);
+        }
+        
+        if (data.Check_out_time && data.Check_out_time.trim() !== "") {
+            
+            document.getElementById("checkOutTime").textContent = formatTime(data.Check_out_time);
+        }
+        
+          
+        if (data.Check_in_status && data.Check_in_status.trim() !== "") {
+           
+            document.getElementById("checkInStatus").textContent = data.Check_in_status;
+        }
+
+        if (data.Check_out_status && data.Check_out_status.trim() !== "") {
+            
+            document.getElementById("checkOutStatus").textContent = data.Check_out_status;
+        }
+
+
+        if (data.Status && data.Status.trim() !== "") {
+           
+            document.getElementById("finalStatus").textContent = data.Status;
+        }
+        
+        if (data.Desicion && data.Desicion.trim() !== "") {
+            
+            document.getElementById("finalDecision").textContent = data.Desicion;
+        }
+
+        
+        
+    } else {
+        console.log("Data received in: undifined", );
+    }
+}
+
+setInterval (updateAtnCellsByDate(formattedDate), 1000);
+
+async function updateAtnCellsByDate(formattedDate) {
+    if (!formattedDate) {
+        console.error("formattedDate is not defined or invalid");
+        return; // Return early if formattedDate is not available
+    }
+
+    console.log("Data received in updateAtnCellsByDate: ", formattedDate);
+
+    try {
+        // Parse the JSON string from localStorage
+        const activeTicket = localStorage.getItem('receiveData'); // Assuming activeTicket is stored in localStorage
+        if (!activeTicket) {
+            console.error("No active ticket data found in localStorage.");
+            return; // Return early if there is no active ticket data
+        }
+        const ticketData = JSON.parse(activeTicket);
+        const userId = ticketData.userId || 'N/A';
+        const token = ticketData.token || 'N/A';
+
+        // Log the active ticket object
+        const ticketObject = { UserId: userId, Token: token };
+        console.log('Active Ticket:', ticketObject);
+
+        // Extract day, month, and year from formattedDate (assuming it's in the format "dd/mm/yy")
+        const dateParts = formattedDate.split('/');
+        const day = dateParts[0]; // Extract day (e.g., "25")
+        const month = dateParts[1]; // Extract month (e.g., "08")
+        const year = dateParts[2]; // Format year (e.g., "25" -> "2025")
+
+        // Get the last 3 digits of the userId
+        const last3Digits = userId.slice(-3); // Get last 3 digits of userId
+
+        // Create the atnToken using the day, month, year, and last 3 digits of userId
+        const atnToken = `${day}${month}${year}${last3Digits}`;
+        console.log('Generated ATN Token:', atnToken);
+
+        // Fetch the backend URL from config.json
+        const response = await fetch('/TFC-Connect/App/config.json');
+        const config = await response.json();
+        const scriptUrl = config.scriptUrl;
+
+        // Prepare the data to send
+        const data = new URLSearchParams();
+        data.append('action', 'getAttenData');
+        data.append('token', token);
+        data.append('userId', userId);
+        data.append('atnToken', atnToken);  // Send the atnToken
+
+        // Send the data to the backend via POST
+        const backendResponse = await fetch(scriptUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: data
+        });
+
+      
+        // Log the backend response before further processing
+        console.log("Backend Response:", backendResponse);
+
+        // Check if the response is successful
+        if (backendResponse.ok) {
+            const backendData = await backendResponse.json();
+            console.log("Backend response data:", backendData);
+            // Handle the backend data as needed
+            if (backendData && backendData.data) {
+
+                updateAtnCells(backendData.data); 
+               
+                let noRecd ;
+                noRecd = "hide";
+                localStorage.setItem('noRecd', noRecd);
+               
+                
+
+
+            } else {
+
+                console.log("No data found in backend response.");
+                resetAttenStatus();
+               
+                let noRecd ;
+                noRecd = "show";
+                localStorage.setItem('noRecd', noRecd);
+             
+                
+                
+              
+
+            }
+        } else {
+            // If backend request is not OK
+            console.error("Backend request failed with status:", backendResponse.status);
+            resetAttenStatus(); // Call a function to reset the status
+        }
+    } catch (error) {
+        console.error("Error in updateAtnCellsByDate:", error);
+        resetAttenStatus(); // Call a function to reset the status
+    }
+}
+
+
+
+function showRecdfun(){
+    const noRecdRes = localStorage.getItem('noRecd');
+    console.log("noRecdRes", noRecdRes);
+    
+    if(noRecdRes === "show"){
+        document.getElementById('crd-bx-cnt').style.display = "none";
+        document.getElementById('noRecd').style.display = "flex";
+    }
+
+
+}
+
+
+function hideRecdfun(){
+    const noRecdRes = localStorage.getItem('noRecd');
+    console.log("noRecdRes", noRecdRes);
+    
+    if(noRecdRes === "hide"){
+        document.getElementById('crd-bx-cnt').style.display = "block";
+        document.getElementById('noRecd').style.display = "none";
+    }
+
+
+}
+
+
+
+// Reset function to clear all status fields
+function resetAttenStatus() {
+    document.getElementById("checkInTime").textContent = "--:--";
+    document.getElementById("checkOutTime").textContent = "--:--";
+    document.getElementById("checkInStatus").textContent = "------";
+    document.getElementById("checkOutStatus").textContent = "------";
+    document.getElementById("finalStatus").textContent = "------";
+    document.getElementById("finalDecision").textContent = "------";
+}
+
+function updateAttenStatus(){
+    document.getElementById("checkInTime").textContent = "loading...";
+      document.getElementById("checkOutTime").textContent = "loading...";
+      document.getElementById("checkInStatus").textContent = "loading...";
+      document.getElementById("checkOutStatus").textContent = "loading...";
+      document.getElementById("finalStatus").textContent = "loading...";
+      document.getElementById("finalDecision").textContent = "loading...";
 }

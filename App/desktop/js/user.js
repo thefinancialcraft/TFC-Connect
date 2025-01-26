@@ -525,3 +525,5 @@ function formatRelativeTime(date) {
 
     return timeAgo;
 }
+
+
