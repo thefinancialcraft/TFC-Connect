@@ -13,20 +13,30 @@ document.querySelectorAll('.notHome').forEach(function (element) {
   });
   
 
+
   function generateQRCode() {
-    const extSystemId = document.getElementById('extSystemId').value;
-    const extAsignUser = document.getElementById('extAsignUser').value;
+    const extSystemIdElement = document.getElementById('extSystemId');
+    const extAsignUserElement = document.getElementById('extAsignUser');
+
+    // Check if the elements exist before accessing their text content
+    if (!extSystemIdElement || !extAsignUserElement) {
+        console.error('Required elements not found.');
+        return;
+    }
+
+    const extSystemId = extSystemIdElement.textContent.trim(); // Use textContent for <p> tags
+    const extAsignUser = extAsignUserElement.textContent.trim(); // Use textContent for <p> tags
+
+    // Check if both fields are filled
+    if (extSystemId === '' || extAsignUser === '') {
+        return; // Exit function if fields are not filled
+    }
 
     const currentDate = new Date();
     const day = currentDate.getDate().toString().padStart(2, '0'); // Ensure two digits
     const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Ensure two digits
 
     const dateFormatted = day + month; // DDMM format
-
-    if (extSystemId.trim() === '' || extAsignUser.trim() === '') {
-        alert('userId and system id missing.');
-        return;
-    }
 
     const userIdLastThree = extAsignUser.slice(-3); // Get last 3 digits of extAsignUser
 
@@ -55,5 +65,30 @@ document.querySelectorAll('.notHome').forEach(function (element) {
     });
 }
 
-// Update QR code every 3 minutes (180,000 milliseconds)
-setInterval(generateQRCode, 180000); // 3 minutes in milliseconds
+// Check every 1 second (1000 milliseconds) for initial field values
+const checkInterval = setInterval(() => {
+    const extSystemIdElement = document.getElementById('extSystemId');
+    const extAsignUserElement = document.getElementById('extAsignUser');
+
+    // Check if the elements exist before accessing their text content
+    if (!extSystemIdElement || !extAsignUserElement) {
+        console.error('Required elements not found.');
+        return;
+    }
+
+    const extSystemId = extSystemIdElement.textContent.trim(); // Use textContent for <p> tags
+    const extAsignUser = extAsignUserElement.textContent.trim(); // Use textContent for <p> tags
+
+    // Run function only when both fields are filled
+    if (extSystemId !== '' && extAsignUser !== '') {
+        generateQRCode();
+
+        // Clear the initial interval check
+        clearInterval(checkInterval);
+
+        // Start generating QR codes every 1 minute (60000 milliseconds)
+        setInterval(() => {
+            generateQRCode();
+        }, 60000); // 1 minute
+    }
+}, 1000); // 1 second in milliseconds

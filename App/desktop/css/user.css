@@ -824,10 +824,10 @@ main{
 
     p{
         font-size: 20px;
-        margin-bottom: 20px;
+        /* margin-bottom: 20px; */
     }
     .qr-cont{
-
+        margin-top: 30px;
         width: 90%;
         justify-content: space-evenly;
 
@@ -837,10 +837,19 @@ main{
             height: 240px;
             border-radius: 30px;
 
+            #qrCodeContainer {
+                width: 200px;
+                height: 200px;
+                /* background-color: #25333a; */
+                border-radius: 20px;
+                overflow: hidden;
+            }
+
         }
 
         .qr-guide{
             width: 55%;
+            margin-top: -30px;
 
             p{
                 font-size: 15px;
