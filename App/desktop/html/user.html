@@ -15,7 +15,7 @@
         <meta name="description" content="Welcome to the user page where you can manage your account.">
     </head>
     <body>
-    <nav>
+    <nav style="display: none;" >
         <div class="prf-card flex-coloum">
             <img class="userImage" src="/TFC-Connect/App/assets/user.png" alt="">
             <h3 class="userName"></h3>
@@ -101,8 +101,7 @@
         </div>
         
     </nav>
-    <main class="flex">
-
+    <section class="flex">
         <div class="qr-display flex-coloum">
             <div class="system-info flex-row">
                 <div class="div flex-row"><span>System ID</span> <p id="extSystemId"></p></div>
@@ -121,17 +120,23 @@
                     </ul>
 
                     <p>Need Help</p>
+                    <p id="qrLogout" class="flex-row">Login with another Account <i class="fi fi-rr-arrow-up-right-from-square"></i></p>
                 </div>
-                <div class="qr-block flex">
+                <div class="qr-block flex-coloum">
                     <div id="qrCodeContainer" ></div>
+                    <p class="qr-time"></p>
                 </div>
             </div>
 
 
         </div>
+    </section>
+    <main style="display: none;"  class="flex">
+
+        
 
 
-        <div style="display: none;" class="misc-info flex-coloum">
+        <div class="misc-info flex-coloum">
 
             <img src="/TFC-Connect/App/assets/Untitled design (2).png" alt="">
 

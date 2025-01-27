@@ -114,6 +114,11 @@ function displayLocalStorageAsObject() {
 displayLocalStorageAsObject();
 
 
+// Add event listener to the element with id="qrLogout"
+document.getElementById('qrLogout').addEventListener('click', () => {
+    logout(); // Call the logout function
+});
+
 
 function logout() {
     // Retrieve and parse the active ticket data from localStorage
