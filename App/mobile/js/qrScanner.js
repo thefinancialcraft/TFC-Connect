@@ -15,6 +15,7 @@ let decodedResult = document.getElementById("decodedResult");
 let qrContent = document.getElementById("qrContent");
 let qrImage = document.getElementById("qrImage");
 let soundEffect = document.getElementById("soundEffect");
+let scanOverlay = document.getElementById("scanner-overlay");
 let cameraStream = null;
 let intervalId = null;
 
@@ -74,6 +75,7 @@ function stopCamera() {
 function displayDecodedResult(code) {
     canvas.style.display = "block";
     video.style.display = "none";
+    scanOverlay.style.display = "none";
     qrContent.textContent = code.data; // Display decoded data
     qrImage.src = code.imageData;      // Show QR code image
     soundEffect.play(); // Play sound when QR is decoded
