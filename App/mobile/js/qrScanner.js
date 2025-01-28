@@ -24,6 +24,7 @@ let intervalId = null;
 
 // Start the camera
 async function startCamera() {
+   
     try {
         cameraStream = await navigator.mediaDevices.getUserMedia({
             video: { facingMode: "environment" },
@@ -59,7 +60,9 @@ function scanFrame() {
         if (qrData.startsWith("TFC") && qrData.endsWith("QR")) {
             // Stop the camera and display the result
             stopCamera();
+            playsound();
             displayDecodedResult(code);
+           
         } else {
             // Invalid QR code, show alert and continue scanning
             alert("Invalid QR Code. Please try again.");
@@ -74,11 +77,16 @@ function stopCamera() {
         const tracks = cameraStream.getTracks();
         tracks.forEach(track => track.stop());
         cameraStream = null;
+        
     }
     if (intervalId) {
         clearInterval(intervalId);
         intervalId = null;
     }
+}
+
+function playsound(){
+soundEffect.play();
 }
 
 // Display the decoded QR code and its content
@@ -88,6 +96,6 @@ function displayDecodedResult(code) {
     scanOverlay.style.display = "none";
     qrContent.textContent = code.data; // Display decoded data
     qrImage.src = code.imageData;      // Show QR code image
-    soundEffect.play(); // Play sound when QR is decoded
+   // Play sound when QR is decoded
     decodedResult.style.display = 'block'; // Show the result
 }
