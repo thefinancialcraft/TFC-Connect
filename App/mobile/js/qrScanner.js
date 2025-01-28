@@ -6,6 +6,7 @@ function showScanner(){
 
 function hideScanner(){
     document.getElementById('qrScanner').style.display = "none";
+    stopCamera();
 }
 
 
@@ -37,7 +38,6 @@ async function startCamera() {
         alert("Could not access the camera. Please allow camera permissions.");
     }
 }
-
 // Scan the current frame
 function scanFrame() {
     const context = canvas.getContext("2d");
@@ -52,9 +52,19 @@ function scanFrame() {
     const code = jsQR(imageData.data, imageData.width, imageData.height);
 
     if (code) {
-        // Stop the camera and scanning once QR is found
-        stopCamera();
-        displayDecodedResult(code);
+        
+        const qrData = code.data.trim(); // Get the scanned QR code content
+        
+        // Validate QR Code
+        if (qrData.startsWith("TFC") && qrData.endsWith("QR")) {
+            // Stop the camera and display the result
+            stopCamera();
+            displayDecodedResult(code);
+        } else {
+            // Invalid QR code, show alert and continue scanning
+            alert("Invalid QR Code. Please try again.");
+            startCamera();
+        }
     }
 }
 
