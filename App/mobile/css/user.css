@@ -1397,6 +1397,20 @@ header{
       
 }
 
+
+.lgtBtn{
+    background-color: #4931e7;
+ color: white; 
+ justify-content: center;
+ align-items: center;
+}
+
+.lgtBtn:active{
+    background-color: #f6f5ff;
+    color: #4931e7;
+
+}
+
 .prfbtn:active{
  background-color: #4931e7;
  color: white;
@@ -1733,10 +1747,6 @@ header{
         margin-right: 8px;
         margin-top: 2px;
     }
-}
-
-.block{
-
 }
 
 
@@ -2627,3 +2637,141 @@ box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.1);
   .mainBody::-webkit-scrollbar{
     display: none;
   }
+
+
+
+  /* ************************************ */
+
+  /* qr-scanner */
+
+.scaner-cont{
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-color);
+    position: absolute;
+    z-index: 9999;
+
+
+    .scnr-heder{
+        width: 100%;
+        justify-content: space-between;
+        padding: 0 20px;
+        margin-top: 15px;
+
+        .scnr-help-icn{
+            font-size: 24px !important;
+        }
+
+        h1{
+            color: #1E3653;
+            font-weight: 600;
+            font-size: 24px;
+        }
+
+    }
+
+    .scanBox{
+        width: 90%;
+        height: 42%;
+        background-color: #00aeed;
+        margin-top: 100px;
+        position: fixed;
+        right: 0;
+        border-radius: 30px 0 0 30px;
+
+
+        #video {
+            width: 100%;
+            height: 100%;
+            background: #000;
+        }
+
+        .scanner-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            height: 2px;
+            /* border:0px solid #007BFF; */
+            background-color: #007BFF;
+            box-shadow: 0px 0px 12px #007bff;
+            border-radius: 5px;
+            object-fit: fill;
+            animation: laserScanAnimation 2s infinite;
+        }
+
+       
+    }
+
+    .scanInfo{
+        width: 100%;
+        height: 40%;
+        /* background-color: #fff; */
+        position: fixed;
+        bottom: 0;
+        border-radius: 30px 30px 0px 0px;
+
+
+        .sysInfo{
+            width: 90%;
+            height: 50%;
+            background-color: #e6e6e64c;
+            margin-top: 20px;
+            border-radius: 20px;
+            justify-content: space-evenly;
+            /* padding-top: 5px; */
+            align-items: start;
+            padding-left: 20px;
+            font-size: 18px;
+            font-weight: 500;
+            color: #1E3653;
+
+            p{
+                width: 100%;
+                justify-content: space-between;
+                padding-right: 30px;
+
+                span{
+                    color: #4931e7;
+                }
+            }
+            
+        }
+       
+
+        .scanPerInfo{
+            width: 90%;
+            margin-top: 20px;
+
+            .user-prf-pic-cont{
+                border-radius: 15px;
+            }
+
+            .userName{
+                font-size: 24px;
+                font-weight: 600;
+                margin-left: 15px;
+                color: #1E3653;
+                
+            }
+        }
+    }
+
+  
+}
+
+@keyframes laserScanAnimation {
+    0% {
+        top: -10%;
+        opacity: 0.2;
+    }
+    50% {
+        top: 50%;
+        opacity: 1;
+    }
+    100% {
+        top: 110%;
+        opacity: 0.2;
+    }
+}

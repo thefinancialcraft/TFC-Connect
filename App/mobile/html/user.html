@@ -89,6 +89,56 @@
         </div>
     </div>
     
+    <div id="qrScanner" class="scaner-cont flex-coloum">
+       
+        <div class="scnr-heder flex-row">
+
+            <div id="scnrBack" onclick="hideScanner()" class="user-prf-pic-cont flex ">
+           
+                <i class="fi flex fi-rr-angle-left"></i>
+              </div>
+
+              <h1>QR Scanner</h1>
+
+              <div id="scnrBtn" class="user-prf-pic-cont flex ">
+           
+                <i class="fi scnr-help-icn flex fi-rr-info"></i>
+              </div>
+
+        </div>
+
+        <div class="scanBox box-styling">
+            <video id="video" autoplay></video>
+            <canvas id="canvas"></canvas>
+            <div class="scanner-overlay"></div>
+
+        </div>
+
+        <div id="qrContent"></div>
+        <audio id="soundEffect" src="beep-07.wav"></audio>
+
+        <div class="scanInfo box-styling flex-coloum">
+            <div class="scanPerInfo flex-row">
+                <div class="user-prf-pic-cont flex">
+                    <img class="userImage" src="/TFC-Connect/App/assets/user.png " alt="">
+                  </div>
+                <div class="userName"></div>
+            </div>
+
+            <div class="sysInfo flex-coloum">
+                    <p class="flex-row">User Id:    <span class="userId"></span></p>
+                    <p class="flex-row">System Id:  <span>123</span></p>
+                    <p class="flex-row">Last Scan:  <span>123</span></p>
+                    <p class="flex-row">Last User:  <span>123</span></p>
+            </div>
+
+
+        </div>
+
+       
+       
+
+    </div>
     
 
     <div id="sidebar" class="sidebar  box-styling">
@@ -209,6 +259,15 @@
 
 
              </div>
+             <div onclick="logout()" class="prfInfo lgtBtn box-styling">
+
+                <div class="info-card  flex-row">
+                    <i class="fi fi-rr-leave"></i>
+                <h4 class="flex">Logout</h4>
+               
+                </div>
+
+             </div>
 
 
 
@@ -244,10 +303,20 @@
 
           <span style="display: none;" class="flex">19</span>
         </div>
-        <div onclick="logout()" class="user-prf-pic-cont flex logout-icon">
+        
+        <div style="display: none;" onclick="logout()" class="user-prf-pic-cont flex logout-icon">
            
             <i class="fi fi-rr-leave"></i>
           </div>
+
+
+        <div id="scnrBtn" onclick="showScanner()" class="user-prf-pic-cont flex ">
+           
+            <i class="fi flex fi-rr-qr-scan"></i>
+          </div>
+
+
+
     </div>
 
               <!-- navbar -->
@@ -853,8 +922,10 @@ Welcome Back, <span class="firstName"></span>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 
     <script src="https://kit.fontawesome.com/ff989e0e08.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
     <script src="/TFC-Connect/App/mobile/js/user.js"></script>
     <script src="/TFC-Connect/App/mobile/js/atten.js"></script>
+    <script src="/TFC-Connect/App/mobile/js/qrScanner.js"></script>
     
 </body>
 </html>
