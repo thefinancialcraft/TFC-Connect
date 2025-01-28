@@ -73,7 +73,7 @@ function stopCamera() {
 // Display the decoded QR code and its content
 function displayDecodedResult(code) {
     canvas.style.display = "block";
-    video.style.display = "block";
+    video.style.display = "none";
     qrContent.textContent = code.data; // Display decoded data
     qrImage.src = code.imageData;      // Show QR code image
     soundEffect.play(); // Play sound when QR is decoded
