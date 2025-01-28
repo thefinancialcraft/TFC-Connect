@@ -1,12 +1,12 @@
 
 function showScanner(){
     document.getElementById('qrScanner').style.display = "flex";
-    startCamera();
+    startQRCamera();
 }
 
 function hideScanner(){
     document.getElementById('qrScanner').style.display = "none";
-    stopCamera();
+    stopQRCamera();
 }
 
 
@@ -23,7 +23,7 @@ let intervalId = null;
 
 
 // Start the camera
-async function startCamera() {
+async function startQRCamera() {
     canvas.style.display = "none";
     video.style.display = "block";
     scanOverlay.style.display = "block";
@@ -62,7 +62,7 @@ function scanFrame() {
         // Validate QR Code
         if (qrData.startsWith("TFC") && qrData.endsWith("QR")) {
             // Stop the camera and display the result
-            stopCamera();
+            stopQRCamera();
             playsound();
             displayDecodedResult(code);
             updateQrCode(code);
@@ -70,13 +70,13 @@ function scanFrame() {
         } else {
             // Invalid QR code, show alert and continue scanning
             alert("Invalid QR Code. Please try again.");
-            startCamera();
+            startQRCamera();
         }
     }
 }
 
 // Stop the camera
-function stopCamera() {
+function stopQRCamera() {
     if (cameraStream) {
         const tracks = cameraStream.getTracks();
         tracks.forEach(track => track.stop());
@@ -183,7 +183,7 @@ function updateQrCode(code) {
     if (!isValidTime || !isSameDate) {
         // If either the date or time is not valid, show an expired popup
         alert("Code has expired or is not valid for today!");
-        startCamera();
+        startQRCamera();
     } else {
         // Now fetch active ticket data from localStorage
         const activeTicket = localStorage.getItem('receiveData');
@@ -215,6 +215,7 @@ function updateQrCode(code) {
     }
 }
 
+
 function sendDataToBackend(token, userId, systemId, assignUserId, formattedTime, formattedDate) {
     // **Fetch backend URL from config.json and send the object**
     fetch('/TFC-Connect/App/config.json')
@@ -239,7 +240,18 @@ function sendDataToBackend(token, userId, systemId, assignUserId, formattedTime,
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: data
-            });
+            })
+            .then(response => response.json())  // Parse response as JSON
+            .then(data => {
+                // Log success message if data is returned as success
+                if (data.status === 'success') {
+                    console.log('Data sent successfully:', data.message);
+                    hideScanner();
+                } else {
+                    console.log('Error:', data.message);
+                }
+            })
+            .catch(error => console.error('Error sending data:', error));
         })
         .catch(error => console.error('Error fetching config:', error));
 }
