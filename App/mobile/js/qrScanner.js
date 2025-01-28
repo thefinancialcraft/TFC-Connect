@@ -1,6 +1,7 @@
 
 function showScanner(){
     document.getElementById('qrScanner').style.display = "flex";
+    startCamera();
 }
 
 function hideScanner(){
@@ -8,8 +9,8 @@ function hideScanner(){
 }
 
 
-let video = document.getElementById("video");
-let canvas = document.getElementById("canvas");
+let video = document.getElementById("scanVideo");
+let canvas = document.getElementById("scanCanvas");
 let decodedResult = document.getElementById("decodedResult");
 let qrContent = document.getElementById("qrContent");
 let qrImage = document.getElementById("qrImage");
@@ -17,8 +18,7 @@ let soundEffect = document.getElementById("soundEffect");
 let cameraStream = null;
 let intervalId = null;
 
-// Start the camera automatically when the page loads
-window.onload = startCamera;
+
 
 // Start the camera
 async function startCamera() {
@@ -73,7 +73,7 @@ function stopCamera() {
 // Display the decoded QR code and its content
 function displayDecodedResult(code) {
     canvas.style.display = "block";
-    video.style.display = "none";
+    video.style.display = "block";
     qrContent.textContent = code.data; // Display decoded data
     qrImage.src = code.imageData;      // Show QR code image
     soundEffect.play(); // Play sound when QR is decoded
