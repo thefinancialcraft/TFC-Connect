@@ -821,6 +821,8 @@ main{
     }
 
     h1{
+        color: #263238;
+        font-size: 28px;
         span{
             /* font-size: 20px; */
             margin-left: 10px;
@@ -828,9 +830,11 @@ main{
     }
 
     p{
-        font-size: 20px;
+        font-size: 18px;
+
         /* margin-bottom: 20px; */
     }
+
 
     .qr-cont{
         margin-top: 30px;
@@ -904,3 +908,19 @@ main{
     }
    
 }
+
+
+.spinner {
+    width: 100px;
+    height: 100px;
+    border: 8px solid #ffffff; /* Light grey */
+    border-top: 8px solid #4931e7; /* Blue */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
