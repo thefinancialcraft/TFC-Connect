@@ -16,6 +16,8 @@
     </head>
     <body>
     <nav id="navSection" style="display: none;" >
+       
+
         <div class="prf-card flex-coloum">
             <img class="userImage" src="/TFC-Connect/App/assets/user.png" alt="">
             <h3 class="userName"></h3>
@@ -26,10 +28,7 @@
             </div>
         </div>
 
-
-
-
-        <div  id="menuCard" class="menu-card">
+       <div  id="menuCard" class="menu-card">
             <div class="menu-opn">
                 <p>Menu</p>
                 <ul id="menu-opn">
@@ -55,6 +54,15 @@
                         Wallet</li>
                 </ul>
             </div>
+        </div>
+
+        <div style="display: none;"  id="checkOutQrCon" class="menu-card checkOut-qr">
+            <div class="qr-container flex-coloum">
+                <p>Scan To Check Out</p>
+                <div id="qrCheckoutBox" class="qr-box flex"></div>
+                <p class="qr-time-checkout">Next Qr : 01:00</p>
+            </div>
+           
         </div>
 
         <div id="logDetails" style="display: none;"  class="menu-card flex-coloum">
@@ -101,6 +109,7 @@
         </div>
         
     </nav>
+
     <section id="qrSection" class="flex">
         <div class="qr-display flex-coloum">
             <div class="system-info flex-row">
@@ -133,12 +142,13 @@
 
         </div>
     </section>
+
     <main id="mainSection" style="display: none;"  class="flex">
 
         
 
 
-        <div class="misc-info flex-coloum">
+        <div id="misc-info" class="misc-info flex-coloum">
 
             <img src="/TFC-Connect/App/assets/Untitled design (2).png" alt="">
 
@@ -175,7 +185,7 @@
 
         </div>
 
-        <div class="construction-disp" style="display: none;">
+        <div id="construction-disp" class="construction-disp" style="display: none;">
             <img src="/TFC-Connect/App/assets/db0400868e5aac451726ad8bb0f9a8f2.gif" alt="">
         </div>
         

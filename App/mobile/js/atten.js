@@ -1421,7 +1421,7 @@ console.log(markstatus);
         token: token, 
         atnToken: atnToken,
         checkoutTime: currentTime,
-        checkinstatusresponse: checkinstatusresponse,
+        checkinstatusresponse: checkOutStatus,
         markstatus: markstatus,
         decision: "By Attendance",
         markstatusReason: markstatusReason

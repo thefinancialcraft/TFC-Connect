@@ -10,6 +10,77 @@ function hideScanner(){
 }
 
 
+
+setInterval(checkScanStatus, 1000);
+
+function checkScanStatus() {
+    // Get the values of extSystemId and extAsignUser
+    const extSystemIdElement = document.getElementById('systemId');
+    const extAsignUserElement = document.getElementById('assignId');
+
+    // Check if the elements exist before accessing their text content
+    if (!extSystemIdElement || !extAsignUserElement) {
+        console.error('Required elements not found.');
+        return;
+    }
+
+    const extSystemId = extSystemIdElement.textContent.trim(); // Get the value from extSystemId element
+    const extAsignUser = extAsignUserElement.textContent.trim(); // Get the value from extAsignUser element
+
+    // Check if both fields are filled
+    if (extSystemId === '' || extAsignUser === '') {
+        console.error('Both fields must be filled.');
+        return;
+    }
+
+    // Fetch the config.json file to get the scriptUrl
+    fetch('/TFC-Connect/App/config.json')
+        .then(response => response.json())
+        .then(config => {
+            const scriptUrl = config.scriptUrl;  // Get the script URL from the config
+
+            // Create data to send in the POST request
+            const data = new URLSearchParams();
+            data.append('action', 'checkScanStatus');
+            data.append('extSystemId', extSystemId);
+            data.append('extAsignUser', extAsignUser);
+
+            // Make the POST request to the backend with the data
+            return fetch(scriptUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: data
+            });
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();  // Process the response if successful
+            } else {
+                console.error('Request failed with status:', response.status);
+            }
+        })
+        .then(data => {
+            if (data) {
+                console.log('Response from backend scan:', data.data);
+
+                // Check the response value
+                if (data.data === false) {
+                    
+                   console.log("falseeeeeeeeeeeeeeeeee");
+                } else {
+   
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error occurred:', error);
+        });
+}
+
+
+
 let video = document.getElementById("scanVideo");
 let canvas = document.getElementById("scanCanvas");
 let decodedResult = document.getElementById("decodedResult");
@@ -20,6 +91,7 @@ let scanOverlay = document.getElementById("scanner-overlay");
 let cameraStream = null;
 let intervalId = null;
 
+let isCheckoutScan;
 
 
 // Start the camera
@@ -254,4 +326,61 @@ function sendDataToBackend(token, userId, systemId, assignUserId, formattedTime,
             .catch(error => console.error('Error sending data:', error));
         })
         .catch(error => console.error('Error fetching config:', error));
+}
+
+
+
+setInterval(getRowDataBySystemId, 1000);
+
+function getRowDataBySystemId() {
+    // Get the values of extSystemId and extAsignUser
+    const activeTicket = localStorage.getItem('receiveData');
+
+    const ticketData = JSON.parse(activeTicket); // Parse the JSON string
+    const storedUserId = ticketData.userId || 'N/A'; // Extract userId from localStorage
+    const token = ticketData.token || 'N/A';   // Extract token
+
+
+    // Fetch the config.json file to get the scriptUrl
+    fetch('/TFC-Connect/App/config.json')
+        .then(response => response.json())
+        .then(config => {
+            const scriptUrl = config.scriptUrl;  // Get the script URL from the config
+
+            // Create data to send in the POST request
+            const data = new URLSearchParams();
+            data.append('action', 'getRowDataBySystemId');
+            data.append('token', token);
+            data.append('storedUserId', storedUserId);
+
+            // Make the POST request to the backend with the data
+            return fetch(scriptUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: data
+            });
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();  // Process the response if successful
+            } else {
+                console.error('Request failed with status:', response.status);
+            }
+        })
+        .then(data => {
+            if (data) {
+                console.log('Response from backend getRowDataBySystemId:', data.data);
+
+                document.getElementById('systemId').textContent = data.data.systemId;
+                document.getElementById('lastUser').textContent = data.data.lastUser;
+                
+                document.getElementById('assignId').textContent = data.data.asignedUser;
+              
+            }
+        })
+        .catch(error => {
+            console.error('Error occurred:', error);
+        });
 }
