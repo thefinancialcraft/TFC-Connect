@@ -48,67 +48,107 @@ updateDateAndWeek();
 // setInterval(updateTime, 1000);
 // updateTime(); 
 
-function generateDates() {
+function generateDates(attrecord, holidays = []) {
     const dateContainer = document.getElementById("dateContainer");
-    const today = new Date();
-  
-    const colors = ['#31e774', '#ffd606', '#ffa033', '#ff4000']; // Colors array
-  
-    for (let i = 0; i < 6; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - i);
-  
-      const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits (DD)
-      const month = date.toLocaleString('default', { month: 'short' }); // Get short month name
-  
-      // Create the date box
-      const atnBox = document.createElement("div");
-      atnBox.classList.add("atn-bx",  "flex-coloum");
-  
-      // Add 'bx-anm' class to the first div only
-      if (i === 0) {
-        atnBox.classList.add("bx-anm", "atn-bx-sp");
-      }
-  
-      // Add the day and month
-      const dateDiv = document.createElement("div");
-      dateDiv.classList.add("date", "flex");
-      dateDiv.textContent = day;
-  
-      const monthDiv = document.createElement("div");
-      monthDiv.classList.add("month", "flex");
-      monthDiv.textContent = month;
-  
-      // Append to atnBox
-      atnBox.appendChild(dateDiv);
-      atnBox.appendChild(monthDiv);
-  
-      // Add an indicator below dates (except for the current date)
-      if (i !== 0) {
-        const indicator = document.createElement("div");
-        indicator.classList.add("indicator");
-  
-        // Assign color from the array
-        const colorIndex = (i - 1) % colors.length; // Rotate through colors
-        indicator.style.cssText = `
-          display: inline-block;
-          width: 12px;
-          height: 3px;
-          background-color: ${colors[colorIndex]};
-          border-radius: 4px;
-          margin-top: -1px;
-        `;
-        atnBox.appendChild(indicator);
-      }
-  
-      // Append to container
-      dateContainer.appendChild(atnBox);
+
+    // Check if the container exists
+    if (!dateContainer) {
+        console.error("Element with id 'dateContainer' not found!");
+        return;
     }
-  }
-  
-  // Call the function
-  generateDates();
-  
+
+    // Clear the previous contents in the container to prevent duplicate entries
+    dateContainer.innerHTML = '';
+
+    const today = new Date();
+
+    const colors = []; // Colors array for attendance
+    const attendance = {}; // Object to hold attendance data by date
+    const holidayMap = {}; // Map to store holidays
+
+    // Fill the attendance object based on the attrecord data
+    attrecord.forEach(record => {
+        let dateObj = new Date(record.Date);
+        let formattedDate = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')}`;
+        attendance[formattedDate] = record.Mark.toUpperCase();
+    });
+
+    // Process holidays (similarly to createCalendarFromSpan)
+    holidays.forEach(row => {
+        let [isoDate, holidayName, working] = row;
+        if (working.toLowerCase() === "yes") return; // Skip working holidays
+        let dateObj = new Date(isoDate);
+        dateObj.setMinutes(dateObj.getMinutes() + 330); // Adjust for timezone if needed
+        let formattedDate = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')}`;
+        holidayMap[formattedDate] = true; // Mark the date as a holiday
+    });
+
+    // Loop to create 6 dates
+    for (let i = 0; i < 6; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i); // Set the date to today, and subtract i days
+        
+        const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits (DD)
+        const month = date.toLocaleString('default', { month: 'short' }); // Get short month name
+
+        // Create the date box
+        const atnBox = document.createElement("div");
+        atnBox.classList.add("atn-bx", "flex-coloum");
+
+        // Add 'bx-anm' class to the first div only
+        if (i === 0) {
+            atnBox.classList.add("bx-anm", "atn-bx-sp");
+        }
+
+        // Add the day and month
+        const dateDiv = document.createElement("div");
+        dateDiv.classList.add("date", "flex");
+        dateDiv.textContent = day;
+
+        const monthDiv = document.createElement("div");
+        monthDiv.classList.add("month", "flex");
+        monthDiv.textContent = month;
+
+        // Append to atnBox
+        atnBox.appendChild(dateDiv);
+        atnBox.appendChild(monthDiv);
+
+        // Determine the attendance mark for this date
+        const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+        const mark = attendance[formattedDate] || null;
+        let color = 'transparent'; // Default color if no attendance mark
+        
+        // Set colors based on attendance mark
+        if (mark === 'P') color = '#31e774'; // Present
+        else if (mark === 'L') color = '#ffd606'; // Late
+        else if (mark === 'H') color = '#ffa033'; // Half day
+        else if (mark === 'A') color = '#ff4000'; // Absent
+        else if (holidayMap[formattedDate]) color = '#4931e7'; // Holiday
+
+        // Add an indicator below dates (except for the current date)
+        if (i !== 0) {
+            const indicator = document.createElement("div");
+            indicator.classList.add("indicator");
+
+            // Set the color based on the mark
+            indicator.style.cssText = `
+                display: inline-block;
+                width: 12px;
+                height: 3px;
+                background-color: ${color};
+                border-radius: 4px;
+                margin-top: -1px;
+            `;
+            atnBox.appendChild(indicator);
+        }
+
+        // Append to container
+        dateContainer.appendChild(atnBox);
+    }
+}
+
+
+
 
   const slider = document.getElementById('slider');
   const camCont = document.getElementById('cam-cnt');
@@ -139,7 +179,7 @@ function generateDates() {
          if (data.results && data.results.length > 0) {
              const addressComponents = data.results[0].components;
 
-             console.log("add",  addressComponents);
+             //console.log("add",  addressComponents);
  
              // Extract the specified components, leave blank if not available
              
@@ -237,7 +277,7 @@ function startCamera() {
 
   .then((stream) => {
      
-      console.log("Camera stream started successfully.");
+      //console.log("Camera stream started successfully.");
       videoElement = document.getElementById('videoElement');
       videoElement.srcObject = stream;
       videoElement.autoplay = true;
@@ -351,8 +391,8 @@ document.getElementById('cam-stp').addEventListener('click', () => {
         const checkinData = checkInUpdate(formattedDate, checkinTime);
 
         // Log checkinData and snapshot before sending to backend
-        // console.log("Check-in Data: ", checkinData);
-        // console.log("Flipped Snapshot Data (Base64): ", flippedSnapshot);
+        // //console.log("Check-in Data: ", checkinData);
+        // //console.log("Flipped Snapshot Data (Base64): ", flippedSnapshot);
 
         // Upload checkinData and snapshot to the backend
         uploadCheckinData(checkinData, flippedSnapshot);
@@ -444,15 +484,15 @@ function checkInUpdate(formattedDate, checkinTime) {
     const halfdayDeadline = addTimeToCheckIn(officeCheckIn, "00:46:00");
     const absentDeadline = addTimeToCheckIn(officeCheckIn, "06:16:00");
 
-    console.log('office Check in Timing', officeCheckIn);
-    console.log('office Check out Timing', officeTiming.checkoutTime);
-    console.log('User Reached at', userCheckIn);
+    //console.log('office Check in Timing', officeCheckIn);
+    //console.log('office Check out Timing', officeTiming.checkoutTime);
+    //console.log('User Reached at', userCheckIn);
     
     // Output the deadlines
-    console.log("Trail time:", truserCheckIn);
-    console.log("Late Deadline:", lateDeadline);
-    console.log("Halfday Deadline:", halfdayDeadline);
-    console.log("Absent Deadline:", absentDeadline);
+    //console.log("Trail time:", truserCheckIn);
+    //console.log("Late Deadline:", lateDeadline);
+    //console.log("Halfday Deadline:", halfdayDeadline);
+    //console.log("Absent Deadline:", absentDeadline);
 
     // Call updateCheckInStatus with the proper arguments
     const checkinstatus = updateCheckInStatus(truserCheckIn, lateDeadline, halfdayDeadline, absentDeadline);
@@ -473,8 +513,8 @@ function checkInUpdate(formattedDate, checkinTime) {
     }
 
 // Ab `statusMark` ko updated value mil gayi hai
-console.log("Check-in Status:", checkinstatus);
-console.log("Status Mark:", statusMark);
+//console.log("Check-in Status:", checkinstatus);
+//console.log("Status Mark:", statusMark);
 
 
 
@@ -552,9 +592,9 @@ function updateCheckInStatus(truserCheckIn, lateDeadline, halfdayDeadline, absen
 // Function to upload checkinData and snapshot
 function uploadCheckinData(checkinData, snapshotData) {
     // Log the data before sending it
-    // console.log("Uploading data...");
-    console.log("Uploading Check-in Data: ", checkinData);
-    console.log("Snapshot Data (Base64): ", snapshotData);
+    // //console.log("Uploading data...");
+    //console.log("Uploading Check-in Data: ", checkinData);
+    //console.log("Snapshot Data (Base64): ", snapshotData);
 
     // Convert checkinData to a URL-encoded string
     const data = new URLSearchParams(checkinData).toString();
@@ -588,7 +628,7 @@ function uploadCheckinData(checkinData, snapshotData) {
 
             
 
-            console.log("attendance Data uploaded successfully:", data);
+            //console.log("attendance Data uploaded successfully:", data);
             document.getElementById('cam-stp').style.display = 'none';
             document.getElementById('SnapWhts').style.display = 'block';
             document.getElementById('bcToDash').style.display = 'block';
@@ -715,7 +755,7 @@ function uploadCheckinData(checkinData, snapshotData) {
 
                 // Create an object and console log it
                 const ticketObject = { UserId: userId, Token: token };
-                console.log('Active Ticket:', ticketObject);
+                //console.log('Active Ticket:', ticketObject);
 
                 // **Fetch backend URL from config.json and send the object**
                 fetch('/TFC-Connect/App/config.json')
@@ -742,7 +782,7 @@ function uploadCheckinData(checkinData, snapshotData) {
                     .then(attendanceData => {
                         // Check if the response indicates success
                         if (attendanceData.status === "success") {
-                            console.log('Attendance Data for Backend:', attendanceData);
+                            //console.log('Attendance Data for Backend:', attendanceData);
                         
                             document.querySelector(".ent-ext-tim").style.display = "flex";
                             document.querySelector("#cam-stp").style.display = "block";
@@ -850,8 +890,6 @@ function updateProgress(targetProgress) {
   }
 }
 
-// Example usage: Update progress to 90%
-updateProgress(50);
 
 
 
@@ -890,6 +928,7 @@ function updateSegmentProgress() {
   });
 }
 
+
 function setSegmentPercentage(segmentIndex, targetPercentage) {
     if (segmentIndex >= 0 && segmentIndex < segmentPercentages.length) {
       // Ensure percentage is within 0-100% range
@@ -918,54 +957,55 @@ function setSegmentPercentage(segmentIndex, targetPercentage) {
 
 
 
-// Example usage: Set individual segment percentages and update progress
-setSegmentPercentage(0, 39);  // Set segment 1 to 25%
-setSegmentPercentage(1, 15);  // Set segment 2 to 25%
-setSegmentPercentage(2, 20);  // Set segment 3 to 25%
-setSegmentPercentage(3, 10);  // Set segment 4 to 25%
-
-
-
-function updateBar(index, targetValue, color) {
+function updateBar(index, targetValue, color, duration = 1000) {
     // Select all progress rings
     const progressRings = document.querySelectorAll('.progress-ring');
-  
+    
     // Get specific progress ring by index
     const progressRing = progressRings[index];
     const circle = progressRing.querySelector('.progress');
     const progressValue = progressRing.querySelector('.progress-value');
-  
+
     const radius = circle.r.baseVal.value;
     const circumference = 2 * Math.PI * radius;
 
-    // Set initial strokeDasharray
+    // Set strokeDasharray
     circle.style.strokeDasharray = `${circumference}`;
-    circle.style.strokeDashoffset = `${circumference}`;  // Initial value is 100% (full circle)
-  
-    // Apply stroke color dynamically
     circle.style.stroke = color;
 
-    // Animate progress value from 0% to targetValue
-    let currentValue = 0;
-    const interval = setInterval(() => {
-        if (currentValue >= targetValue) {
-            clearInterval(interval); // Stop the interval once the target value is reached
-        } else {
-            currentValue++;
-            progressValue.textContent = `${currentValue}%`;
-            
-            // Update strokeDashoffset based on current progress
-            const offset = circumference - (currentValue / 100) * circumference;
-            circle.style.strokeDashoffset = offset;
+    // Get current percentage value
+    let startValue = parseFloat(progressValue.textContent) || 0;
+    targetValue = Math.max(0, Math.min(100, targetValue)); // Ensure within 0-100
+
+    let startTime = null;
+
+    function animateProgress(currentTime) {
+        if (!startTime) startTime = currentTime;
+        let elapsedTime = currentTime - startTime;
+        
+        // Calculate progress based on time elapsed
+        let progress = Math.min(elapsedTime / duration, 1); // Ensures max value is 1
+        
+        // **Easing effect (smooth transition)**
+        let easedProgress = progress * (2 - progress); // Ease-in-out effect
+
+        // Interpolated Value Between startValue and targetValue
+        let currentValue = startValue + (targetValue - startValue) * easedProgress;
+        progressValue.innerText = `${Math.round(currentValue)}%`; // Update text smoothly
+
+        // Update strokeDashoffset based on percentage
+        const offset = circumference - (currentValue / 100) * circumference;
+        circle.style.strokeDashoffset = offset;
+
+        if (progress < 1) {
+            requestAnimationFrame(animateProgress); // Continue animation
         }
-    }, 10); // Increase every 10ms for a smooth animation
+    }
+
+    requestAnimationFrame(animateProgress);
 }
 
-// Example: Update all progress rings
-updateBar(0, 25, '#31e774'); // 25% progress, green color
-updateBar(1, 50, '#ffd606'); // 50% progress, yellow color
-updateBar(2, 75, '#ffa033'); // 75% progress, orange color
-updateBar(3, 90, '#ff4000'); // 90% progress, red color
+
 
 
 let currentIndex = 0;
@@ -990,18 +1030,64 @@ function startAutoSlide() {
 
 // Start the automatic sliding on page load
 startAutoSlide();
-function createCalendar(year, month) {
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    createCalendarFromSpan(); // Initial load
+    observeDateChange(); // Start observing changes in crt-atn-clndr
+});
+
+
+function createCalendarFromSpan(attrecord, response = []) {
+    //console.log("attrecord Data:", attrecord);
+    //console.log("Holidays Data:", response);
+
     const calendar = document.getElementById('calendar');
+    const dateSpan = document.getElementById('crt-atn-clndr');
+
+    if (!dateSpan) {
+        console.error("Element with id 'crt-atn-clndr' not found!");
+        return;
+    }
+
+    const dateText = dateSpan.textContent.trim();
+    const [monthText, yearText] = dateText.split(" ");
+    const year = parseInt(yearText, 10);
+    const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    const month = monthNames.indexOf(monthText.toUpperCase());
+
+    if (month === -1 || isNaN(year)) {
+        console.error("Invalid date format in span. Expected 'MMM YYYY' format.");
+        return;
+    }
+
     const currentDate = new Date();
     const today = currentDate.getDate();
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
-
+    
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const firstDay = new Date(year, month, 1).getDay();
 
-    // Define colors for the spans
-    const colors = ['#31e774', '#ffd606', '#ffa033', '#ff4000'];
+    let holidays = {};
+    response.forEach((row, index) => {
+        if (index === 0) return;
+        let [isoDate, holidayName, working] = row;
+        if (working.toLowerCase() === "yes") return;
+        let dateObj = new Date(isoDate);
+        dateObj.setMinutes(dateObj.getMinutes() + 330);
+        let formattedDate = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')}`;
+        holidays[formattedDate] = true;
+    });
+
+    let attendance = {};
+    attrecord.forEach(record => {
+        let dateObj = new Date(record.Date);
+        let formattedDate = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')}`;
+        if (dateObj.getFullYear() === year && dateObj.getMonth() === month) {
+            attendance[formattedDate] = record.Mark.toUpperCase();
+        }
+    });
 
     let table = `<table>
         <thead>
@@ -1016,7 +1102,7 @@ function createCalendar(year, month) {
             </tr>
         </thead>
         <tbody>`;
-    
+
     let date = 1;
     for (let i = 0; i < 6; i++) {
         table += '<tr>';
@@ -1027,11 +1113,24 @@ function createCalendar(year, month) {
                 break;
             } else {
                 const isToday = date === today && month === currentMonth && year === currentYear;
-                const colorIndex = (date - 1) % colors.length; // Rotate through colors
+                let formattedDate = `${year}-${(month + 1).toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
+                let isHoliday = holidays[formattedDate] ? true : false;
+                let mark = attendance[formattedDate] || null;
                 
+                let color = 'transparent';
+                if (mark === 'P') color = '#31e774';
+                else if (mark === 'L') color = '#ffd606';
+                else if (mark === 'H') color = '#ffa033';
+                else if (mark === 'A') color = '#ff4000';
+                else if (isHoliday) color = '#4931e7';
+
+                let spanHTML = !isToday 
+                    ? `<span style="display: inline-block; border-radius: 12px; width: 13px; height: 3.5px; background-color: ${color};"></span>`
+                    : '';
+
                 table += `<td class="${isToday ? 'current-day bx-anm' : ''}">
                     <div class="tc-c" style="text-align: center;">
-                        ${!isToday ? `<span style="display: inline-block; border-radius: 12px; width: 10px; height: 3px; background-color: ${colors[colorIndex]};"></span>` : ''}
+                        ${spanHTML}
                         <div>${date}</div>
                     </div>
                 </td>`;
@@ -1045,8 +1144,21 @@ function createCalendar(year, month) {
     calendar.innerHTML = table;
 }
 
-// Initialize the calendar
-createCalendar(new Date().getFullYear(), new Date().getMonth());
+
+
+
+// 📌 **Auto-Update When `crt-atn-clndr` Changes**
+function observeDateChange() {
+    const targetNode = document.getElementById('crt-atn-clndr');
+    if (!targetNode) return;
+
+    const observer = new MutationObserver(() => {
+        createCalendarFromSpan(); // Update calendar on text change
+    });
+
+    observer.observe(targetNode, { characterData: true, childList: true, subtree: true });
+}
+
 
 
 
@@ -1066,7 +1178,7 @@ async function getCheckinInfo() {
 
         // Log the active ticket object
         const ticketObject = { UserId: userId, Token: token };
-        console.log('Active Ticket:', ticketObject);
+        //console.log('Active Ticket:', ticketObject);
 
         // Fetch the backend URL from config.json
         const response = await fetch('/TFC-Connect/App/config.json');
@@ -1090,7 +1202,7 @@ async function getCheckinInfo() {
 
         // Parse the backend response
         const result = await backendResponse.json();
-        console.log('Backend Response for checkin:', result);
+        //console.log('Backend Response for checkin:', result);
 
         const convertTimeFormat = (timeString) => {
             if (!timeString || typeof timeString !== 'string') return 'N/A';
@@ -1124,7 +1236,7 @@ if (result.status === 'success') {
         checkoutTime: convertTimeFormat(checkoutTime) // Use updated checkoutTime
     };
     localStorage.setItem('officeTiming', JSON.stringify(officeTiming));
-    console.log('Office Timing saved to localStorage:', officeTiming);
+    //console.log('Office Timing saved to localStorage:', officeTiming);
 }
 
 
@@ -1172,10 +1284,13 @@ let noRecd ;
 noRecd = "hide";
 localStorage.setItem('noRecd', noRecd);
 
+
 setInterval(getCheckinInfo, 1000);
+setInterval(activityDataRecord, 1000);
 setInterval(getAttenData, 5000);
 setInterval(showRecdfun, 1000);
 setInterval(hideRecdfun, 1000);
+setInterval(findHoliday, 1000);
 
 
 
@@ -1208,7 +1323,7 @@ async function getAttenData() {
    
       // Log the active ticket object
       const ticketObject = { UserId: userId, Token: token, atnToken: atnToken};
-      console.log('Active Ticket:', ticketObject);
+      //console.log('Active Ticket:', ticketObject);
 
       // Fetch the backend URL from config.json
       const response = await fetch('/TFC-Connect/App/config.json');
@@ -1231,22 +1346,42 @@ async function getAttenData() {
     });
 
     const result = await backendResponse.json();
+   
     
-    if (result.status === "error"){
-        resetAttenStatus();
-        let noRecd ;
-        noRecd = "show";
-        localStorage.setItem('noRecd', noRecd);
-     
-    }  
+// Get the date from the element with class "selected-date-text"
+let selectedDateText = document.querySelector(".selected-date-text")?.textContent.trim();
 
-    console.log('data get from getAttenData:', result);
+// Convert selected date to a proper format (23 MAR 2025)
+let selectedDate = new Date(selectedDateText);
+// let currentDate = new Date();
+
+// Format current date to match the format "23 MAR 2025"
+let formattedCurrentDate = currentDate.getDate() + " " + 
+    currentDate.toLocaleString('en-US', { month: 'short' }).toUpperCase() + " " + 
+    currentDate.getFullYear();
+
+// Run function only if selected date matches current date
+if (selectedDateText === formattedCurrentDate) {
+    if (result.status === "error") {
+        resetAttenStatus();
+        let noRecd = "show";
+        localStorage.setItem('noRecd', noRecd);
+        //console.log("Data available hai:", data);
+    } else {
+        //console.log("Data undefined hai, 'noRecd' ko 'hide' set nahi kiya gaya.");
+    }
+} else {
+    //console.log("Selected date aur current date match nahi kar rahe, function execute nahi hoga.");
+}
+
+
+    //console.log('data get from getAttenData:', result);
  
     
     let checkinstatusresponse;
 
     if (!result.data || typeof result.data.Check_in_status === 'undefined') {
-        console.log('Check_in_status is undefined or result.data is missing');
+        //console.log('Check_in_status is undefined or result.data is missing');
         checkinstatusresponse = 'Default value';  // Set a default value or handle it accordingly
     } else if (typeof result.data.Check_in_status === 'string') {
         // If Check_in_status is a plain string like "Absent", no need to parse it.
@@ -1256,7 +1391,7 @@ async function getAttenData() {
         try {
             checkinstatusresponse = JSON.parse(result.data.Check_in_status);
         } catch (error) {
-            console.log('Error parsing Check_in_status:', error);
+            //console.log('Error parsing Check_in_status:', error);
             checkinstatusresponse = result.data.Check_in_status;  // Fallback to raw value
         }
     }
@@ -1264,7 +1399,7 @@ async function getAttenData() {
     localStorage.setItem('Check_in_status', checkinstatusresponse);
     
     checkInOutDate(result.data);
-    
+
 }
 
 
@@ -1309,19 +1444,19 @@ function hideSpinner() {
 async function checkoutFuntion() {
     showSpinner();
     const checkinstatusresponse = localStorage.getItem('Check_in_status');
-    console.log(`Data of getAttenData:`, checkinstatusresponse);
+    //console.log(`Data of getAttenData:`, checkinstatusresponse);
 
     // Ensure the checkinstatusresponse is valid
     if (!checkinstatusresponse) {
-        console.log('checkinstatusresponse is not defined or is null.');
+        //console.log('checkinstatusresponse is not defined or is null.');
         return;
     }
-    console.log('checkinstatusresponse:', checkinstatusresponse);
+    //console.log('checkinstatusresponse:', checkinstatusresponse);
 
     // Get office timing from localStorage
     const officeTiming = JSON.parse(localStorage.getItem('officeTiming'));
     if (!officeTiming || !officeTiming.checkoutTime) {
-        console.log('Checkout time not found in localStorage.');
+        //console.log('Checkout time not found in localStorage.');
         return;
     }
     
@@ -1334,17 +1469,17 @@ async function checkoutFuntion() {
         timeZone: 'Asia/Kolkata', // Indian Standard Time
     });
 
-    console.log(`Checkout time: ${userCheckOut}, Current time: ${currentTime}`);
+    //console.log(`Checkout time: ${userCheckOut}, Current time: ${currentTime}`);
 
     // Calculate the time difference between currentTime and userCheckOut
     const latediffrence = calculateTimeDifference(currentTime, userCheckOut);
 
-    console.log(`Time difference: ${latediffrence}`);
+    //console.log(`Time difference: ${latediffrence}`);
 
     // Check if the current time is earlier than the checkout time - 15 minutes
     const fifteenMinutesBeforeCheckout = subtractTime(userCheckOut, "00:15:00");  // Subtract 15 minutes
 
-    console.log(`Fifteen minutes before checkout: ${fifteenMinutesBeforeCheckout}`);
+    //console.log(`Fifteen minutes before checkout: ${fifteenMinutesBeforeCheckout}`);
 
     let checkOutStatus = "On Time";  // This can be "On Time", "Halfday", "Late", or "Absent"
 let markstatus = "P";
@@ -1360,12 +1495,12 @@ if (checkinstatusresponse === "On Time") {
     markstatus = "A";  // A for Absent
 }
 
-console.log(markstatus);
+//console.log(markstatus);
 
 
     // Compare the current time and fifteen minutes before checkout directly as strings
     if (currentTime < fifteenMinutesBeforeCheckout) {
-        console.log(`User is early by ${currentTime} compared to ${fifteenMinutesBeforeCheckout}.`);
+        //console.log(`User is early by ${currentTime} compared to ${fifteenMinutesBeforeCheckout}.`);
     
         // Check the value of checkinstatusresponse
         if (checkinstatusresponse === "On Time") {
@@ -1373,21 +1508,21 @@ console.log(markstatus);
             markstatus = "H";
             markstatusReason = `Due to the early exit by ${latediffrence}`;
 
-            console.log("status update", checkOutStatus);
+            //console.log("status update", checkOutStatus);
         } else if (checkinstatusresponse === "Halfday") {
             checkOutStatus = "Absent";
             markstatus = "A";
             markstatusReason = `Due to the early exit by ${latediffrence}`;
-            console.log("status update", checkOutStatus);
+            //console.log("status update", checkOutStatus);
         } else if (checkinstatusresponse === "Absent") {
             checkOutStatus = "Absent";
             markstatus = "A";
-            console.log("status update", checkOutStatus);
+            //console.log("status update", checkOutStatus);
         }
     
     } else {
         // If the user is not early enough, no change
-        console.log(`User is not early enough to trigger status change.`);
+        //console.log(`User is not early enough to trigger status change.`);
     }
 
     const activeTicket = localStorage.getItem('receiveData');
@@ -1426,7 +1561,7 @@ console.log(markstatus);
         decision: "By Attendance",
         markstatusReason: markstatusReason
     };
-    console.log('checkout reponse sending data:', ticketObject);
+    //console.log('checkout reponse sending data:', ticketObject);
 
     const data = new URLSearchParams(ticketObject);
 
@@ -1446,7 +1581,7 @@ console.log(markstatus);
     
     // Handle the response if needed
     const result = await backendResponse.json();
-    console.log('Backend from checkout:', result);
+    //console.log('Backend from checkout:', result);
     const checkOutBtn = document.getElementById('checkOutBtn');
 
     // Clear the button's current content
@@ -1512,125 +1647,235 @@ function subtractTime(time, subtract) {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
-const dateDisplayContainer = document.querySelector(".date-display-container");
+
+class DatePicker {
+    constructor(container, type) {
+        this.container = container;
+        this.dateDisplay = container.querySelector(".selected-date-text");
+        this.resetButton = container.querySelector(".resetDate");
+
+        // Set default dates based on type
+        let today = new Date();
+        if (type === "start") {
+            this.selectedDate = new Date(today.getFullYear(), today.getMonth(), 1); // Month start
+        } else if (type === "end") {
+            this.selectedDate = new Date(today.getFullYear(), today.getMonth() + 1, 0); // Month end
+        } else {
+            this.selectedDate = new Date(); // Today (default)
+        }
+        this.date = new Date(this.selectedDate); 
+
+        this.init();
+    }
+
+    init() {
+        this.updateSelectedDateText();
+        this.addEventListeners();
+    }
+
+    updateSelectedDateText() {
+        this.dateDisplay.textContent = `${this.selectedDate.getDate().toString().padStart(2, "0")} ${
+            this.selectedDate.toLocaleString("default", { month: "short" }).toUpperCase()
+        } ${this.selectedDate.getFullYear()}`;
+    }
+
+    addEventListeners() {
+        this.dateDisplay.addEventListener("click", () => {
+            activeDatePicker = this;  // Store reference for active date picker
+            calendarContainer.style.display = "block";
+            renderCalendar();
+        });
+
+        this.resetButton.addEventListener("click", () => this.resetToDefaultDate());
+    }
+
+    resetToDefaultDate() {
+        let today = new Date();
+        if (this.dateDisplay.classList.contains("start-date-text")) {
+            this.selectedDate = new Date(today.getFullYear(), today.getMonth(), 1); // Month start
+        } else if (this.dateDisplay.classList.contains("end-date-text")) {
+            this.selectedDate = new Date(today.getFullYear(), today.getMonth() + 1, 0); // Month end
+        } else {
+            this.selectedDate = new Date(); // Current Date
+        }
+        this.date = new Date(this.selectedDate);
+        this.updateSelectedDateText();
+        this.resetButton.style.display = "none";
+        localStorage.setItem('noRecd', "hide");
+    }
+}
+
+// Initialize All Date Pickers with correct type
+const datePickers = [];
+document.querySelectorAll(".date-picker-container").forEach(container => {
+    let dateText = container.querySelector(".selected-date-text");
+
+    let type = dateText.classList.contains("start-date-text") ? "start"
+             : dateText.classList.contains("end-date-text") ? "end"
+             : "current";
+
+    datePickers.push(new DatePicker(container, type));
+});
+
+// Calendar Functions
 const calendarContainer = document.querySelector(".calendar-container");
 const currentMonthYear = document.querySelector(".current-month-year");
 const calendarGridContainer = document.querySelector(".calendar-grid-container");
-const selectedDateText = document.querySelector(".selected-date-text");
+let activeDatePicker = null;
 
-let date = new Date();
-let selectedDate = new Date(); // Default selected date to current date
-
-// Set selected date in display
-selectedDateText.textContent = `${selectedDate.getDate().toString().padStart(2, "0")} ${
-  selectedDate.toLocaleString("default", { month: "short" }).toUpperCase()
-} ${selectedDate.getFullYear()}`;
-
-// Toggle calendar visibility
-dateDisplayContainer.addEventListener("click", () => {
-  calendarContainer.style.display = calendarContainer.style.display === "block" ? "none" : "block";
-});
-
-// Render the calendar
 function renderCalendar() {
-  calendarGridContainer.innerHTML = ""; // Clear previous days
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  
-  // Set current month and year
-  currentMonthYear.textContent = date.toLocaleString("default", {
-    month: "long",
-    year: "numeric",
-  });
+    if (!activeDatePicker) return;
 
-  // Get first and last day of the month
-  const firstDay = new Date(year, month, 1).getDay();
-  const lastDate = new Date(year, month + 1, 0).getDate();
+    calendarGridContainer.innerHTML = "";
+    let date = activeDatePicker.date;
+    let year = date.getFullYear();
+    let month = date.getMonth();
 
-  // Add empty slots for previous month
-  for (let i = 0; i < firstDay; i++) {
-    const emptySlot = document.createElement("div");
-    calendarGridContainer.appendChild(emptySlot);
-  }
+    currentMonthYear.textContent = date.toLocaleString("default", { month: "long", year: "numeric" });
 
-  // Add days of the month
-  for (let i = 1; i <= lastDate; i++) {
-    const day = document.createElement("div");
-    day.className = "calendar-day";
-    day.textContent = i;
+    let firstDay = new Date(year, month, 1).getDay();
+    let lastDate = new Date(year, month + 1, 0).getDate();
 
-    // Highlight current date by default
-    if (
-      i === selectedDate.getDate() &&
-      year === selectedDate.getFullYear() &&
-      month === selectedDate.getMonth()
-    ) {
-      day.classList.add("calendar-day-selected");
+    for (let i = 0; i < firstDay; i++) {
+        let emptySlot = document.createElement("div");
+        calendarGridContainer.appendChild(emptySlot);
     }
 
-    // Add click event for selecting a date
-    day.addEventListener("click", () => {
-      selectedDateText.textContent = `${i.toString().padStart(2, "0")} ${
-        date.toLocaleString("default", { month: "short" }).toUpperCase()
-      } ${year}`;
-      updateAttenStatus();
-      const resetDate = document.querySelector(".resetDate");
-      resetDate.style.display = "flex";
-      
-      selectedDate = new Date(year, month, i); // Update selected date
-      calendarContainer.style.display = "none"; // Close calendar after selection
+    for (let i = 1; i <= lastDate; i++) {
+        let day = document.createElement("div");
+        day.className = "calendar-day";
+        day.textContent = i;
 
-      // Remove selected class from other days and add to the clicked day
-      document.querySelectorAll(".calendar-day").forEach(d => d.classList.remove("calendar-day-selected"));
-      day.classList.add("calendar-day-selected");
-    });
+        if (i === activeDatePicker.selectedDate.getDate() && 
+            year === activeDatePicker.selectedDate.getFullYear() && 
+            month === activeDatePicker.selectedDate.getMonth()) {
+            day.classList.add("calendar-day-selected");
+        }
 
-    calendarGridContainer.appendChild(day);
-  }
+        day.addEventListener("click", () => {
+            activeDatePicker.selectedDate = new Date(year, month, i);
+            activeDatePicker.updateSelectedDateText();
+            activeDatePicker.resetButton.style.display = "flex";
+            calendarContainer.style.display = "none";
+
+            document.querySelectorAll(".calendar-day").forEach(d => d.classList.remove("calendar-day-selected"));
+            day.classList.add("calendar-day-selected");
+        });
+
+        calendarGridContainer.appendChild(day);
+    }
 }
 
-// Previous and Next Month navigation
 document.querySelector(".prev-month").addEventListener("click", () => {
-  date.setMonth(date.getMonth() - 1);
-  renderCalendar();
+    if (activeDatePicker) {
+        activeDatePicker.date.setMonth(activeDatePicker.date.getMonth() - 1);
+        renderCalendar();
+    }
 });
 
 document.querySelector(".next-month").addEventListener("click", () => {
-  date.setMonth(date.getMonth() + 1);
-  renderCalendar();
+    if (activeDatePicker) {
+        activeDatePicker.date.setMonth(activeDatePicker.date.getMonth() + 1);
+        renderCalendar();
+    }
 });
 
-// Function to reset the date picker to the current date
-function resetToCurrentDate() {
-    updateAttenStatus();
-    const resetDate = document.querySelector(".resetDate");
-      resetDate.style.display = "none";
+// Close calendar when clicked outside
+document.addEventListener("click", (e) => {
+    if (!e.target.closest(".date-picker-container") && !e.target.closest(".calendar-container")) {
+        calendarContainer.style.display = "none";
+    }
+});
 
-  date = new Date(); // Reset the date to the current date
-  selectedDate = new Date(); // Reset selected date to the current date
-  selectedDateText.textContent = `${selectedDate.getDate().toString().padStart(2, "0")} ${
-    selectedDate.toLocaleString("default", { month: "short" }).toUpperCase()
-  } ${selectedDate.getFullYear()}`;
-  renderCalendar(); // Re-render the calendar
-  let noRecd ;
-  noRecd = "hide";
-  localStorage.setItem('noRecd', noRecd);
 
+
+function updateMonthDates(index) {
+    let monthSpan = document.querySelector(`.act-mnth-slt-${index}`);
+    let startSpan = document.querySelector(`.act-start-${index}`);
+    let endSpan = document.querySelector(`.act-end-${index}`);
+    
+    if (!monthSpan || !startSpan || !endSpan) {
+        console.error("One or more elements not found for index:", index);
+        return;
+    }
+    
+    let monthYearText = monthSpan.innerText.trim(); // "MMM YYYY"
+    let date = new Date(monthYearText);
+    
+    if (isNaN(date.getTime())) {
+        console.error("Invalid date format in act-mnth-slt-", index);
+        return;
+    }
+    
+    let currentDate = new Date();
+    let firstDate = new Date(date.getFullYear(), date.getMonth(), 1);
+    let lastDate;
+    
+    // Check if selected month is the current month
+    if (date.getFullYear() === currentDate.getFullYear() && date.getMonth() === currentDate.getMonth()) {
+        lastDate = currentDate; // Set to current date only (without time)
+    } else {
+        lastDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    }
+    
+    function formatDate(date) {
+        let day = date.getDate().toString().padStart(2, '0');
+        let month = date.toLocaleString("en-GB", { month: "short" }).toUpperCase();
+        let year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+    }
+    
+    startSpan.innerText = formatDate(firstDate);
+    endSpan.innerText = formatDate(lastDate);
 }
 
-// Initial Render
-renderCalendar();
+function observeMonthSpan(index) {
+    const monthSpan = document.querySelector(`.act-mnth-slt-${index}`);
+    if (monthSpan) {
+        const observer = new MutationObserver(() => updateMonthDates(index));
+        observer.observe(monthSpan, { childList: true, subtree: true, characterData: true });
+    }
+}
 
-// Close calendar if clicked outside
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".date-picker-container")) {
-    calendarContainer.style.display = "none";
-  }
-});
+// Example usage for multiple instances
+observeMonthSpan(1);
+observeMonthSpan(2);
+
+
+
+
+
 
 
 function checkInOutDate(data) {
-    console.log("Data received in checkInOutDate: ", data); // Log the data to check what's being passed
+    //console.log("Data received in checkInOutDate: ", data); // Log the data to check what's being passed
+
+
+// Get the date from the element with class "selected-date-text"
+let selectedDateText = document.querySelector(".selected-date-text")?.textContent.trim();
+
+// Convert selected date to a proper format (23 MAR 2025)
+let selectedDate = new Date(selectedDateText);
+let currentDate = new Date();
+
+// Format current date to match the format "23 MAR 2025"
+let formattedCurrentDate = currentDate.getDate() + " " + 
+    currentDate.toLocaleString('en-US', { month: 'short' }).toUpperCase() + " " + 
+    currentDate.getFullYear();
+
+// Run function only if selected date matches current date
+if (selectedDateText === formattedCurrentDate) {
+    if (typeof data !== "undefined") {
+        let noRecd = "hide";
+        localStorage.setItem('noRecd', noRecd);
+        //console.log("Data available hai:", data);
+    } else {
+        //console.log("Data undefined hai, 'noRecd' ko 'hide' set nahi kiya gaya.");
+    }
+} else {
+    //console.log("Selected date aur current date match nahi kar rahe, function execute nahi hoga.");
+}
+
 
     const checkInOutDate = document.getElementById("checkInOutDate");
 
@@ -1642,7 +1887,7 @@ function checkInOutDate(data) {
 
     const dateValue = checkInOutDate.innerText.trim(); // Get the text content of the span
     if (!dateValue || dateValue === "Select Date") {
-        console.log("No valid date selected.");
+        //console.log("No valid date selected.");
         return;
     }
 
@@ -1651,22 +1896,268 @@ function checkInOutDate(data) {
 
     if (parsedDate) {
         const formattedDate = formatDateToDDMMYY(parsedDate);
-        console.log(`Formatted date (dd/mm/yy): ${formattedDate}`);
+        //console.log(`Formatted date (dd/mm/yy): ${formattedDate}`);
 
         // Check if the formatted date matches today's date
         const currentDate = getCurrentDateInDDMMYY();
         if (formattedDate === currentDate) {
-            console.log("Formatted date matches the current date. Running function A...");
+            //console.log("Formatted date matches the current date. Running function A...");
             updateAtnCells(data);
         } else {
-            console.log("Formatted date does not match the current date. Skipping function A.", formattedDate);
+            //console.log("Formatted date does not match the current date. Skipping function A.", formattedDate);
             updateAtnCellsByDate(formattedDate);
             
         }
     } else {
-        console.log("Invalid date format. Please use 'DD MMM YYYY', e.g., 17 JAN 2025.");
+        //console.log("Invalid date format. Please use 'DD MMM YYYY'");
     }
 }
+
+
+function activityDataRecord() {
+    //console.log("Function running: activityDataRecord");
+
+    // Retrieve and parse the active ticket data from localStorage
+    const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
+
+    if (!activeTicket) {
+        console.error("No active ticket found.");
+        return;
+    }
+
+    // Extract token and userId from the activeTicket object
+    const tktuserToken = activeTicket.token;
+    const tktuserId = activeTicket.userId;
+
+    //console.log("Token:", tktuserToken);
+    //console.log("UserId:", tktuserId);
+
+    // Create data object to send to the backend, with action included
+    const data = new URLSearchParams();
+    data.append('action', 'activityDataRecord');
+    data.append('token', tktuserToken);
+    data.append('userId', tktuserId);
+
+    //console.log('Data being sent from activityDataRecord:', data.toString());
+
+    // Fetch config.json to get script URL
+    fetch('/TFC-Connect/App/config.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Failed to load config.json, status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(config => {
+            if (!config.scriptUrl) {
+                throw new Error("scriptUrl not found in config.json");
+            }
+
+            // Make the POST request to the App Script endpoint
+            return fetch(config.scriptUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: data
+            });
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(result => {
+            markActivity(result.data);
+            markAttnDays(result.data);
+            findHoliday(result.data)
+            //console.log("Server response activityDataRecord:", result);
+
+        })
+        .catch(error => {
+            console.error("Error in activityDataRecord:", error);
+        });
+
+        markActivity();  
+}
+
+
+function markActivity(data) {
+    //console.log("📌 Received Data:", data);
+
+    let activityContainer = document.getElementById("activityContainer");
+    let allActCnt = document.getElementById("allActCnt");
+
+    let entries = Object.values(data);
+    
+    // Sort entries in descending order based on the date (newest first)
+    entries.sort((a, b) => new Date(b.Date) - new Date(a.Date));
+
+    let recentEntries = entries.slice(0, 2); // सिर्फ़ 2 एंट्रीज़ (top 2 latest entries)
+
+    // ✅ `activityContainer` (Recent 2 Entries)
+    renderEntries(recentEntries, activityContainer);
+
+    // ✅ `allActCnt` ke liye date-wise filter karein
+    applyDateFilter(entries);
+
+    function formatDate(dateString) {
+        let date = new Date(dateString);
+        let options = { day: "2-digit", month: "short", year: "numeric" };
+        return date.toLocaleDateString("en-GB", options).replace(",", "");
+    }
+
+    function formatTime(timeString) {
+        if (!timeString) return "00:00 AM";
+        let date = new Date(timeString);
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let ampm = hours >= 12 ? "PM" : "AM";
+
+        hours = hours % 12;
+        hours = hours === 0 ? 12 : hours;
+
+        let formattedHours = hours < 10 ? "0" + hours : hours;
+        let formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+
+        return `${formattedHours}:${formattedMinutes} ${ampm}`;
+    }
+
+    function renderEntries(entries, container) {
+        //console.log("🔍 Rendering Entries:", entries);
+
+        let fragment = document.createDocumentFragment();
+        container.innerHTML = ""; // ✅ Clear previous data
+
+        entries.forEach(entry => {
+            let formattedDate = formatDate(entry.Date);
+            let checkInTime = formatTime(entry.Check_in_time);
+            let checkOutTime = formatTime(entry.Check_out_time);
+            let checkInStatus = entry.Check_in_status || "N/A";
+            let checkOutStatus = entry.Check_out_status || "N/A";
+
+            //console.log(`📆 Entry Date: ${entry.Date} ➝ ${formattedDate}`);
+
+            let checkInCard = document.createElement("div");
+            checkInCard.classList.add("act-card", "flex", "box-styling");
+            checkInCard.innerHTML = `
+                <div class="act-cd-prf box-styling">
+                    <i style="transform: rotateY(180deg);" class="fi fi-rs-arrow-left-from-arc"></i>
+                </div>
+                <div class="act-txt-bx flex-row">
+                    <div class="sts-cd">
+                        <h3 class="attn_status">Check In</h3>
+                        <p class="attn_date">${formattedDate}</p>
+                    </div>
+                    <div class="sts-cd">
+                        <h3 class="attn_time">${checkInTime}</h3>
+                        <p class="attn_remark">${checkInStatus}</p>
+                    </div>
+                </div>
+            `;
+
+            let checkOutCard = null;
+            if (checkOutTime !== "00:00 AM") {
+                checkOutCard = document.createElement("div");
+                checkOutCard.classList.add("act-card", "flex", "box-styling");
+                checkOutCard.innerHTML = `
+                    <div class="act-cd-prf box-styling" >
+                        <i class=" fi fi-rs-arrow-left-from-arc"></i>
+                    </div>
+                    <div class="act-txt-bx flex-row">
+                        <div class="sts-cd">
+                            <h3 class="attn_status">Check Out</h3>
+                            <p class="attn_date">${formattedDate}</p>
+                        </div>
+                        <div class="sts-cd">
+                            <h3 class="attn_time">${checkOutTime}</h3>
+                            <p class="attn_remark">${checkOutStatus}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            fragment.appendChild(checkInCard);
+            if (checkOutCard) fragment.appendChild(checkOutCard);
+        });
+
+        container.appendChild(fragment);
+        document.getElementById("daily-atn").style.display = "block";
+    }
+
+    function applyDateFilter(allEntries) {
+        let startDateSpan = document.getElementById("act-st-dt");
+        let endDateSpan = document.getElementById("act-ed-dt");
+    
+        let startDateText = startDateSpan ? startDateSpan.innerText.trim() : "";
+        let endDateText = endDateSpan ? endDateSpan.innerText.trim() : "";
+    
+        //console.log(`📌 Start Date (Raw): "${startDateText}"`);
+        //console.log(`📌 End Date (Raw): "${endDateText}"`);
+    
+        let startDate = convertPickerDate(startDateText);
+        let endDate = convertPickerDate(endDateText);
+    
+        if (!startDate || !endDate) {
+            //console.log("⚠️ No valid date range selected. Showing all entries.");
+            let sortedEntries = allEntries.sort((a, b) => new Date(b.Date) - new Date(a.Date)); // ✅ Sort in DESC order
+            renderEntries(sortedEntries, allActCnt);
+            return;
+        }
+    
+        let startTimestamp = new Date(startDate).getTime();
+        let endTimestamp = new Date(endDate).getTime();
+    
+        //console.log(`✅ Start Date (Timestamp): ${startTimestamp}`);
+        //console.log(`✅ End Date (Timestamp): ${endTimestamp}`);
+    
+        let filteredEntries = allEntries
+            .filter(entry => {
+                let entryTimestamp = new Date(entry.Date).getTime();
+                let isInRange = entryTimestamp >= startTimestamp && entryTimestamp <= endTimestamp;
+    
+                //console.log(`🔍 Checking: ${entry.Date} (${entryTimestamp}) ➝ In Range? ${isInRange}`);
+                return isInRange;
+            })
+            .sort((a, b) => new Date(b.Date) - new Date(a.Date)); // ✅ Sorting in DESC order (Newest First)
+    
+        //console.log("✅ Sorted Filtered Entries (Descending):", filteredEntries);
+        renderEntries(filteredEntries, allActCnt);
+    }
+    
+
+    function convertPickerDate(dateString) {
+        let parts = dateString.split(" ");
+        if (parts.length !== 3) return null;
+    
+        let day = parts[0].padStart(2, "0"); // Ensuring "1" becomes "01"
+        let month = parts[1]; // Month already in correct format
+        let year = parts[2];
+    
+        return `${day} ${month} ${year}`;
+    }
+    
+
+    function observeDateChanges() {
+        let startDateSpan = document.getElementById("act-st-dt");
+        let endDateSpan = document.getElementById("act-ed-dt");
+
+        if (startDateSpan && endDateSpan) {
+            let observer = new MutationObserver(() => {
+                //console.log("🔄 Date changed, reapplying filter...");
+                applyDateFilter(entries);
+            });
+
+            observer.observe(startDateSpan, { childList: true, subtree: true, characterData: true });
+            observer.observe(endDateSpan, { childList: true, subtree: true, characterData: true });
+        }
+    }
+
+    observeDateChanges();
+}
+
+
+
+
 
 
 function parseDate(input) {
@@ -1700,7 +2191,7 @@ function getCurrentDateInDDMMYY() {
 function updateAtnCells(data) {
     
     if (data !== undefined) {
-        console.log("Data received in updateAtnCells: ", data); // Log the data if it's not undefined
+        //console.log("Data received in updateAtnCells: ", data); // Log the data if it's not undefined
 
         resetAttenStatus();
      
@@ -1751,7 +2242,7 @@ function updateAtnCells(data) {
         
         
     } else {
-        console.log("Data received in: undifined", );
+        //console.log("Data received in: undifined", );
     }
 }
 
@@ -1763,7 +2254,7 @@ async function updateAtnCellsByDate(formattedDate) {
         return; // Return early if formattedDate is not available
     }
 
-    console.log("Data received in updateAtnCellsByDate: ", formattedDate);
+    //console.log("Data received in updateAtnCellsByDate: ", formattedDate);
 
     try {
         // Parse the JSON string from localStorage
@@ -1778,7 +2269,7 @@ async function updateAtnCellsByDate(formattedDate) {
 
         // Log the active ticket object
         const ticketObject = { UserId: userId, Token: token };
-        console.log('Active Ticket:', ticketObject);
+        //console.log('Active Ticket:', ticketObject);
 
         // Extract day, month, and year from formattedDate (assuming it's in the format "dd/mm/yy")
         const dateParts = formattedDate.split('/');
@@ -1791,7 +2282,7 @@ async function updateAtnCellsByDate(formattedDate) {
 
         // Create the atnToken using the day, month, year, and last 3 digits of userId
         const atnToken = `${day}${month}${year}${last3Digits}`;
-        console.log('Generated ATN Token:', atnToken);
+        //console.log('Generated ATN Token:', atnToken);
 
         // Fetch the backend URL from config.json
         const response = await fetch('/TFC-Connect/App/config.json');
@@ -1816,27 +2307,27 @@ async function updateAtnCellsByDate(formattedDate) {
 
       
         // Log the backend response before further processing
-        console.log("Backend Response:", backendResponse);
+        //console.log("Backend Response:", backendResponse);
 
         // Check if the response is successful
         if (backendResponse.ok) {
             const backendData = await backendResponse.json();
-            console.log("Backend response data:", backendData);
+            //console.log("Backend response data:", backendData);
             // Handle the backend data as needed
             if (backendData && backendData.data) {
 
                 updateAtnCells(backendData.data); 
                
+     
                 let noRecd ;
                 noRecd = "hide";
                 localStorage.setItem('noRecd', noRecd);
-               
                 
 
 
             } else {
 
-                console.log("No data found in backend response.");
+                //console.log("No data found in backend response.");
                 resetAttenStatus();
                
                 let noRecd ;
@@ -1863,7 +2354,7 @@ async function updateAtnCellsByDate(formattedDate) {
 
 function showRecdfun(){
     const noRecdRes = localStorage.getItem('noRecd');
-    console.log("noRecdRes", noRecdRes);
+    //console.log("noRecdRes", noRecdRes);
     
     if(noRecdRes === "show"){
         document.getElementById('crd-bx-cnt').style.display = "none";
@@ -1876,7 +2367,7 @@ function showRecdfun(){
 
 function hideRecdfun(){
     const noRecdRes = localStorage.getItem('noRecd');
-    console.log("noRecdRes", noRecdRes);
+    //console.log("noRecdRes", noRecdRes);
     
     if(noRecdRes === "hide"){
         document.getElementById('crd-bx-cnt').style.display = "block";
@@ -1905,4 +2396,422 @@ function updateAttenStatus(){
       document.getElementById("checkOutStatus").textContent = "loading...";
       document.getElementById("finalStatus").textContent = "loading...";
       document.getElementById("finalDecision").textContent = "loading...";
+}
+
+
+function brkAlrt(){
+    const brkAlertBox = document.getElementById('brkAlertBox');
+    
+    if (brkAlertBox) {
+        brkAlertBox.classList.remove('visible'); // Slide out to hide
+    }
+}
+
+function showAlrt(){
+    const brkAlertBox = document.getElementById('brkAlertBox');
+    
+    if (brkAlertBox) {
+        brkAlertBox.classList.add('visible'); // Slide in to show
+    }
+}
+
+
+
+
+function showActivity(){
+    const allActivity = document.getElementById('allActivity');
+    
+    if (allActivity) {
+        allActivity.classList.add('visible'); // Slide out to hide
+    }
+}
+
+
+
+
+function hideActivity(){
+    const allActivity = document.getElementById('allActivity');
+    
+    if (allActivity) {
+        allActivity.classList.remove('visible'); // Slide in to show
+    }
+}
+
+function hideAttnRecord(){
+    const allActivity = document.getElementById('allAttnRecord');
+    
+    if (allActivity) {
+        allActivity.classList.remove('visible'); // Slide in to show
+    }
+}
+
+function showAttnRecord(){
+    const allActivity = document.getElementById('allAttnRecord');
+    
+    if (allActivity) {
+        allActivity.classList.add('visible'); // Slide out to hide
+    }
+}
+
+
+
+
+function findHoliday(attrecord) {
+    //console.log("Function running: findHoliday");
+
+    // Retrieve and parse the active ticket data from localStorage
+    const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
+
+    if (!activeTicket) {
+        console.error("No active ticket found.");
+        return;
+    }
+
+    // Extract token and userId from the activeTicket object
+    const tktuserToken = activeTicket.token;
+    const tktuserId = activeTicket.userId;
+
+    //console.log("Token:", tktuserToken);
+    //console.log("UserId:", tktuserId);
+
+    // Create data object to send to the backend, with action included
+    const data = new URLSearchParams();
+    data.append('action', 'findHoliday');
+    data.append('token', tktuserToken);
+    data.append('userId', tktuserId);
+
+    //console.log('Data being sent from findHoliday:', data.toString());
+
+    // Fetch config.json to get script URL
+    fetch('/TFC-Connect/App/config.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Failed to load config.json, status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(config => {
+            if (!config.scriptUrl) {
+                throw new Error("scriptUrl not found in config.json");
+            }
+
+            // Make the POST request to the App Script endpoint
+            return fetch(config.scriptUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: data
+            });
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(result => {
+            //console.log("Server response findHoliday:", result);
+            createCalendarFromSpan(attrecord, result.holidays);
+            updateHoliday( result.holidays );
+            generateDates(attrecord, result.holidays);
+            chkInOutRcd(attrecord);
+        })
+        .catch(error => {
+            console.error("Error in findHoliday:", error);
+        });
+}
+
+
+function updateHoliday( response) {
+    if (!response) {
+        console.error("❌ updateHoliday: Received undefined or null response");
+        return;
+    }
+
+    //console.log("📌 Received Data response updateHoliday:", response);
+    
+    // Extract the target month and year from the span element
+    const targetMonthYear = document.getElementById("ttl-mnt-cnt").textContent.trim().toUpperCase();
+    //console.log("🎯 Target Month-Year:", targetMonthYear);
+    
+    // Convert target month-year format to proper format (MMM YYYY)
+    const [targetMonth, targetYear] = targetMonthYear.split(" ");
+    
+    // Define mapping for months
+    const monthMapping = {
+        "JAN": 0, "FEB": 1, "MAR": 2, "APR": 3, "MAY": 4, "JUN": 5, 
+        "JUL": 6, "AUG": 7, "SEP": 8, "OCT": 9, "NOV": 10, "DEC": 11
+    };
+    
+    if (!(targetMonth in monthMapping)) {
+        console.error("❌ Invalid target month format.");
+        return;
+    }
+    
+    const targetMonthNum = monthMapping[targetMonth];
+    
+    // Filter the response data based on the target month and year, and exclude entries where column 3 is 'Yes' or 'yes'
+    const filteredEntries = response.filter(entry => {
+        const entryDate = new Date(entry[0]); // Convert ISO date to Date object
+        const workingStatus = entry[2].trim().toLowerCase(); // Normalize case
+        return (
+            entryDate.getMonth() === targetMonthNum &&
+            entryDate.getFullYear().toString() === targetYear &&
+            workingStatus !== 'yes' // Exclude if column 3 has 'Yes' (case insensitive)
+        );
+    });
+    
+    // Format count as 00 Days
+    const formattedCount = filteredEntries.length.toString().padStart(2, '0');
+    
+    // Update the count in the holiday-count element with 'Days' suffix
+    document.getElementById("holiday-count").textContent = `${formattedCount} Days`;
+    //console.log("✅ Number of holidays updated:", formattedCount);
+    
+    // Get total days count from ttl-mnth-day
+    const totalDays = parseInt(document.getElementById("ttl-mnth-day").textContent.trim(), 10);
+    const holidayCount = parseInt(formattedCount, 10);
+    
+    // Calculate working days
+    const workingDays = totalDays - holidayCount;
+    const formattedWorkingDays = workingDays.toString().padStart(2, '0');
+    
+    // Update working days count
+    document.getElementById("Working-count").textContent = `${formattedWorkingDays} Days`;
+    //console.log("✅ Number of working days updated:", formattedWorkingDays);
+    
+
+}
+
+
+
+
+function markAttnDays(response) {
+    //console.log("markAttnDays record", response);
+    
+    let presentCount = 0;
+    let lateCount = 0;
+    let holidayCount = 0;
+    let absentCount = 0;
+    
+    // Get the selected month and year from the element
+    let selectedMonthYear = document.getElementById("ttl-mnt-cnt").textContent.trim();
+    let totalWorkingDays = parseInt(document.getElementById("Working-count").textContent) || 1;
+    
+    response.forEach(record => {
+        // Convert response.Date to Indian Standard Time (IST) and 'MMM YYYY' format
+        let dateObj = new Date(record.Date);
+        let istDateObj = new Date(dateObj.toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
+        let formattedDate = istDateObj.toLocaleString('en-US', { month: 'short', year: 'numeric' }).toUpperCase();
+        
+        if (formattedDate === selectedMonthYear) {
+            let mark = record.Mark.toUpperCase(); // Convert to uppercase to handle both cases
+            switch (mark) {
+                case "P":
+                    presentCount++;
+                    break;
+                case "L":
+                    lateCount++;
+                    break;
+                case "H":
+                    holidayCount++;
+                    break;
+                case "A":
+                    absentCount++;
+                    break;
+            }
+        }
+    });
+    
+    document.getElementById("ttl_prsnt").textContent = presentCount.toString().padStart(2, '0') + " Days";
+    document.getElementById("ttl_late").textContent = lateCount.toString().padStart(2, '0') + " Days";
+    document.getElementById("ttl_hday").textContent = holidayCount.toString().padStart(2, '0') + " Days";
+    document.getElementById("ttl_absnt").textContent = absentCount.toString().padStart(2, '0') + " Days";
+    
+    // Calculate total attendance days (P + L + H)
+    let totalAttendanceDays = presentCount + lateCount + holidayCount;
+    let attendancePercent = totalWorkingDays > 0 ? Math.min((totalAttendanceDays / totalWorkingDays) * 100, 100) : 0;
+    
+    updateProgress(Math.round(attendancePercent));
+    
+    // Ensure percentages don't exceed 100%
+    let presentPercent = totalWorkingDays > 0 ? Math.min((presentCount / totalWorkingDays) * 100, 100) : 0;
+    let latePercent = totalWorkingDays > 0 ? Math.min((lateCount / totalWorkingDays) * 100, 100) : 0;
+    let holidayPercent = totalWorkingDays > 0 ? Math.min((holidayCount / totalWorkingDays) * 100, 100) : 0;
+    let absentPercent = totalWorkingDays > 0 ? Math.min((absentCount / totalWorkingDays) * 100, 100) : 0;
+    
+    // Store last known percentages to avoid fluctuations
+    if (!window.lastPercentages) {
+        window.lastPercentages = { present: 0, late: 0, holiday: 0, absent: 0 };
+    }
+    
+    // Update progress bars and segments only if values change
+    if (window.lastPercentages.present !== presentPercent) {
+        updateBar(0, presentPercent, '#31e774'); // Green for present
+        setSegmentPercentage(0, presentPercent);
+        window.lastPercentages.present = presentPercent;
+    }
+    if (window.lastPercentages.late !== latePercent) {
+        updateBar(1, latePercent, '#ffd606'); // Yellow for late
+        setSegmentPercentage(1, latePercent);
+        window.lastPercentages.late = latePercent;
+    }
+    if (window.lastPercentages.holiday !== holidayPercent) {
+        updateBar(2, holidayPercent, '#ffa033'); // Orange for holiday
+        setSegmentPercentage(2, holidayPercent);
+        window.lastPercentages.holiday = holidayPercent;
+    }
+    if (window.lastPercentages.absent !== absentPercent) {
+        updateBar(3, absentPercent, '#ff4000'); // Red for absent
+        setSegmentPercentage(3, absentPercent);
+        window.lastPercentages.absent = absentPercent;
+    }
+}
+
+
+
+function chkInOutRcd(attrecord) {
+    console.log("Updated attrecord by chkInOutRcd", attrecord);
+
+    // Function to format the date from 'yyyy-mm-dd' to 'dd mmm yy'
+    function formatDate(dateString) {
+        if (!dateString) return '----';  // If the date is null or undefined
+        const options = { day: '2-digit', month: 'short', year: '2-digit' };
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-GB', options);
+    }
+
+    // Function to convert the time (e.g., '1899-12-29T20:43:50.000Z') to 'hh:mm am/pm'
+    function formatTime(timeString) {
+        if (!timeString) return '----';  // If the time is null or undefined
+        const time = new Date(timeString);
+        let hours = time.getHours();
+        let minutes = time.getMinutes();
+        const ampm = hours >= 12 ? 'pm' : 'am';
+
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+
+        return `${hours}:${minutes} ${ampm}`;
+    }
+
+    // Get the month and year from the month-display element
+    const monthYearString = document.getElementById('month-display').innerText;
+    const [monthName, year] = monthYearString.split(' ');  // Extract "March" and "2025"
+
+    // Convert month name to number (e.g., "March" => 3)
+    const monthNumber = new Date(`${monthName} 1, ${year}`).getMonth() + 1;
+
+    // Sort the records in descending order based on Date
+    attrecord.sort((a, b) => new Date(b.Date) - new Date(a.Date));  // Sort by Date in descending order
+
+    // Find the container div for monthly display and clear its contents
+    const container = document.querySelector('#tbl-bdy-cnt');
+    container.innerHTML = ''; // Clear existing records
+
+    // Loop through each attendance record and filter based on the month and year
+    let count = 0;  // To limit the number of entries to 4
+    attrecord.forEach(record => {
+        const recordDate = new Date(record.Date);
+        const recordMonth = recordDate.getMonth() + 1; // Get month number (1-12)
+        const recordYear = recordDate.getFullYear(); // Get full year (e.g., 2025)
+
+        // Filter records based on the month and year displayed in month-display
+        if (recordMonth === monthNumber && recordYear === parseInt(year)) {
+            if (count >= 4) return; // Stop adding records after 4 entries
+
+            // Format the Date, Check_in_time, Check_out_time, and Image URL
+            const formattedDate = formatDate(record.Date);
+            const formattedCheckInTime = formatTime(record.Check_in_time);
+            const formattedCheckOutTime = formatTime(record.Check_out_time);
+            const imageId = record.Image ? record.Image.split('/d/')[1].split('/view')[0] : '';
+            const formattedImageUrl = imageId ? `https://lh3.googleusercontent.com/d/${imageId}` : '';
+
+            // Create a new div for each record and append it to the container
+            const divElement = document.createElement('div');
+            divElement.className = "t-data-row tb-rw-shd-frt td-ex-pol-thd-cont tbl-bdy-rw-frt flex-row";
+
+            divElement.innerHTML = `
+              <p class="entry-date cusName ex-td-nam-frm p-styling td-ex-tbl-hd-frt">${formattedDate}</p>
+              <p class="entry-checkin cusContact ex-td-cnt-frm p-styling td-ex-tbl-hd-frt">${formattedCheckInTime}</p>
+              <p class="entry-checkout cusPremium ex-td-prm-frm p-styling td-ex-tbl-hd-frt">${formattedCheckOutTime}</p>
+              <p class="entry-status cusStatus ex-td-sts-frm p-styling td-ex-tbl-hd-frt">${record.Status || '----'}</p>
+              <p class="cusAction p-styling p-icn-wdth td-ex-tbl-hd-frt">
+                <a href="${formattedImageUrl}" class="entry-image call-link" target="_blank">
+                  <i class="fi fi-rr-copy-image flex"></i>
+                </a>
+              </p>
+            `;
+
+            // Append the new div to the container
+            container.appendChild(divElement);
+
+            count++; // Increment count
+        }
+    });
+
+    // Start Date and End Date for filtering allAttnRecordList
+    const startDateStr = document.getElementById('rcd-st-dt').innerText; // Format: 01 MAR 2025
+    const endDateStr = document.getElementById('rcd-ed-dt').innerText;   // Format: 25 MAR 2025
+
+    const startDate = new Date(`${startDateStr.split(' ')[0]} ${startDateStr.split(' ')[1]} ${startDateStr.split(' ')[2]}`);
+    const endDate = new Date(`${endDateStr.split(' ')[0]} ${endDateStr.split(' ')[1]} ${endDateStr.split(' ')[2]}`);
+
+    // Find the container for allAttnRecordList and clear its contents
+    const allRecordsContainer = document.querySelector('#allAttnRecordList');
+    allRecordsContainer.innerHTML = ''; // Clear existing records
+
+    // Loop through each attendance record and filter based on the start and end date
+    attrecord.forEach(record => {
+        const recordDate = new Date(record.Date);
+
+        // Check if the record date falls between start and end date
+        if (recordDate >= startDate && recordDate <= endDate) {
+            // Format the Date, Check_in_time, Check_out_time, and Image URL
+            const formattedDate = formatDate(record.Date);
+            const formattedCheckInTime = formatTime(record.Check_in_time);
+            const formattedCheckOutTime = formatTime(record.Check_out_time);
+            const imageId = record.Image ? record.Image.split('/d/')[1].split('/view')[0] : '';
+            const formattedImageUrl = imageId ? `https://lh3.googleusercontent.com/d/${imageId}` : '';
+
+            // Create a new div for each record and append it to the container
+            const divElement = document.createElement('div');
+            divElement.className = "t-data-row tb-rw-shd-frt td-ex-pol-thd-cont tbl-bdy-rw-frt flex-row";
+
+            divElement.innerHTML = `
+              <p class="entry-date cusName ex-td-nam-frm p-styling td-ex-tbl-hd-frt">${formattedDate}</p>
+              <p class="entry-checkin cusContact ex-td-cnt-frm p-styling td-ex-tbl-hd-frt">${formattedCheckInTime}</p>
+              <p class="entry-checkout cusPremium ex-td-prm-frm p-styling td-ex-tbl-hd-frt">${formattedCheckOutTime}</p>
+              <p class="entry-status cusStatus ex-td-sts-frm p-styling td-ex-tbl-hd-frt">${record.Status || '----'}</p>
+              <p class="cusAction p-styling p-icn-wdth td-ex-tbl-hd-frt">
+                <a href="${formattedImageUrl}" class="entry-image call-link" target="_blank">
+                  <i class="fi fi-rr-copy-image flex"></i>
+                </a>
+              </p>
+            `;
+
+            // Append the new div to the allAttnRecordList container
+            allRecordsContainer.appendChild(divElement);
+        }
+    });
+
+    // Add event listener for clicks on the image link in both containers
+    const imageLinks = document.querySelectorAll('.entry-image');
+
+    imageLinks.forEach(link => {
+        link.addEventListener('click', function(event) {
+            // Find the icon element inside the link
+            const icon = link.querySelector('i');
+
+            // Change the icon to the loading one
+            icon.classList.remove('fi-rr-copy-image');
+            icon.classList.add('fi-tr-loading', 'rotating-icon');
+
+            // After 3 seconds, reset the icon to the original
+            setTimeout(() => {
+                icon.classList.remove('fi-tr-loading', 'rotating-icon');
+                icon.classList.add('fi-rr-copy-image');
+            }, 3000); // 3 seconds
+        });
+    });
 }

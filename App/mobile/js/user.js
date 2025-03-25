@@ -725,3 +725,167 @@ function sendApiRequest() {
   }
 }
 
+
+document.addEventListener("DOMContentLoaded", function () {
+    function initializeMonthYearPicker(container) {
+        const monthDropdown = container.querySelector(".custom-month-dropdown");
+        const yearDropdown = container.querySelector(".custom-year-dropdown");
+        const mnthYearSpan = container.querySelector(".custom-mnth-year");
+        const resetButton = container.querySelector(".mnyr-rst");
+
+        const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+        const today = new Date();
+        const currentMonthIndex = today.getMonth();
+        const currentFullYear = today.getFullYear();
+
+        // Populate Month Dropdown
+        monthDropdown.innerHTML = "";
+        monthNames.forEach((month, index) => {
+            const option = document.createElement("option");
+            option.value = month;
+            option.textContent = month;
+            if (index === currentMonthIndex) option.selected = true;
+            monthDropdown.appendChild(option);
+        });
+
+        // Populate Year Dropdown (For next 5 years)
+        yearDropdown.innerHTML = "";
+        for (let i = currentFullYear - 2; i <= currentFullYear + 2; i++) {
+            const option = document.createElement("option");
+            option.value = i;
+            option.textContent = i.toString();
+            if (i === currentFullYear) option.selected = true;
+            yearDropdown.appendChild(option);
+        }
+
+        // Function to update span text
+        function updateMonthYear() {
+            const selectedMonth = monthDropdown.value;
+            const selectedYear = yearDropdown.value;
+            mnthYearSpan.textContent = `${selectedMonth} ${selectedYear}`;
+            resetButton.style.display = "flex"; // Jab bhi change ho, show kare
+        }
+
+        // Function to reset to current month and year
+        function resetToCurrentMonthYear() {
+            monthDropdown.value = monthNames[currentMonthIndex];
+            yearDropdown.value = currentFullYear;
+            mnthYearSpan.textContent = `${monthNames[currentMonthIndex]} ${currentFullYear}`;
+            resetButton.style.display = "none"; // Reset hone ke baad hide ho jaye
+        }
+
+        // Initial Call
+        updateMonthYear();
+        resetButton.style.display = "none"; // Initially hidden
+
+        // Event Listeners
+        monthDropdown.addEventListener("change", updateMonthYear);
+        yearDropdown.addEventListener("change", updateMonthYear);
+        resetButton.addEventListener("click", resetToCurrentMonthYear);
+    }
+
+    // Initialize for all instances
+    document.querySelectorAll(".custom-mnth-year-picker").forEach(initializeMonthYearPicker);
+});
+
+
+function updateDaysInMonth() {
+    let monthYearSpan = document.getElementById("ttl-mnt-cnt");
+    let daysOutput = document.getElementById("ttl-mnth-day");
+
+    if (!monthYearSpan || !daysOutput) {
+        console.error("❌ Required elements not found!");
+        return;
+    }
+
+    // Get the value from span (expected format: MMM YYYY)
+    let value = monthYearSpan.innerText.trim().toUpperCase();
+    console.log("📌 Read from span:", value);
+
+    if (value) {
+        let parts = value.split(" "); // Split using space
+        console.log("📌 Split parts:", parts);
+
+        if (parts.length === 2) {
+            let monthStr = parts[0]; // Extract month (e.g., "AUG")
+            let year = parseInt(parts[1], 10); // Extract year
+            console.log("📌 Extracted Month:", monthStr, "| Year:", year);
+
+            // Month names mapping
+            let monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            let month = monthNames.indexOf(monthStr) + 1; // Get month number (1-12)
+            console.log("📌 Month Number:", month);
+
+            if (month > 0 && !isNaN(year)) {
+                let daysInMonth = new Date(year, month, 0).getDate();
+                console.log("✅ Days in Month:", daysInMonth);
+                daysOutput.innerText = daysInMonth; // Update the span with number of days
+            } else {
+                console.error("❌ Invalid month or year!");
+            }
+        } else {
+            console.error("❌ Invalid format! Expected MMM YYYY (e.g., AUG 2025)");
+        }
+    } else {
+        console.error("❌ Empty span content!");
+    }
+}
+
+// ✅ MutationObserver to detect changes in span
+function observeSpanChanges() {
+    let targetNode = document.getElementById("ttl-mnt-cnt");
+
+    if (!targetNode) {
+        console.error("❌ Target span not found!");
+        return;
+    }
+
+    let observer = new MutationObserver(updateDaysInMonth);
+
+    observer.observe(targetNode, {
+        childList: true, 
+        characterData: true, 
+        subtree: true
+    });
+
+    console.log("👀 MutationObserver started!");
+}
+
+// ✅ Initialize observer when DOM loads
+document.addEventListener("DOMContentLoaded", function () {
+    updateDaysInMonth(); // Initial run
+    observeSpanChanges(); // Start observing changes
+});
+
+
+
+
+const monthDisplay = document.getElementById("month-display");
+    let currentDate = new Date(); // Default current date
+    let selectedMonth = currentDate.getMonth(); // 0-based index
+    let selectedYear = currentDate.getFullYear();
+
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    function updateMonthDisplay() {
+        monthDisplay.innerText = `${monthNames[selectedMonth]} ${selectedYear}`;
+    }
+
+    function changeMonth(direction) {
+        selectedMonth += direction;
+        if (selectedMonth < 0) {
+            selectedMonth = 11;
+            selectedYear--;
+        } else if (selectedMonth > 11) {
+            selectedMonth = 0;
+            selectedYear++;
+        }
+        updateMonthDisplay();
+    }
+
+    // Initialize with the current month
+    updateMonthDisplay();

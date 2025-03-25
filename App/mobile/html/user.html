@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
     <title>Admin Page</title>
+
     <link rel="icon" href="path/to/favicon.ico" type="image/x-icon">
     
     
     <!-- <link rel="stylesheet" href="/TFC-Connect/TFC-Connect/App/css/user.css"> -->
     <link rel="stylesheet" href="/TFC-Connect/App/mobile/css/user.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-thin-rounded/css/uicons-thin-rounded.css'>
 
 
 
@@ -18,6 +20,7 @@
 </head>
 <body>
 
+ 
     <div id="cam-cnt" class="flex cmr-cnt">
 
         <div class=" ent-ext-tim flex-row">
@@ -142,8 +145,6 @@
 
     </div>
 
-
-    
 
     <div id="sidebar" class="sidebar  box-styling">
         <div class="sideLogo flex-row">
@@ -286,6 +287,189 @@
     </div>
 
 
+    <div id="brkAlertBox"   class="brk-alrt flex-coloum">
+        <img src="/TFC-Connect/App/assets/underork.gif" alt="">
+        <h1>Break System </h1>
+        <p>Under Construction</p>
+        <button onclick="brkAlrt()"  id="hideAlrt" >Go Back</button>
+    </div>
+
+
+
+    <div id="allActivity" class="allActivity block " >
+        <div onclick="hideActivity()" class="alac-hd flex">
+            <div class="alact-back flex"> <i class="fi flex fi-sr-angle-small-left"></i></div>
+            <h2> All Activity </h2>
+        </div>
+
+        <div class="act-flt-cnt flex-row">
+
+            <div class="flex date-picker-container">
+                <!-- Start Date Picker -->
+                <div class="date-display-container start-date">
+                    <span id="act-st-dt" class="selected-date-text start-date-text act-start-1">Select Date</span>
+                </div>
+                <span class="resetDate flex" style="display: none;">
+                    <i class="fi flex fi-rr-time-past"></i>
+                </span>
+            </div>
+            
+
+            <div class="flex date-picker-container">
+                <!-- current date picker -->
+                <div class="date-display-container current-date ">
+                    <span id="act-ed-dt" class="selected-date-text act-end-1 current-date-text">Select Date</span>
+                </div>
+                <span class="resetDate flex" style="display: none;"><i class="fi flex fi-rr-time-past"></i></span>
+            </div>
+
+
+
+             <!-- end date picker -->
+            <!-- <div class="flex date-picker-container">
+               
+                <div class="date-display-container end-date ">
+                    <span class="selected-date-text  end-date-text">Select Date</span>
+                </div>
+                <span class="resetDate flex" style="display: none;"><i class="fi flex fi-rr-time-past"></i></span>
+            </div> -->
+
+
+            
+            
+            <div class="flex-row custom-mnth-year-picker">
+                <select class="custom-date-mnth custom-month-dropdown"></select>
+            
+                <select class="custom-year-dropdown"></select>
+
+                <div class="mnyr-rst flex">
+                    <i class="fi flex fi-rr-time-past"></i>
+                </div>
+            
+                <span class="custom-mnth-year act-mnth-slt-1" style="position: absolute; z-index: 9999; top: 10px; display: none;"></span>
+            </div>
+            
+
+
+        </div>
+
+        
+        
+
+        <div id="allActCnt" class="activity-card">
+            
+        </div>
+
+    </div>
+
+
+
+    <div id="allAttnRecord" class="allAttnRecord allActivity">
+   
+        <div onclick="hideAttnRecord()" class="alac-hd flex">
+            <div class="alact-back flex"> <i class="fi flex fi-sr-angle-small-left"></i></div>
+            <h2> All Records </h2>
+        </div>
+
+        <div class="act-flt-cnt flex-row">
+
+            <div class="flex date-picker-container">
+                <!-- Start Date Picker -->
+                <div class="date-display-container start-date">
+                    <span id="rcd-st-dt" class="selected-date-text start-date-text act-start-2">Select Date</span>
+                </div>
+                <span class="resetDate flex" style="display: none;">
+                    <i class="fi flex fi-rr-time-past"></i>
+                </span>
+            </div>
+            
+
+            <div class="flex date-picker-container">
+                <!-- current date picker -->
+                <div class="date-display-container current-date ">
+                    <span id="rcd-ed-dt" class="selected-date-text act-end-2 current-date-text">Select Date</span>
+                </div>
+                <span class="resetDate flex" style="display: none;"><i class="fi flex fi-rr-time-past"></i></span>
+            </div>
+
+
+
+             <!-- end date picker -->
+            <!-- <div class="flex date-picker-container">
+               
+                <div class="date-display-container end-date ">
+                    <span class="selected-date-text  end-date-text">Select Date</span>
+                </div>
+                <span class="resetDate flex" style="display: none;"><i class="fi flex fi-rr-time-past"></i></span>
+            </div> -->
+
+
+            
+            
+            <div class="flex-row custom-mnth-year-picker">
+                <select class="custom-date-mnth custom-month-dropdown"></select>
+            
+                <select class="custom-year-dropdown"></select>
+
+                <div class="mnyr-rst flex">
+                    <i class="fi flex fi-rr-time-past"></i>
+                </div>
+            
+                <span id="allRcdMnthFltr" class="custom-mnth-year act-mnth-slt-2" style="position: absolute; z-index: 9999; top: 10px; display: none;"></span>
+            </div>
+            
+
+
+        </div>
+
+
+
+        
+        
+        <div class="mnth-rcrd  mnthrcrd-lst">
+            <div class="rcrd-brd flex-coloum box-styling">
+                <div class="tabel-container">
+                    <table class="td-ex-pol-table">
+
+    
+                        <div class="t-head td-ex-pol-thd-cont flex-row">
+                            <p class="p-styling td-ex-tbl-hd-frt ex-td-nam-frm" > Date</p>
+                            <p class="p-styling td-ex-tbl-hd-frt ex-td-cnt-frm" > Check In </p>
+                            <p class="p-styling ex-td-prm-frm td-ex-tbl-hd-frt" > Check Out</p>
+                            <p class="p-styling td-ex-tbl-hd-frt ex-td-sts-frm flex " > Status </p>
+                            <p class="p-styling td-ex-tbl-hd-frt p-icn-wdth" ><i class="fi fi-rr-copy-image flex"></i></p>
+                        </div>
+    
+    
+                        <div id="allAttnRecordList" class="tbl-bdy-cnt ">
+                             </div>
+                        
+    
+                        
+                        
+                        
+                    </table>
+                    </div>
+                        
+                   
+                </div>
+        </div>
+
+
+    
+    </div>
+
+    
+    <div class="calendar-container">
+        <div class="calendar-header-container">
+          <button class="calendar-header-button prev-month">&#9664;</button>
+          <span class="current-month-year"></span>
+          <button class="calendar-header-button next-month">&#9654;</button>
+        </div>
+        <div class="calendar-grid-container"></div>
+      </div>
+
+
     <div class="mb-header flex-row ">
         <div onclick="showSideBar()" class="user-prf-pic-cont flex">
           <img class="userImage" src="/TFC-Connect/App/assets/user.png " alt="">
@@ -404,7 +588,7 @@ Welcome Back, <span class="firstName"></span>
                         </div>
                     </div>
                     <div style="display: none;" id="actBtn" class="chkn-switch-slider btn-cnt flex-row">
-                        <button style="background-color: #ffcd06;" class="btn1 flex">
+                        <button onclick="showAlrt()" id="brkBtn" style="background-color: #ffcd06;" class="btn1 flex">
                             <i class="fi fi-rs-stopwatch"></i>Take Break</button>
                         <button id="checkOutBtn" onclick="checkoutFuntion()" class="btn1 flex"><i class="fi fi-rs-arrow-left-from-arc"></i> Check Out</button>
                         
@@ -417,26 +601,26 @@ Welcome Back, <span class="firstName"></span>
         
             </div>
 
+            
+
             <div class="daily-atn block">
 
                 <div class="title flex-row">
                  <h3 class="h-styling" >Attendance</h3>
+
                   <div class="flex date-picker-container">
                     <div class="date-display-container">
                       <span id="checkInOutDate" class="selected-date-text">Select Date</span>
                     </div>
-                    <div class="calendar-container">
-                      <div class="calendar-header-container">
-                        <button class="calendar-header-button prev-month">&#9664;</button>
-                        <span class="current-month-year"></span>
-                        <button class="calendar-header-button next-month">&#9654;</button>
-                      </div>
-                      <div class="calendar-grid-container"></div>
-                    </div>
-                    <span class="resetDate flex" onclick="resetToCurrentDate()"  id="resetDate" style="display: none;" ><i class="fi flex fi-rr-time-past"></i></span>
+                   
+                    <span class="resetDate flex" onclick="resetToCurrentDate()"   style="display: none;" ><i class="fi flex fi-rr-time-past"></i></span>
                   </div>
+  
                 </div>
               
+
+
+                
                 <div id="noRecd" style="display: none;" class="box-styling no_recd_img_bx">
                     <img src="/TFC-Connect/App/assets/5928293_2953962.jpg" alt="">
                 </div>
@@ -479,6 +663,8 @@ Welcome Back, <span class="firstName"></span>
                         <h2 class="breakTiming">--:--</h2>
                         <p class="nBreak">------</p>
                        
+                        <img src="/TFC-Connect/App/assets/brkImg.gif" alt="">
+
                     </div>
                     <div class="card bx-anm box-styling">
                         <div class="bsc-title flex-row">
@@ -500,56 +686,15 @@ Welcome Back, <span class="firstName"></span>
             </div>
 
 
-            <div class="daily-atn atn-activity block">
+            <div id="daily-atn" style="display: none;"  class="daily-atn atn-activity block">
 
                 <div class="title flex-row">
                  <h3 class="h-styling" >Activity</h3>
-                 <p class="vall">View All</p>
+                 <p id="vewAllAct" onclick="showActivity()" class="vall">View All</p>
                 </div>
         
-             <div class="activity-card">
-                <div class="act-card flex box-styling">
-                    <div class="act-cd-prf box-styling"></div>
-                    <div class="act-txt-bx flex-row">
-                        <div class="sts-cd">
-                            <h3>Check In</h3>
-                            <p>29 Apr 2024</p>
-                        </div>
-                        <div class="sts-cd">
-                            <h3>10:00 am</h3>
-                            <p>Early Morining</p>
-                        </div>
-                       
-                    </div>
-                </div>
-                <div class="act-card flex box-styling">
-                    <div class="act-cd-prf box-styling"></div>
-                    <div class="act-txt-bx flex-row">
-                        <div class="sts-cd">
-                            <h3>Check In</h3>
-                            <p>29 Apr 2024</p>
-                        </div>
-                        <div class="sts-cd">
-                            <h3>10:00 am</h3>
-                            <p>Early Morining</p>
-                        </div>
-                       
-                    </div>
-                </div>
-                <div class="act-card flex box-styling">
-                    <div class="act-cd-prf box-styling"></div>
-                    <div class="act-txt-bx flex-row">
-                        <div class="sts-cd">
-                            <h3>Check In</h3>
-                            <p>29 Apr 2024</p>
-                        </div>
-                        <div class="sts-cd">
-                            <h3>10:00 am</h3>
-                            <p>Early Morining</p>
-                        </div>
-                       
-                    </div>
-                </div>
+             <div id="activityContainer" class="activity-card activityContainer">
+
              </div>
         
               
@@ -561,15 +706,32 @@ Welcome Back, <span class="firstName"></span>
 
                 <div class="title flex-row">
                     <h3 class="h-styling" >Summary</h3>
-                     <div class="date-cont flex" >
-                       <div class="Month on-mnth flex">AUG</div>
-                     </div>
+
+             <div class="flex-row custom-mnth-year-picker">
+                <select class="custom-date-mnth custom-month-dropdown"></select>
+            
+                <select class="custom-year-dropdown"></select>
+
+                <div class="mnyr-rst flex">
+                    <i class="fi flex fi-rr-time-past"></i>
+                </div>
+            
+                <span id="ttl-mnt-cnt" class="custom-mnth-year act-mnth-slt" style="position: absolute; z-index: 9999; top: 10px; display: none;"></span>
+            </div>
+            
+
+
                    </div>
         
+                   
         
                    <div class="atn-rcrd-card flex-coloum box-styling">
+                    
+                   
                     <div class="atn-ovr-vw flex-row">
+                      
                         <div class="ovr-vw-bar flex">
+                            
                             <div class="progress-container flex">
                                 
                                 <svg class="progress-svg" width="160" height="160">
@@ -594,12 +756,17 @@ Welcome Back, <span class="firstName"></span>
         
                               
                         </div>
+
                         <div class="ovr-vw-dta flex">
+                            <div class="flex-coloum mnth-cout">
+                                <h3 id="ttl-mnth-day">00</h3>
+                                <p>Days</p>
+                            </div>
                             <div class="ln"></div>
                             <div class="col-dta">
-                                <p class="col-val">10 Days</p>
-                                <p class="col-titl">Working Days</p>
-                                <p class="col-val">10 Days</p>
+                                <p id="Working-count" class="col-val">00 Days</p>
+                                <p  class="col-titl">Working Days</p>
+                                <p id="holiday-count" class="col-val">00 Days</p>
                                 <p class="col-titl">Holidays</p>
         
                             </div>
@@ -626,7 +793,7 @@ Welcome Back, <span class="firstName"></span>
                                   
                             </div>
                             <div class="data-ov-box flex-coloum">
-                               <h4 style="color: #31e774;">20 Days</h4>
+                               <h4 id="ttl_prsnt" style="color: #31e774;">00 Days</h4>
                                <p>On Time</p>
                             </div>
                         </div>
@@ -642,7 +809,7 @@ Welcome Back, <span class="firstName"></span>
                                   
                             </div>
                             <div class="data-ov-box flex-coloum">
-                               <h4 style="color: #ffcd06;">20 Days</h4>
+                               <h4 id="ttl_late" style="color: #ffcd06;">00 Days</h4>
                                <p>Late</p>
                             </div>
                         </div>
@@ -662,7 +829,7 @@ Welcome Back, <span class="firstName"></span>
                               
                         </div>
                         <div class="data-ov-box flex-coloum">
-                           <h4 style="color:#ffa033 ;">20 Days</h4>
+                           <h4 id="ttl_hday" style="color:#ffa033 ;">00 Days</h4>
                            <p>Half Days</p>
                         </div>
                     </div>
@@ -678,7 +845,7 @@ Welcome Back, <span class="firstName"></span>
                               
                         </div>
                         <div class="data-ov-box flex-coloum">
-                           <h4 style="color: #ff4000;">20 Days</h4>
+                           <h4 id="ttl_absnt" style="color: #ff4000;">00 Days</h4>
                            <p>Absent</p>
                         </div>
                     </div>
@@ -752,9 +919,18 @@ Welcome Back, <span class="firstName"></span>
             <div class="block cal-cont">
                 <div class="title flex-row">
                     <h3 class="h-styling" >Calender</h3>
-                     <div class="date-cont flex" >
-                       <div class="Month on-mnth flex">AUG</div>
-                     </div>
+                    <div class="flex-row custom-mnth-year-picker">
+                        <select class="custom-date-mnth custom-month-dropdown"></select>
+                    
+                        <select class="custom-year-dropdown"></select>
+        
+                        <div class="mnyr-rst flex">
+                            <i class="fi flex fi-rr-time-past"></i>
+                        </div>
+                    
+                        <span id="crt-atn-clndr" class="custom-mnth-year act-mnth-slt" style="position: absolute; z-index: 9999; top: 10px; display: none;"></span>
+                    </div>
+                    
                    </div>
         
                    <div class="calender box-styling" id="calendar"></div>
@@ -766,7 +942,7 @@ Welcome Back, <span class="firstName"></span>
             <div class="block mnth-rcrd">
                 <div class="title flex-row">
                     <h3 class="h-styling" >All Record</h3>
-                    <p class="vall">View All</p>
+                    <p onclick="showAttnRecord()" class="vall">View All</p>
                 </div>
 
                 <div class="rcrd-brd flex-coloum box-styling">
@@ -774,12 +950,15 @@ Welcome Back, <span class="firstName"></span>
                         <table class="td-ex-pol-table">
         
                             <div class="mnth-dt-filt flex-row">
-                                <div class="mnth-btn btn-rt flex">
-                                    <i class="fi fi-rr-angle-small-right flex"></i>
+                                <div class="mnth-btn btn-lt flex" onclick="changeMonth(-1)">
+                                    <i class="fi fi-rr-angle-small-left flex"></i>
                                 </div>
-                                <p>Januray 2025</p>
-                                <div class="mnth-btn flex"><i class="fi fi-rr-angle-small-right flex"></i></div>
+                                <p id="month-display"></p>
+                                <div class="mnth-btn btn-rt flex" onclick="changeMonth(1)" >
+                                    <i style="transform: rotateX(180deg);"  class="fi fi-rr-angle-small-right flex"></i>
+                                </div>
                             </div>
+                            
         
                             <div class="t-head td-ex-pol-thd-cont flex-row">
                                 <p class="p-styling td-ex-tbl-hd-frt ex-td-nam-frm" > Date</p>
@@ -790,53 +969,8 @@ Welcome Back, <span class="firstName"></span>
                             </div>
         
         
-                            <div class="tbl-bdy-cnt ">
-        
-        
-                                <div class="t-data-row tb-rw-shd-frt td-ex-pol-thd-cont tbl-bdy-rw-frt flex-row">
-                                    <p class="cusName ex-td-nam-frm p-styling td-ex-tbl-hd-frt">23 Jan</p>
-                                    <p class="cusContact ex-td-cnt-frm p-styling td-ex-tbl-hd-frt">12:00 am</p>
-                                    <p class="cusPremium ex-td-prm-frm p-styling td-ex-tbl-hd-frt">13:00 pm</p>
-                                    <p class="cusStatus ex-td-sts-frm p-styling td-ex-tbl-hd-frt">Halfday</p>
-                                    <p class="cusAction p-styling p-icn-wdth td-ex-tbl-hd-frt">
-                                        <a href="#" class="call-link"><i class="fi fi-rr-copy-image flex"></i></a>
-                                    </p>
-                                </div>
-                                
-                                <div class="t-data-row tb-rw-shd-frt td-ex-pol-thd-cont tbl-bdy-rw-frt flex-row">
-                                    <p class="cusName ex-td-nam-frm p-styling td-ex-tbl-hd-frt">23 Jan</p>
-                                    <p class="cusContact ex-td-cnt-frm p-styling td-ex-tbl-hd-frt">12:00 am</p>
-                                    <p class="cusPremium ex-td-prm-frm p-styling td-ex-tbl-hd-frt">13:00 pm</p>
-                                    <p class="cusStatus ex-td-sts-frm p-styling td-ex-tbl-hd-frt">Halfday</p>
-                                    <p class="cusAction p-styling p-icn-wdth td-ex-tbl-hd-frt">
-                                        <a href="#" class="call-link"><i class="fi fi-rr-copy-image flex"></i></a>
-                                    </p>
-                                </div>
-                                
-                                <div class="t-data-row tb-rw-shd-frt td-ex-pol-thd-cont tbl-bdy-rw-frt flex-row">
-                                    <p class="cusName ex-td-nam-frm p-styling td-ex-tbl-hd-frt">23 Jan</p>
-                                    <p class="cusContact ex-td-cnt-frm p-styling td-ex-tbl-hd-frt">12:00 am</p>
-                                    <p class="cusPremium ex-td-prm-frm p-styling td-ex-tbl-hd-frt">13:00 pm</p>
-                                    <p class="cusStatus ex-td-sts-frm p-styling td-ex-tbl-hd-frt">Halfday</p>
-                                    <p class="cusAction p-styling p-icn-wdth td-ex-tbl-hd-frt">
-                                        <a href="#" class="call-link"><i class="fi fi-rr-copy-image flex"></i></a>
-                                    </p>
-                                </div>
-                                <div class="t-data-row tb-rw-shd-frt td-ex-pol-thd-cont tbl-bdy-rw-frt flex-row">
-                                    <p class="cusName ex-td-nam-frm p-styling td-ex-tbl-hd-frt">23 Jan</p>
-                                    <p class="cusContact ex-td-cnt-frm p-styling td-ex-tbl-hd-frt">12:00 am</p>
-                                    <p class="cusPremium ex-td-prm-frm p-styling td-ex-tbl-hd-frt">13:00 pm</p>
-                                    <p class="cusStatus ex-td-sts-frm p-styling td-ex-tbl-hd-frt">Halfday</p>
-                                    <p class="cusAction p-styling p-icn-wdth td-ex-tbl-hd-frt">
-                                        <a href="#" class="call-link"><i class="fi fi-rr-copy-image flex"></i></a>
-                                    </p>
-                                </div>
-                                
-                                
-                
-        
-        
-                            </div>
+                            <div id="tbl-bdy-cnt" class="tbl-bdy-cnt ">
+                                 </div>
                             
         
                             

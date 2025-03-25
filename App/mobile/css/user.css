@@ -408,6 +408,67 @@ body::-webkit-scrollbar{
 
 /* ------------------------------------------ */
 
+.custom-mnth-year-picker{
+    overflow: hidden;
+    width: auto;
+    height: 30px;
+    background-color: #fff;
+    border-radius: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+
+    .mnyr-rst{
+        width: 30px;
+        height: 30px;
+        background-color: #1E3653;
+        /* display: none; */
+        border-radius: 20px;
+        color: #fff;
+        font-size: 12px;
+    }
+
+
+    .custom-date-mnth{
+        width: 70px;
+        height: 100%;
+        text-align: center;
+        color: white;
+        border-radius: 40px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        background-color: #1E3653;
+        appearance: none; /* Remove default dropdown styling */
+        -webkit-appearance: none; /* Remove default dropdown styling in WebKit browsers */
+    }
+
+
+    .custom-year-dropdown   {
+        width: 50px;
+        height: 100%;
+        color: #1E3653 ;
+        text-align: center;
+        border-radius: 40px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 700;
+        border: none;
+        margin-right: 2px;
+        appearance: none; /* Remove default dropdown styling */
+        -webkit-appearance: none; /* Remove default dropdown styling in WebKit browsers */
+    }
+
+    .date-mnth:focus {
+        outline: none; /* Remove focus outline */
+    }
+    
+}
+
+
+
+
+
 .date-picker-container {
     position: relative;
     min-width: 100px;
@@ -417,7 +478,7 @@ body::-webkit-scrollbar{
     border-radius: 40px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
-    #resetDate{
+    .resetDate{
         width: 30px;
         height: 30px;
         color: #1E3653;
@@ -442,18 +503,28 @@ body::-webkit-scrollbar{
     background-color: #1E3653;
   }
 
+  .clndr-cnt{
+    width: 100%;
+    height: 100%;
+    background-color: #000000;
+    position: absolute;
+    z-index: 12;
+  }
+
   .calendar-container {
     display: none;
     position: absolute;
     overflow: hidden;
-    top: 40px;
-    right: 0px;
+    /* top: 40px; */
+    /* right: 0px; */
     width: 350px;
     background: #fff;
     border: 1px solid #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 10;
+    backdrop-filter: blur(5px); /* Blur effect */
+    /* z-index: -1; */
+    z-index: 999999;
   }
 
   .calendar-header-container {
@@ -1753,6 +1824,7 @@ header{
 .block{
     width: 100%;
     margin-top: 20px;
+
     
     .title{
         width: 100%;
@@ -1817,10 +1889,18 @@ header{
         padding: 0 10px;
 
         .act-cd-prf{
+            display: flex;
+            justify-content: center;
+            align-items: center;
             width: 50px;
             border-radius: 10px;
             height: 50px;
-            background-color: #ffd606;
+            background-color:#e8e5ff;
+
+            i{
+                color: #4931e7;
+                font-size: 18px;
+            }
         }
 
         .act-txt-bx{
@@ -1867,7 +1947,19 @@ header{
             width: 48%;
             height: 140px;
             padding: 15px;
+            position: relative;
             /* background-color: #fff; */
+            overflow: hidden;
+
+            img{
+                position: absolute;
+                z-index: 1;
+                width: 100%;
+                top: 0;
+                left: 0;
+                height: 100%;
+                object-fit: cover;
+            }
 
         
             h2{
@@ -1920,6 +2012,7 @@ header{
     width: 100%;
     height: 380px;
     margin-bottom: 20px;
+    overflow: hidden;
 
     .atn-ovr-vw{
         width: 100%;
@@ -1936,6 +2029,7 @@ header{
             width: 48%;
             height: 100%;
             /* background-color: #1E3653; */
+            position: relative;
 
 
             .ln{
@@ -2356,12 +2450,38 @@ header{
         
     }
     
+
+}
+
+.mnthrcrd-lst{
+    height: 100% !important;
+    
+
+    .rcrd-brd{
+        height: 100% !important; 
+        margin-top: -10px;
+    .tabel-container{
+        height: 100% !important;
+      
+
+
+        
+    .tbl-bdy-cnt{
+        height: 78% !important;
+        
+    }
+
+
+}
+}
 }
 
 
 .mnth-rcrd{
     width: 100%;
     margin-top: 20px;
+
+    
 
 
 
@@ -2788,3 +2908,164 @@ box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.1);
         opacity: 0.2;
     }
 }
+
+
+.brk-alrt{
+    /* display: none; */
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 99;
+    background-color: #1E3653;
+    justify-content: center;
+    transform: translateY(-100%); /* Start hidden by sliding left */
+    transition: transform 0.7s ease-out;
+
+    img{
+        width: 80%;
+        height: 40%;
+        border-radius: 20px;
+        box-shadow: 10px 10px 10px #00000018;
+        border: 1.5px solid #fff;
+        margin-bottom: 30px;
+
+    }
+
+    h1, p{
+        /* margin-top: 20px; */
+        color: white;
+
+    }
+
+    button{
+        width: 80%;
+        height: 50px;
+        border-radius: 20px;
+        border: none;
+        margin-top: 80px;
+        font-size: 1rem;
+        font-weight: 600;
+        background-color: rgb(75, 82, 219) ;
+        color: #fff;
+        box-shadow: 5px 5px 5px rgba(36, 36, 36, 0.144);
+    }
+
+    button:active{
+     background-color: rgb(245, 183, 181);
+     color:  rgb(75, 82, 219) ;
+    }
+
+   
+    
+}
+
+.brk-alrt.visible {
+    transform: translateY(0); /* Slide in */
+}
+
+
+.allActivity{
+    width: 100% ;
+    height: 100% ;
+    position: absolute;
+    background-color: rgb(246, 245, 255);
+    z-index: 9999;
+    margin-top: 0;
+    transform: translateX(100%);
+    transition: transform 0.5s ease;
+
+
+    .act-flt-cnt{
+        width: 100%;
+        height: 60px;
+        justify-content: space-around;
+        padding: 0 10px;
+        margin-top: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgb(232, 230, 255);
+
+       
+
+
+    }
+
+
+    #allActCnt {
+        padding: 0 10px;
+        overflow-y: auto; /* ✅ Vertical Scroll Enable */
+        max-height: calc(100% - 160px); /* 🔥 Scrollbar तभी आएगा जब कंटेंट 300px से ज़्यादा होगा */
+       
+    }
+
+    #allActCnt::-webkit-scrollbar {
+        display: none;
+    }
+    
+
+    .alac-hd{
+        width: 100%;
+        margin-top: 20px;
+        padding: 0 10px;
+        height: 50px;
+        /* justify-content: space-between; */
+        padding-bottom: 10px;
+      
+
+        .alact-back{
+            width: 40px;
+            height: 40px;
+            background-color: rgb(232, 230, 255);
+            border-radius: 50px;
+            left: 15px;
+            position: absolute;
+
+            i{
+                font-size: 20px;
+            }
+        }
+
+        h2{
+            color: rgb(30, 55, 84) ;
+            margin-left: 20px;
+            font-weight: 600;
+            
+        }
+    }
+}
+
+#allActivity.visible {
+    transform: translateX(0); /* Slide in */
+}
+
+#allAttnRecord.visible {
+    transform: translateX(0); 
+}
+
+
+.mnth-cout{
+    width: 45px;
+    height: 45px;
+    border-radius: 0 15px 0 15px;
+    position: absolute;
+    background-color: #e8e5ff;
+    right: 0;
+    top: 0;
+    text-align: center;
+    justify-content: center;
+    color: #2811bc;
+
+
+    h3{
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: -5px;
+        margin-top: 2px;
+
+    }
+    p{
+        font-size: 8px;
+        font-weight: 500;
+    }
+}
+
+
