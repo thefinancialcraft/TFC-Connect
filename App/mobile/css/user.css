@@ -1580,6 +1580,15 @@ header{
     height: 70px;
     /* background-color: ; */
     justify-content: space-evenly;
+    position: relative;
+
+    img{
+        width: 100%;
+        height: 100%;
+        /* position: absolute; */
+        z-index: 111111;
+        object-fit: cover;
+    }
 
     .atn-bx-sp{
         margin-top: 0px !important;
@@ -2283,7 +2292,72 @@ header{
     height: 140px; /* Set fixed height of 140px */
     overflow: hidden; /* Hide content outside the container */
     position: relative;
-    margin-bottom: 20px;
+    
+    
+}
+
+.sal-disp{
+    width: 100%;
+    height: auto;
+    background-color: white;
+    border-radius: 20px;
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+     margin-bottom: 20px;
+     display: flex;
+     flex-direction: column;
+     justify-content: space-between ;
+    
+     
+     align-items: start !important;
+
+     .cl-updt{
+        width: 100%;
+        height: 50px;
+        justify-content: space-evenly;
+        flex-direction: row ;
+        margin:  10px 0;
+        align-items: center;
+        color: #2811bc;
+
+ 
+       
+        .toggle-container {
+            width: 46%;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 20px;
+            padding: 0 5px;
+            cursor: pointer;
+            transition: all 0.4s ease-in-out;
+            border: 1px solid;
+            /* margin: 10px; */
+        }
+
+        .toggle-container p {
+            font-weight: 500;
+            transition: all 0.4s ease-in-out;
+            text-align: center;
+            width: 80%;
+        }
+
+        .toggle-icon {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #fff;
+            transition: all 0.4s ease-in-out;
+        }
+
+        .swtchNo {
+            display: none;
+        }
+     }
+
 }
 
 
@@ -2329,8 +2403,21 @@ header{
     .sld-cvr2{
         justify-content: center;
         align-items: center;
-        color: #fff;
+        color: #ffffff;
+       
     }
+
+    .sld-cvr3{
+        justify-content: center;
+        align-items: center;
+        color: #000000;
+        /* text-shadow: 5px 5px 15px #000000; */
+
+    }
+
+
+
+
 
     .sld-cvr{
         width: 100%;
@@ -3069,3 +3156,43 @@ box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.1);
 }
 
 
+.progress-wrapper {
+    width: 100%;
+    padding: 0 10px;
+    height: 60px;
+    /* text-align: center; */
+    justify-content: center;
+
+}
+.progress-bar-container {
+    width: 100%;
+    height: 10px;
+    background: #dfe6e9;
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+}
+.progress-bar-inner {
+    width: 0%;
+    height: 100%;
+    /* background: #a29bfe; */
+    border-radius: 5px;
+    transition: width 0.5s ease-in-out;
+}
+.progress-details {
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    /* text-transform: uppercase; */
+    font-weight: 500;
+}
+.progress-percentage {
+    font-weight: 500;
+    /* color: #a29bfe; */
+    margin-left: 5px;
+}
+
+
+.progress-wrapper:nth-child(2) .progress-bar-inner { background: rgb(137, 58, 222); } /* Red */
+.progress-wrapper:nth-child(2) .progress-percentage { color: rgb(137, 58, 222); }

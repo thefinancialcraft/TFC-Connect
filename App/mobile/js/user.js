@@ -1,3 +1,8 @@
+localStorage.removeItem("isPaidLeave");
+localStorage.removeItem("isJustify");
+localStorage.removeItem("isCaller");
+localStorage.removeItem("justPercentData");
+
 
 
 
@@ -5,14 +10,13 @@
 window.onload = function() {
     const sentData = JSON.parse(localStorage.getItem('sentData'));
     
-    console.log("Data sent to backend:", sentData);
-    console.log("Receive from backend:", JSON.parse(localStorage.getItem('receiveData')));
-
+    //console.log("Data sent to backend:", sentData);
+    //console.log("Receive from backend:", JSON.parse(localStorage.getItem('receiveData')));
 
 
   // Retrieve token details from localStorage
     const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
-    console.log("active Ticket", activeTicket);
+    //console.log("active Ticket", activeTicket);
 
     if (activeTicket) {
 
@@ -26,10 +30,10 @@ window.onload = function() {
     const tktuserImg = activeTicket.userImage; // Access userName from activeTicket
     const tktuserToken = activeTicket.token; // Access userName from activeTicket
 
-    console.log("Username:", tktuserName); // Log the username
-    console.log("UserId:", tktuserId);
-    console.log("UserType:", tktuserType);
-    console.log("token:", tktuserToken);
+    //console.log("Username:", tktuserName); // Log the username
+    //console.log("UserId:", tktuserId);
+    //console.log("UserType:", tktuserType);
+    //console.log("token:", tktuserToken);
   
   
     const userName = document.querySelectorAll(".userName");
@@ -57,7 +61,7 @@ window.onload = function() {
     });
     
 } else {
-    console.log("No token details found.");
+    //console.log("No token details found.");
     // window.location.href = "/TFC-Connect/App/login.html";
 }
 
@@ -185,8 +189,8 @@ function logout() {
     const tktuserToken = activeTicket.token;
     const tktuserId = activeTicket.userId;
 
-    console.log("Token:", tktuserToken);
-    console.log("UserId:", tktuserId);
+    //console.log("Token:", tktuserToken);
+    //console.log("UserId:", tktuserId);
 
     // Create data object to send to the backend, with action included
     const data = new URLSearchParams();
@@ -194,7 +198,7 @@ function logout() {
     data.append('token', tktuserToken);
     data.append('userId', tktuserId);
 
-    console.log('Data being sent to the server:', data);
+    //console.log('Data being sent to the server:', data);
 
     // Fetch scriptUrl from config.json and then make the logout request
     fetch('/TFC-Connect/App/config.json')
@@ -216,7 +220,7 @@ function logout() {
             }
         })
         .then(data => {
-            console.log("Logout successful:", data);
+            //console.log("Logout successful:", data);
 
             // Update the specific ticket in localStorage's ticketDetails array
             if (data.userDetails) {
@@ -248,8 +252,7 @@ function logout() {
                     // Save updated ticketDetails array back to localStorage
                     localStorage.removeItem('reciveData');
                     localStorage.setItem('ticketDetails', JSON.stringify(ticketDetails));
-                    console.log("Updated ticket in localStorage:", ticketDetails
-                    [ticketIndex]);
+                    //console.log("Updated ticket in localStorage:", ticketDetails[ticketIndex]);
                 } else {
                     console.warn("No matching ticket found for token:", data.userDetails.token);
                 }
@@ -303,7 +306,7 @@ function monitorToken() {
             .then(data => {
                 // Check if the token is still valid
                 if (data.isValid) {
-                    console.log("Token valid");
+                    //console.log("Token valid");
                 } else {
                     console.warn("Token no longer valid");
 
@@ -334,7 +337,7 @@ function removeInvalidTicket(token) {
 
         // Update localStorage with the modified ticketDetails array
         localStorage.setItem('ticketDetails', JSON.stringify(ticketDetails));
-        console.log(`Removed invalid ticket with token: ${token}`);
+        //console.log(`Removed invalid ticket with token: ${token}`);
     }
 
     // Clear the active ticket as well
@@ -372,13 +375,13 @@ function displayLoggedAccount() {
 
     // Extract `token` from the activeTicket object
     const tktuserToken = activeTicket.token;
-    console.log("Check Token:", tktuserToken);
+    //console.log("Check Token:", tktuserToken);
 
     // Create a data object to send to the backend, including action
     const data = new URLSearchParams();
     data.append('action', 'displayLoggedAccount');
     data.append('token', tktuserToken);
-    console.log('Data being sent to the server:', data);
+    //console.log('Data being sent to the server:', data);
 
     // Fetch config.json to get the script URL
     fetch('/TFC-Connect/App/config.json')
@@ -403,12 +406,12 @@ function displayLoggedAccount() {
             }
         })
         .then(result => {
-            console.log("Server response:", result);
+            //console.log("Server response:", result);
             if (result.status) {
-                console.log("All Accounts Received successfully.");
+                //console.log("All Accounts Received successfully.");
 
                 const allAccounts = result.matchedAccounts;
-                console.log("All Accounts:", allAccounts);
+                //console.log("All Accounts:", allAccounts);
 
                 // Clear previous contents if needed
                 const deviceOpnContainer = document.getElementById('device-opn');
@@ -505,7 +508,7 @@ function displayLoggedAccount() {
                     deviceOpnContainer.appendChild(deviceInfoDiv);
                 });
             } else {
-                console.log("No Record Found.");
+                //console.log("No Record Found.");
             }
         })
         .catch(error => {
@@ -514,7 +517,7 @@ function displayLoggedAccount() {
 }
 
 function removeTokenFromBackend(token) {
-    console.log("Removing token:", token);
+    //console.log("Removing token:", token);
 
     // Create data object to send to the backend
     const data = new URLSearchParams();
@@ -539,10 +542,10 @@ function removeTokenFromBackend(token) {
         .then(response => response.json())
         .then(result => {
             if (result.status === "sucess") {
-                console.log("Token removal successful.");
-                console.log("message:", result.message);
+                //console.log("Token removal successful.");
+                //console.log("message:", result.message);
             } else {
-                console.log("Token removal failed or token not found.");
+                //console.log("Token removal failed or token not found.");
             }
         })
         .catch(error => {
@@ -801,25 +804,25 @@ function updateDaysInMonth() {
 
     // Get the value from span (expected format: MMM YYYY)
     let value = monthYearSpan.innerText.trim().toUpperCase();
-    console.log("📌 Read from span:", value);
+    //console.log("📌 Read from span:", value);
 
     if (value) {
         let parts = value.split(" "); // Split using space
-        console.log("📌 Split parts:", parts);
+        //console.log("📌 Split parts:", parts);
 
         if (parts.length === 2) {
             let monthStr = parts[0]; // Extract month (e.g., "AUG")
             let year = parseInt(parts[1], 10); // Extract year
-            console.log("📌 Extracted Month:", monthStr, "| Year:", year);
+            //console.log("📌 Extracted Month:", monthStr, "| Year:", year);
 
             // Month names mapping
             let monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
             let month = monthNames.indexOf(monthStr) + 1; // Get month number (1-12)
-            console.log("📌 Month Number:", month);
+            //console.log("📌 Month Number:", month);
 
             if (month > 0 && !isNaN(year)) {
                 let daysInMonth = new Date(year, month, 0).getDate();
-                console.log("✅ Days in Month:", daysInMonth);
+                //console.log("✅ Days in Month:", daysInMonth);
                 daysOutput.innerText = daysInMonth; // Update the span with number of days
             } else {
                 console.error("❌ Invalid month or year!");
@@ -849,7 +852,7 @@ function observeSpanChanges() {
         subtree: true
     });
 
-    console.log("👀 MutationObserver started!");
+    //console.log("👀 MutationObserver started!");
 }
 
 // ✅ Initialize observer when DOM loads
@@ -889,3 +892,140 @@ const monthDisplay = document.getElementById("month-display");
 
     // Initialize with the current month
     updateMonthDisplay();
+
+    
+
+    document.addEventListener("DOMContentLoaded", function () {
+        
+        // पहली बार टेबल जनरेट करें
+        generateAttendanceTable();
+    
+        // MutationObserver से बदलाव डिटेक्ट करें
+        const observer = new MutationObserver(generateAttendanceTable);
+        const config = { childList: true, subtree: true, characterData: true };
+    
+        // सभी IDs के लिए MutationObserver लगाएं
+        const observeElements = () => {
+            const dataMapIds = [
+                "ttl_prsnt",
+                "ttl_late",
+                "ttl_hday",
+                "ttl_absnt",
+                "holiday-count",
+                "Working-count",
+                "ttl-mnth-day"
+            ];
+    
+            dataMapIds.forEach(id => {
+                let element = document.getElementById(id);
+                if (element) observer.observe(element, config);
+            });
+        };
+    
+        observeElements();
+    });
+
+
+    setInterval(loadFlags, 1000);
+    setInterval(updateToggles, 1000);
+
+    let flagValues = {};  // Global flag object
+
+// ✅ Load flags from localStorage or set defaults
+function loadFlags() {
+    let defaultFlags = {
+        isJustify: "yes",
+        isPaidLeave: "no"
+    };
+
+    // ✅ Load values from localStorage or fallback to default
+    flagValues.isJustify = localStorage.getItem("isJustify") || defaultFlags.isJustify;
+    flagValues.isPaidLeave = localStorage.getItem("isPaidLeave") || defaultFlags.isPaidLeave;
+
+    console.log("%c[INFO] Flags Loaded from LocalStorage:", "color: blue; font-weight: bold;", flagValues);
+}
+    
+    
+    // ✅ Update all toggles based on flag values
+    function updateToggles() {
+        let justifyBar = document.querySelector('.justify-bar');  // ✅ Get closest .cl-updt
+    
+        console.log("%c[INFO] Updating toggles based on flag values...", "color: blue; font-weight: bold;");
+    
+        document.querySelectorAll('.toggle-container').forEach(container => {
+            let customColor = container.getAttribute('data-color');
+            let isCaller = localStorage.getItem("isCaller");  // Default "no"
+            let flagKey = container.getAttribute('data-flag');
+
+            console.log("isCallerResult",isCaller);
+    
+            if (!flagKey || !customColor) {
+                console.warn("[WARNING] Missing attributes in:", container);
+                return;
+            }
+    
+            let iconContainer = container.querySelector('.toggle-icon');
+            let text = container.querySelector('p');
+            let checkIcon = container.querySelector('.swtchYes');
+            let crossIcon = container.querySelector('.swtchNo');
+            let clUpdate = container.closest('.cl-updt');  // ✅ Get closest .cl-updt
+          
+            // ✅ Check if elements exist
+            if (!iconContainer || !text || !checkIcon || !crossIcon) {
+                console.error("[ERROR] One or more elements missing in:", container);
+                return;
+            }
+    
+            // ✅ Hide `.cl-updt` if `isCaller` is "no"
+            if (clUpdate) {
+                clUpdate.style.display = isCaller.toLowerCase() === "no" ? "none" : "flex";
+                justifyBar.style.display = isCaller.toLowerCase() === "no" ? "none" : "flex";
+            }
+    
+            let isActive = flagValues[flagKey]?.toLowerCase() === "yes";
+            console.log(`[DEBUG] Toggle "${flagKey}" isActive: ${isActive}`);
+    
+            // ✅ Apply styles based on flag state
+            if (isActive) {
+                container.style.backgroundColor = customColor;
+                container.style.borderColor = customColor;
+                iconContainer.style.backgroundColor = "#fff";
+                iconContainer.style.color = customColor;
+                text.style.color = "#fff";
+                checkIcon.style.display = "none";
+                crossIcon.style.display = "flex";
+                container.style.flexDirection = "row-reverse";
+            } else {
+                container.style.backgroundColor = "#ffffffd3";
+                container.style.borderColor = customColor;
+                iconContainer.style.backgroundColor = customColor;
+                iconContainer.style.color = "#fff";
+                text.style.color = customColor;
+                checkIcon.style.display = "flex";
+                crossIcon.style.display = "none";
+                container.style.flexDirection = "row";
+            }
+        });
+    
+        console.log("%c[INFO] Toggle updates completed.", "color: green; font-weight: bold;");
+    }
+    
+    // ✅ Change flag value & update UI
+    function changeFlag(flagKey) {
+        if (!flagValues.hasOwnProperty(flagKey)) {
+            console.warn(`[WARNING] Flag "${flagKey}" not found.`);
+            return;
+        }
+    
+        flagValues[flagKey] = flagValues[flagKey] === "yes" ? "no" : "yes";
+        localStorage.setItem("flagValues", JSON.stringify(flagValues));  // ✅ Save updated flags
+        console.log(`%c[INFO] Flag "${flagKey}" changed to: ${flagValues[flagKey]}`, "color: purple; font-weight: bold;");
+    
+        updateToggles();
+    }
+    
+    // ✅ Load flags & initialize toggles on page load
+    loadFlags();
+    updateToggles();
+    
+    

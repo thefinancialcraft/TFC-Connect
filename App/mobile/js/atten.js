@@ -49,11 +49,12 @@ updateDateAndWeek();
 // updateTime(); 
 
 function generateDates(attrecord, holidays = []) {
+
     const dateContainer = document.getElementById("dateContainer");
 
     // Check if the container exists
     if (!dateContainer) {
-        console.error("Element with id 'dateContainer' not found!");
+        //console.error("Element with id 'dateContainer' not found!");
         return;
     }
 
@@ -144,6 +145,7 @@ function generateDates(attrecord, holidays = []) {
 
         // Append to container
         dateContainer.appendChild(atnBox);
+       
     }
 }
 
@@ -179,7 +181,7 @@ function generateDates(attrecord, holidays = []) {
          if (data.results && data.results.length > 0) {
              const addressComponents = data.results[0].components;
 
-             //console.log("add",  addressComponents);
+             ////console.log("add",  addressComponents);
  
              // Extract the specified components, leave blank if not available
              
@@ -204,7 +206,7 @@ function generateDates(attrecord, holidays = []) {
              throw new Error("No results found.");
          }
      } catch (error) {
-         console.error("Error fetching area name:", error);
+         //console.error("Error fetching area name:", error);
          return "Unable to fetch area name.";
      }
  }
@@ -226,7 +228,7 @@ function generateDates(attrecord, holidays = []) {
                locationElement.textContent = `${areaName}`;
            },
            (error) => {
-               console.error("Error fetching location: ", error);
+               //console.error("Error fetching location: ", error);
                locationElement.textContent = "Unable to fetch location.";
            },
            {
@@ -236,7 +238,7 @@ function generateDates(attrecord, holidays = []) {
            }
        );
    } else {
-       console.error("Geolocation is not supported in this browser.");
+       //console.error("Geolocation is not supported in this browser.");
        locationElement.textContent = "Geolocation is not supported by your browser.";
    }
  }
@@ -251,7 +253,7 @@ function generateDates(attrecord, holidays = []) {
 // Modify startCamera function to update location
 function startCamera() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      console.error("getUserMedia is not supported in your browser.");
+      //console.error("getUserMedia is not supported in your browser.");
       alert("Your browser does not support camera access. Please try using a modern browser like Chrome, Firefox, or Safari.");
       return;
   }
@@ -277,7 +279,7 @@ function startCamera() {
 
   .then((stream) => {
      
-      //console.log("Camera stream started successfully.");
+      ////console.log("Camera stream started successfully.");
       videoElement = document.getElementById('videoElement');
       videoElement.srcObject = stream;
       videoElement.autoplay = true;
@@ -291,7 +293,7 @@ function startCamera() {
       camCont.style.perspective = '1500px'; // Optional styling for camera container
   })
   .catch((err) => {
-      console.error('Error accessing the camera: ', err);
+      //console.error('Error accessing the camera: ', err);
       alert("Error accessing the camera. Please try again.");
   });
 }
@@ -391,8 +393,8 @@ document.getElementById('cam-stp').addEventListener('click', () => {
         const checkinData = checkInUpdate(formattedDate, checkinTime);
 
         // Log checkinData and snapshot before sending to backend
-        // //console.log("Check-in Data: ", checkinData);
-        // //console.log("Flipped Snapshot Data (Base64): ", flippedSnapshot);
+        // ////console.log("Check-in Data: ", checkinData);
+        // ////console.log("Flipped Snapshot Data (Base64): ", flippedSnapshot);
 
         // Upload checkinData and snapshot to the backend
         uploadCheckinData(checkinData, flippedSnapshot);
@@ -484,15 +486,15 @@ function checkInUpdate(formattedDate, checkinTime) {
     const halfdayDeadline = addTimeToCheckIn(officeCheckIn, "00:46:00");
     const absentDeadline = addTimeToCheckIn(officeCheckIn, "06:16:00");
 
-    //console.log('office Check in Timing', officeCheckIn);
-    //console.log('office Check out Timing', officeTiming.checkoutTime);
-    //console.log('User Reached at', userCheckIn);
+    ////console.log('office Check in Timing', officeCheckIn);
+    ////console.log('office Check out Timing', officeTiming.checkoutTime);
+    ////console.log('User Reached at', userCheckIn);
     
     // Output the deadlines
-    //console.log("Trail time:", truserCheckIn);
-    //console.log("Late Deadline:", lateDeadline);
-    //console.log("Halfday Deadline:", halfdayDeadline);
-    //console.log("Absent Deadline:", absentDeadline);
+    ////console.log("Trail time:", truserCheckIn);
+    ////console.log("Late Deadline:", lateDeadline);
+    ////console.log("Halfday Deadline:", halfdayDeadline);
+    ////console.log("Absent Deadline:", absentDeadline);
 
     // Call updateCheckInStatus with the proper arguments
     const checkinstatus = updateCheckInStatus(truserCheckIn, lateDeadline, halfdayDeadline, absentDeadline);
@@ -513,8 +515,8 @@ function checkInUpdate(formattedDate, checkinTime) {
     }
 
 // Ab `statusMark` ko updated value mil gayi hai
-//console.log("Check-in Status:", checkinstatus);
-//console.log("Status Mark:", statusMark);
+////console.log("Check-in Status:", checkinstatus);
+////console.log("Status Mark:", statusMark);
 
 
 
@@ -592,9 +594,9 @@ function updateCheckInStatus(truserCheckIn, lateDeadline, halfdayDeadline, absen
 // Function to upload checkinData and snapshot
 function uploadCheckinData(checkinData, snapshotData) {
     // Log the data before sending it
-    // //console.log("Uploading data...");
-    //console.log("Uploading Check-in Data: ", checkinData);
-    //console.log("Snapshot Data (Base64): ", snapshotData);
+    // ////console.log("Uploading data...");
+    ////console.log("Uploading Check-in Data: ", checkinData);
+    ////console.log("Snapshot Data (Base64): ", snapshotData);
 
     // Convert checkinData to a URL-encoded string
     const data = new URLSearchParams(checkinData).toString();
@@ -628,7 +630,7 @@ function uploadCheckinData(checkinData, snapshotData) {
 
             
 
-            //console.log("attendance Data uploaded successfully:", data);
+            ////console.log("attendance Data uploaded successfully:", data);
             document.getElementById('cam-stp').style.display = 'none';
             document.getElementById('SnapWhts').style.display = 'block';
             document.getElementById('bcToDash').style.display = 'block';
@@ -640,7 +642,7 @@ function uploadCheckinData(checkinData, snapshotData) {
             
         })
         .catch(error => {
-            console.error("attendance Error uploading data:", error);
+            //console.error("attendance Error uploading data:", error);
         });
 }
 
@@ -755,7 +757,7 @@ function uploadCheckinData(checkinData, snapshotData) {
 
                 // Create an object and console log it
                 const ticketObject = { UserId: userId, Token: token };
-                //console.log('Active Ticket:', ticketObject);
+                ////console.log('Active Ticket:', ticketObject);
 
                 // **Fetch backend URL from config.json and send the object**
                 fetch('/TFC-Connect/App/config.json')
@@ -782,7 +784,7 @@ function uploadCheckinData(checkinData, snapshotData) {
                     .then(attendanceData => {
                         // Check if the response indicates success
                         if (attendanceData.status === "success") {
-                            //console.log('Attendance Data for Backend:', attendanceData);
+                            console.log('Attendance Data for Backend:', attendanceData);
                         
                             document.querySelector(".ent-ext-tim").style.display = "flex";
                             document.querySelector("#cam-stp").style.display = "block";
@@ -809,13 +811,13 @@ function uploadCheckinData(checkinData, snapshotData) {
                         
                     })
                     .catch(error => {
-                        console.error('Error during fetch:', error);
+                        //console.error('Error during fetch:', error);
 
                         // Reset UI and stop stream
                         resetUI();
                     });
             } catch (err) {
-                console.error('Error parsing activeTicket from localStorage:', err);
+                //console.error('Error parsing activeTicket from localStorage:', err);
 
                 // Reset UI and stop stream
                 resetUI();
@@ -1025,7 +1027,7 @@ function moveCarousel() {
 
 // Start the automatic sliding interval
 function startAutoSlide() {
-    setInterval(moveCarousel, 5000); // Move the carousel every 3 seconds
+    setInterval(moveCarousel, 8000); // Move the carousel every 3 seconds
 }
 
 // Start the automatic sliding on page load
@@ -1039,14 +1041,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 function createCalendarFromSpan(attrecord, response = []) {
-    //console.log("attrecord Data:", attrecord);
-    //console.log("Holidays Data:", response);
+    ////console.log("attrecord Data:", attrecord);
+    ////console.log("Holidays Data:", response);
 
     const calendar = document.getElementById('calendar');
     const dateSpan = document.getElementById('crt-atn-clndr');
 
     if (!dateSpan) {
-        console.error("Element with id 'crt-atn-clndr' not found!");
+        //console.error("Element with id 'crt-atn-clndr' not found!");
         return;
     }
 
@@ -1057,7 +1059,7 @@ function createCalendarFromSpan(attrecord, response = []) {
     const month = monthNames.indexOf(monthText.toUpperCase());
 
     if (month === -1 || isNaN(year)) {
-        console.error("Invalid date format in span. Expected 'MMM YYYY' format.");
+        //console.error("Invalid date format in span. Expected 'MMM YYYY' format.");
         return;
     }
 
@@ -1166,7 +1168,7 @@ async function getCheckinInfo() {
     // Retrieve the active ticket from localStorage
     const activeTicket = localStorage.getItem('receiveData');
     if (!activeTicket) {
-        console.error('No active ticket found in localStorage.');
+        //console.error('No active ticket found in localStorage.');
         return;
     }
 
@@ -1178,7 +1180,7 @@ async function getCheckinInfo() {
 
         // Log the active ticket object
         const ticketObject = { UserId: userId, Token: token };
-        //console.log('Active Ticket:', ticketObject);
+        ////console.log('Active Ticket:', ticketObject);
 
         // Fetch the backend URL from config.json
         const response = await fetch('/TFC-Connect/App/config.json');
@@ -1202,7 +1204,7 @@ async function getCheckinInfo() {
 
         // Parse the backend response
         const result = await backendResponse.json();
-        //console.log('Backend Response for checkin:', result);
+        ////console.log('Backend Response for checkin:', result);
 
         const convertTimeFormat = (timeString) => {
             if (!timeString || typeof timeString !== 'string') return 'N/A';
@@ -1236,7 +1238,7 @@ if (result.status === 'success') {
         checkoutTime: convertTimeFormat(checkoutTime) // Use updated checkoutTime
     };
     localStorage.setItem('officeTiming', JSON.stringify(officeTiming));
-    //console.log('Office Timing saved to localStorage:', officeTiming);
+    ////console.log('Office Timing saved to localStorage:', officeTiming);
 }
 
 
@@ -1276,7 +1278,7 @@ if (result.status === 'success') {
 
         return result;
     } catch (error) {
-        console.error('Error processing active ticket:', error);
+        //console.error('Error processing active ticket:', error);
     }
 }
 
@@ -1291,6 +1293,10 @@ setInterval(getAttenData, 5000);
 setInterval(showRecdfun, 1000);
 setInterval(hideRecdfun, 1000);
 setInterval(findHoliday, 1000);
+setInterval(findSalary, 1000);
+// हर 1 सेकंड में progress bars update होंगी
+setInterval(updateProgressBars, 1000);
+
 
 
 
@@ -1299,7 +1305,7 @@ async function getAttenData() {
     // Retrieve the active ticket from localStorage
     const activeTicket = localStorage.getItem('receiveData');
     if (!activeTicket) {
-        console.error('No active ticket found in localStorage.');
+        //console.error('No active ticket found in localStorage.');
         return;
     }
 
@@ -1323,7 +1329,7 @@ async function getAttenData() {
    
       // Log the active ticket object
       const ticketObject = { UserId: userId, Token: token, atnToken: atnToken};
-      //console.log('Active Ticket:', ticketObject);
+      ////console.log('Active Ticket:', ticketObject);
 
       // Fetch the backend URL from config.json
       const response = await fetch('/TFC-Connect/App/config.json');
@@ -1366,22 +1372,22 @@ if (selectedDateText === formattedCurrentDate) {
         resetAttenStatus();
         let noRecd = "show";
         localStorage.setItem('noRecd', noRecd);
-        //console.log("Data available hai:", data);
+        ////console.log("Data available hai:", data);
     } else {
-        //console.log("Data undefined hai, 'noRecd' ko 'hide' set nahi kiya gaya.");
+        ////console.log("Data undefined hai, 'noRecd' ko 'hide' set nahi kiya gaya.");
     }
 } else {
-    //console.log("Selected date aur current date match nahi kar rahe, function execute nahi hoga.");
+    ////console.log("Selected date aur current date match nahi kar rahe, function execute nahi hoga.");
 }
 
 
-    //console.log('data get from getAttenData:', result);
+    ////console.log('data get from getAttenData:', result);
  
     
     let checkinstatusresponse;
 
     if (!result.data || typeof result.data.Check_in_status === 'undefined') {
-        //console.log('Check_in_status is undefined or result.data is missing');
+        ////console.log('Check_in_status is undefined or result.data is missing');
         checkinstatusresponse = 'Default value';  // Set a default value or handle it accordingly
     } else if (typeof result.data.Check_in_status === 'string') {
         // If Check_in_status is a plain string like "Absent", no need to parse it.
@@ -1391,7 +1397,7 @@ if (selectedDateText === formattedCurrentDate) {
         try {
             checkinstatusresponse = JSON.parse(result.data.Check_in_status);
         } catch (error) {
-            //console.log('Error parsing Check_in_status:', error);
+            ////console.log('Error parsing Check_in_status:', error);
             checkinstatusresponse = result.data.Check_in_status;  // Fallback to raw value
         }
     }
@@ -1444,19 +1450,19 @@ function hideSpinner() {
 async function checkoutFuntion() {
     showSpinner();
     const checkinstatusresponse = localStorage.getItem('Check_in_status');
-    //console.log(`Data of getAttenData:`, checkinstatusresponse);
+    ////console.log(`Data of getAttenData:`, checkinstatusresponse);
 
     // Ensure the checkinstatusresponse is valid
     if (!checkinstatusresponse) {
-        //console.log('checkinstatusresponse is not defined or is null.');
+        ////console.log('checkinstatusresponse is not defined or is null.');
         return;
     }
-    //console.log('checkinstatusresponse:', checkinstatusresponse);
+    ////console.log('checkinstatusresponse:', checkinstatusresponse);
 
     // Get office timing from localStorage
     const officeTiming = JSON.parse(localStorage.getItem('officeTiming'));
     if (!officeTiming || !officeTiming.checkoutTime) {
-        //console.log('Checkout time not found in localStorage.');
+        ////console.log('Checkout time not found in localStorage.');
         return;
     }
     
@@ -1469,17 +1475,17 @@ async function checkoutFuntion() {
         timeZone: 'Asia/Kolkata', // Indian Standard Time
     });
 
-    //console.log(`Checkout time: ${userCheckOut}, Current time: ${currentTime}`);
+    ////console.log(`Checkout time: ${userCheckOut}, Current time: ${currentTime}`);
 
     // Calculate the time difference between currentTime and userCheckOut
     const latediffrence = calculateTimeDifference(currentTime, userCheckOut);
 
-    //console.log(`Time difference: ${latediffrence}`);
+    ////console.log(`Time difference: ${latediffrence}`);
 
     // Check if the current time is earlier than the checkout time - 15 minutes
     const fifteenMinutesBeforeCheckout = subtractTime(userCheckOut, "00:15:00");  // Subtract 15 minutes
 
-    //console.log(`Fifteen minutes before checkout: ${fifteenMinutesBeforeCheckout}`);
+    ////console.log(`Fifteen minutes before checkout: ${fifteenMinutesBeforeCheckout}`);
 
     let checkOutStatus = "On Time";  // This can be "On Time", "Halfday", "Late", or "Absent"
 let markstatus = "P";
@@ -1495,12 +1501,12 @@ if (checkinstatusresponse === "On Time") {
     markstatus = "A";  // A for Absent
 }
 
-//console.log(markstatus);
+////console.log(markstatus);
 
 
     // Compare the current time and fifteen minutes before checkout directly as strings
     if (currentTime < fifteenMinutesBeforeCheckout) {
-        //console.log(`User is early by ${currentTime} compared to ${fifteenMinutesBeforeCheckout}.`);
+        ////console.log(`User is early by ${currentTime} compared to ${fifteenMinutesBeforeCheckout}.`);
     
         // Check the value of checkinstatusresponse
         if (checkinstatusresponse === "On Time") {
@@ -1508,26 +1514,26 @@ if (checkinstatusresponse === "On Time") {
             markstatus = "H";
             markstatusReason = `Due to the early exit by ${latediffrence}`;
 
-            //console.log("status update", checkOutStatus);
+            ////console.log("status update", checkOutStatus);
         } else if (checkinstatusresponse === "Halfday") {
             checkOutStatus = "Absent";
             markstatus = "A";
             markstatusReason = `Due to the early exit by ${latediffrence}`;
-            //console.log("status update", checkOutStatus);
+            ////console.log("status update", checkOutStatus);
         } else if (checkinstatusresponse === "Absent") {
             checkOutStatus = "Absent";
             markstatus = "A";
-            //console.log("status update", checkOutStatus);
+            ////console.log("status update", checkOutStatus);
         }
     
     } else {
         // If the user is not early enough, no change
-        //console.log(`User is not early enough to trigger status change.`);
+        ////console.log(`User is not early enough to trigger status change.`);
     }
 
     const activeTicket = localStorage.getItem('receiveData');
     if (!activeTicket) {
-        console.error('No active ticket found in localStorage.');
+        //console.error('No active ticket found in localStorage.');
         
         return;
 
@@ -1561,7 +1567,7 @@ if (checkinstatusresponse === "On Time") {
         decision: "By Attendance",
         markstatusReason: markstatusReason
     };
-    //console.log('checkout reponse sending data:', ticketObject);
+    ////console.log('checkout reponse sending data:', ticketObject);
 
     const data = new URLSearchParams(ticketObject);
 
@@ -1581,7 +1587,7 @@ if (checkinstatusresponse === "On Time") {
     
     // Handle the response if needed
     const result = await backendResponse.json();
-    //console.log('Backend from checkout:', result);
+    ////console.log('Backend from checkout:', result);
     const checkOutBtn = document.getElementById('checkOutBtn');
 
     // Clear the button's current content
@@ -1795,7 +1801,7 @@ function updateMonthDates(index) {
     let endSpan = document.querySelector(`.act-end-${index}`);
     
     if (!monthSpan || !startSpan || !endSpan) {
-        console.error("One or more elements not found for index:", index);
+        //console.error("One or more elements not found for index:", index);
         return;
     }
     
@@ -1803,7 +1809,7 @@ function updateMonthDates(index) {
     let date = new Date(monthYearText);
     
     if (isNaN(date.getTime())) {
-        console.error("Invalid date format in act-mnth-slt-", index);
+        //console.error("Invalid date format in act-mnth-slt-", index);
         return;
     }
     
@@ -1848,7 +1854,7 @@ observeMonthSpan(2);
 
 
 function checkInOutDate(data) {
-    //console.log("Data received in checkInOutDate: ", data); // Log the data to check what's being passed
+    ////console.log("Data received in checkInOutDate: ", data); // Log the data to check what's being passed
 
 
 // Get the date from the element with class "selected-date-text"
@@ -1868,12 +1874,12 @@ if (selectedDateText === formattedCurrentDate) {
     if (typeof data !== "undefined") {
         let noRecd = "hide";
         localStorage.setItem('noRecd', noRecd);
-        //console.log("Data available hai:", data);
+        ////console.log("Data available hai:", data);
     } else {
-        //console.log("Data undefined hai, 'noRecd' ko 'hide' set nahi kiya gaya.");
+        ////console.log("Data undefined hai, 'noRecd' ko 'hide' set nahi kiya gaya.");
     }
 } else {
-    //console.log("Selected date aur current date match nahi kar rahe, function execute nahi hoga.");
+    ////console.log("Selected date aur current date match nahi kar rahe, function execute nahi hoga.");
 }
 
 
@@ -1881,13 +1887,13 @@ if (selectedDateText === formattedCurrentDate) {
 
     // Check if the element exists
     if (!checkInOutDate) {
-        console.error("Element with ID 'checkInOutDate' not found in the DOM!");
+        //console.error("Element with ID 'checkInOutDate' not found in the DOM!");
         return;
     }
 
     const dateValue = checkInOutDate.innerText.trim(); // Get the text content of the span
     if (!dateValue || dateValue === "Select Date") {
-        //console.log("No valid date selected.");
+        ////console.log("No valid date selected.");
         return;
     }
 
@@ -1896,32 +1902,32 @@ if (selectedDateText === formattedCurrentDate) {
 
     if (parsedDate) {
         const formattedDate = formatDateToDDMMYY(parsedDate);
-        //console.log(`Formatted date (dd/mm/yy): ${formattedDate}`);
+        ////console.log(`Formatted date (dd/mm/yy): ${formattedDate}`);
 
         // Check if the formatted date matches today's date
         const currentDate = getCurrentDateInDDMMYY();
         if (formattedDate === currentDate) {
-            //console.log("Formatted date matches the current date. Running function A...");
+            ////console.log("Formatted date matches the current date. Running function A...");
             updateAtnCells(data);
         } else {
-            //console.log("Formatted date does not match the current date. Skipping function A.", formattedDate);
+            ////console.log("Formatted date does not match the current date. Skipping function A.", formattedDate);
             updateAtnCellsByDate(formattedDate);
             
         }
     } else {
-        //console.log("Invalid date format. Please use 'DD MMM YYYY'");
+        ////console.log("Invalid date format. Please use 'DD MMM YYYY'");
     }
 }
 
 
 function activityDataRecord() {
-    //console.log("Function running: activityDataRecord");
+    ////console.log("Function running: activityDataRecord");
 
     // Retrieve and parse the active ticket data from localStorage
     const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
 
     if (!activeTicket) {
-        console.error("No active ticket found.");
+        //console.error("No active ticket found.");
         return;
     }
 
@@ -1929,8 +1935,8 @@ function activityDataRecord() {
     const tktuserToken = activeTicket.token;
     const tktuserId = activeTicket.userId;
 
-    //console.log("Token:", tktuserToken);
-    //console.log("UserId:", tktuserId);
+    ////console.log("Token:", tktuserToken);
+    ////console.log("UserId:", tktuserId);
 
     // Create data object to send to the backend, with action included
     const data = new URLSearchParams();
@@ -1938,7 +1944,7 @@ function activityDataRecord() {
     data.append('token', tktuserToken);
     data.append('userId', tktuserId);
 
-    //console.log('Data being sent from activityDataRecord:', data.toString());
+    ////console.log('Data being sent from activityDataRecord:', data.toString());
 
     // Fetch config.json to get script URL
     fetch('/TFC-Connect/App/config.json')
@@ -1970,11 +1976,11 @@ function activityDataRecord() {
             markActivity(result.data);
             markAttnDays(result.data);
             findHoliday(result.data)
-            //console.log("Server response activityDataRecord:", result);
+            console.log("Server response activityDataRecord:", result);
 
         })
         .catch(error => {
-            console.error("Error in activityDataRecord:", error);
+            //console.error("Error in activityDataRecord:", error);
         });
 
         markActivity();  
@@ -1982,28 +1988,35 @@ function activityDataRecord() {
 
 
 function markActivity(data) {
-    //console.log("📌 Received Data:", data);
+    // ✅ Ensure `data` is always an object, otherwise use fake data
+    // 🔹 Agar data null ya undefined hai, toh function exit kar de
 
+    console.log("markac", data);
+  
     let activityContainer = document.getElementById("activityContainer");
     let allActCnt = document.getElementById("allActCnt");
 
     let entries = Object.values(data);
+
+    // Check karein agar sirf ek entry hai aur sabhi values empty hain
+    if (entries.length === 1 && Object.values(entries[0]).every(val => val === "")) {
+        console.warn("⚠ Empty data detected, skipping UI rendering.");
+        return;
+    }
     
-    // Sort entries in descending order based on the date (newest first)
+
+    // ✅ Sorting: Newest first
     entries.sort((a, b) => new Date(b.Date) - new Date(a.Date));
 
-    let recentEntries = entries.slice(0, 2); // सिर्फ़ 2 एंट्रीज़ (top 2 latest entries)
+    let recentEntries = entries.slice(0, 2); // Latest 2 entries
 
-    // ✅ `activityContainer` (Recent 2 Entries)
     renderEntries(recentEntries, activityContainer);
-
-    // ✅ `allActCnt` ke liye date-wise filter karein
     applyDateFilter(entries);
 
     function formatDate(dateString) {
+        if (!dateString) return "N/A";
         let date = new Date(dateString);
-        let options = { day: "2-digit", month: "short", year: "numeric" };
-        return date.toLocaleDateString("en-GB", options).replace(",", "");
+        return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }).replace(",", "");
     }
 
     function formatTime(timeString) {
@@ -2013,20 +2026,13 @@ function markActivity(data) {
         let minutes = date.getMinutes();
         let ampm = hours >= 12 ? "PM" : "AM";
 
-        hours = hours % 12;
-        hours = hours === 0 ? 12 : hours;
-
-        let formattedHours = hours < 10 ? "0" + hours : hours;
-        let formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
-
-        return `${formattedHours}:${formattedMinutes} ${ampm}`;
+        hours = hours % 12 || 12;
+        return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")} ${ampm}`;
     }
 
     function renderEntries(entries, container) {
-        //console.log("🔍 Rendering Entries:", entries);
-
         let fragment = document.createDocumentFragment();
-        container.innerHTML = ""; // ✅ Clear previous data
+        container.innerHTML = "";
 
         entries.forEach(entry => {
             let formattedDate = formatDate(entry.Date);
@@ -2034,8 +2040,6 @@ function markActivity(data) {
             let checkOutTime = formatTime(entry.Check_out_time);
             let checkInStatus = entry.Check_in_status || "N/A";
             let checkOutStatus = entry.Check_out_status || "N/A";
-
-            //console.log(`📆 Entry Date: ${entry.Date} ➝ ${formattedDate}`);
 
             let checkInCard = document.createElement("div");
             checkInCard.classList.add("act-card", "flex", "box-styling");
@@ -2060,7 +2064,7 @@ function markActivity(data) {
                 checkOutCard = document.createElement("div");
                 checkOutCard.classList.add("act-card", "flex", "box-styling");
                 checkOutCard.innerHTML = `
-                    <div class="act-cd-prf box-styling" >
+                    <div class="act-cd-prf box-styling">
                         <i class=" fi fi-rs-arrow-left-from-arc"></i>
                     </div>
                     <div class="act-txt-bx flex-row">
@@ -2087,55 +2091,42 @@ function markActivity(data) {
     function applyDateFilter(allEntries) {
         let startDateSpan = document.getElementById("act-st-dt");
         let endDateSpan = document.getElementById("act-ed-dt");
-    
+
         let startDateText = startDateSpan ? startDateSpan.innerText.trim() : "";
         let endDateText = endDateSpan ? endDateSpan.innerText.trim() : "";
-    
-        //console.log(`📌 Start Date (Raw): "${startDateText}"`);
-        //console.log(`📌 End Date (Raw): "${endDateText}"`);
-    
+
         let startDate = convertPickerDate(startDateText);
         let endDate = convertPickerDate(endDateText);
-    
+
         if (!startDate || !endDate) {
-            //console.log("⚠️ No valid date range selected. Showing all entries.");
-            let sortedEntries = allEntries.sort((a, b) => new Date(b.Date) - new Date(a.Date)); // ✅ Sort in DESC order
+            let sortedEntries = allEntries.sort((a, b) => new Date(b.Date) - new Date(a.Date));
             renderEntries(sortedEntries, allActCnt);
             return;
         }
-    
+
         let startTimestamp = new Date(startDate).getTime();
         let endTimestamp = new Date(endDate).getTime();
-    
-        //console.log(`✅ Start Date (Timestamp): ${startTimestamp}`);
-        //console.log(`✅ End Date (Timestamp): ${endTimestamp}`);
-    
+
         let filteredEntries = allEntries
             .filter(entry => {
                 let entryTimestamp = new Date(entry.Date).getTime();
-                let isInRange = entryTimestamp >= startTimestamp && entryTimestamp <= endTimestamp;
-    
-                //console.log(`🔍 Checking: ${entry.Date} (${entryTimestamp}) ➝ In Range? ${isInRange}`);
-                return isInRange;
+                return entryTimestamp >= startTimestamp && entryTimestamp <= endTimestamp;
             })
-            .sort((a, b) => new Date(b.Date) - new Date(a.Date)); // ✅ Sorting in DESC order (Newest First)
-    
-        //console.log("✅ Sorted Filtered Entries (Descending):", filteredEntries);
+            .sort((a, b) => new Date(b.Date) - new Date(a.Date));
+
         renderEntries(filteredEntries, allActCnt);
     }
-    
 
     function convertPickerDate(dateString) {
         let parts = dateString.split(" ");
         if (parts.length !== 3) return null;
-    
-        let day = parts[0].padStart(2, "0"); // Ensuring "1" becomes "01"
-        let month = parts[1]; // Month already in correct format
+
+        let day = parts[0].padStart(2, "0"); 
+        let month = parts[1]; 
         let year = parts[2];
-    
+
         return `${day} ${month} ${year}`;
     }
-    
 
     function observeDateChanges() {
         let startDateSpan = document.getElementById("act-st-dt");
@@ -2143,7 +2134,6 @@ function markActivity(data) {
 
         if (startDateSpan && endDateSpan) {
             let observer = new MutationObserver(() => {
-                //console.log("🔄 Date changed, reapplying filter...");
                 applyDateFilter(entries);
             });
 
@@ -2154,6 +2144,7 @@ function markActivity(data) {
 
     observeDateChanges();
 }
+
 
 
 
@@ -2191,7 +2182,7 @@ function getCurrentDateInDDMMYY() {
 function updateAtnCells(data) {
     
     if (data !== undefined) {
-        //console.log("Data received in updateAtnCells: ", data); // Log the data if it's not undefined
+        ////console.log("Data received in updateAtnCells: ", data); // Log the data if it's not undefined
 
         resetAttenStatus();
      
@@ -2242,7 +2233,7 @@ function updateAtnCells(data) {
         
         
     } else {
-        //console.log("Data received in: undifined", );
+        ////console.log("Data received in: undifined", );
     }
 }
 
@@ -2250,17 +2241,17 @@ setInterval (updateAtnCellsByDate(formattedDate), 1000);
 
 async function updateAtnCellsByDate(formattedDate) {
     if (!formattedDate) {
-        console.error("formattedDate is not defined or invalid");
+        //console.error("formattedDate is not defined or invalid");
         return; // Return early if formattedDate is not available
     }
 
-    //console.log("Data received in updateAtnCellsByDate: ", formattedDate);
+    ////console.log("Data received in updateAtnCellsByDate: ", formattedDate);
 
     try {
         // Parse the JSON string from localStorage
         const activeTicket = localStorage.getItem('receiveData'); // Assuming activeTicket is stored in localStorage
         if (!activeTicket) {
-            console.error("No active ticket data found in localStorage.");
+            //console.error("No active ticket data found in localStorage.");
             return; // Return early if there is no active ticket data
         }
         const ticketData = JSON.parse(activeTicket);
@@ -2269,7 +2260,7 @@ async function updateAtnCellsByDate(formattedDate) {
 
         // Log the active ticket object
         const ticketObject = { UserId: userId, Token: token };
-        //console.log('Active Ticket:', ticketObject);
+        ////console.log('Active Ticket:', ticketObject);
 
         // Extract day, month, and year from formattedDate (assuming it's in the format "dd/mm/yy")
         const dateParts = formattedDate.split('/');
@@ -2282,7 +2273,7 @@ async function updateAtnCellsByDate(formattedDate) {
 
         // Create the atnToken using the day, month, year, and last 3 digits of userId
         const atnToken = `${day}${month}${year}${last3Digits}`;
-        //console.log('Generated ATN Token:', atnToken);
+        ////console.log('Generated ATN Token:', atnToken);
 
         // Fetch the backend URL from config.json
         const response = await fetch('/TFC-Connect/App/config.json');
@@ -2307,12 +2298,12 @@ async function updateAtnCellsByDate(formattedDate) {
 
       
         // Log the backend response before further processing
-        //console.log("Backend Response:", backendResponse);
+        ////console.log("Backend Response:", backendResponse);
 
         // Check if the response is successful
         if (backendResponse.ok) {
             const backendData = await backendResponse.json();
-            //console.log("Backend response data:", backendData);
+            ////console.log("Backend response data:", backendData);
             // Handle the backend data as needed
             if (backendData && backendData.data) {
 
@@ -2327,7 +2318,7 @@ async function updateAtnCellsByDate(formattedDate) {
 
             } else {
 
-                //console.log("No data found in backend response.");
+                ////console.log("No data found in backend response.");
                 resetAttenStatus();
                
                 let noRecd ;
@@ -2341,11 +2332,11 @@ async function updateAtnCellsByDate(formattedDate) {
             }
         } else {
             // If backend request is not OK
-            console.error("Backend request failed with status:", backendResponse.status);
+            //console.error("Backend request failed with status:", backendResponse.status);
             resetAttenStatus(); // Call a function to reset the status
         }
     } catch (error) {
-        console.error("Error in updateAtnCellsByDate:", error);
+        //console.error("Error in updateAtnCellsByDate:", error);
         resetAttenStatus(); // Call a function to reset the status
     }
 }
@@ -2354,7 +2345,7 @@ async function updateAtnCellsByDate(formattedDate) {
 
 function showRecdfun(){
     const noRecdRes = localStorage.getItem('noRecd');
-    //console.log("noRecdRes", noRecdRes);
+    ////console.log("noRecdRes", noRecdRes);
     
     if(noRecdRes === "show"){
         document.getElementById('crd-bx-cnt').style.display = "none";
@@ -2367,7 +2358,7 @@ function showRecdfun(){
 
 function hideRecdfun(){
     const noRecdRes = localStorage.getItem('noRecd');
-    //console.log("noRecdRes", noRecdRes);
+    ////console.log("noRecdRes", noRecdRes);
     
     if(noRecdRes === "hide"){
         document.getElementById('crd-bx-cnt').style.display = "block";
@@ -2457,13 +2448,13 @@ function showAttnRecord(){
 
 
 function findHoliday(attrecord) {
-    //console.log("Function running: findHoliday");
+    ////console.log("Function running: findHoliday");
 
     // Retrieve and parse the active ticket data from localStorage
     const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
 
     if (!activeTicket) {
-        console.error("No active ticket found.");
+        //console.error("No active ticket found.");
         return;
     }
 
@@ -2471,8 +2462,8 @@ function findHoliday(attrecord) {
     const tktuserToken = activeTicket.token;
     const tktuserId = activeTicket.userId;
 
-    //console.log("Token:", tktuserToken);
-    //console.log("UserId:", tktuserId);
+    ////console.log("Token:", tktuserToken);
+    ////console.log("UserId:", tktuserId);
 
     // Create data object to send to the backend, with action included
     const data = new URLSearchParams();
@@ -2480,7 +2471,7 @@ function findHoliday(attrecord) {
     data.append('token', tktuserToken);
     data.append('userId', tktuserId);
 
-    //console.log('Data being sent from findHoliday:', data.toString());
+    ////console.log('Data being sent from findHoliday:', data.toString());
 
     // Fetch config.json to get script URL
     fetch('/TFC-Connect/App/config.json')
@@ -2509,83 +2500,85 @@ function findHoliday(attrecord) {
             return response.json();
         })
         .then(result => {
-            //console.log("Server response findHoliday:", result);
+            ////console.log("Server response findHoliday:", result);
             createCalendarFromSpan(attrecord, result.holidays);
             updateHoliday( result.holidays );
             generateDates(attrecord, result.holidays);
             chkInOutRcd(attrecord);
         })
         .catch(error => {
-            console.error("Error in findHoliday:", error);
+            //console.error("Error in findHoliday:", error);
         });
 }
 
 
-function updateHoliday( response) {
+function updateHoliday(response) {
     if (!response) {
-        console.error("❌ updateHoliday: Received undefined or null response");
         return;
     }
 
-    //console.log("📌 Received Data response updateHoliday:", response);
-    
-    // Extract the target month and year from the span element
     const targetMonthYear = document.getElementById("ttl-mnt-cnt").textContent.trim().toUpperCase();
-    //console.log("🎯 Target Month-Year:", targetMonthYear);
-    
-    // Convert target month-year format to proper format (MMM YYYY)
     const [targetMonth, targetYear] = targetMonthYear.split(" ");
     
-    // Define mapping for months
     const monthMapping = {
         "JAN": 0, "FEB": 1, "MAR": 2, "APR": 3, "MAY": 4, "JUN": 5, 
         "JUL": 6, "AUG": 7, "SEP": 8, "OCT": 9, "NOV": 10, "DEC": 11
     };
-    
+
     if (!(targetMonth in monthMapping)) {
-        console.error("❌ Invalid target month format.");
         return;
     }
-    
+
     const targetMonthNum = monthMapping[targetMonth];
-    
-    // Filter the response data based on the target month and year, and exclude entries where column 3 is 'Yes' or 'yes'
+
+    // Holiday details store karne ke liye array
+    let holidayDetails = [];
+
+    // Filter response aur holiday details collect karo
     const filteredEntries = response.filter(entry => {
-        const entryDate = new Date(entry[0]); // Convert ISO date to Date object
-        const workingStatus = entry[2].trim().toLowerCase(); // Normalize case
-        return (
+        const entryDate = new Date(entry[0]); // Date format me convert karein
+        const workingStatus = entry[2].trim().toLowerCase(); // Case normalize karein
+        
+        if (
             entryDate.getMonth() === targetMonthNum &&
             entryDate.getFullYear().toString() === targetYear &&
-            workingStatus !== 'yes' // Exclude if column 3 has 'Yes' (case insensitive)
-        );
+            workingStatus !== 'yes' // Holiday entries ko filter karna
+        ) {
+            // Holiday details add karna
+            holidayDetails.push({
+                date: entryDate.toISOString().split("T")[0], // YYYY-MM-DD format
+                status: "Holiday"
+            });
+            return true;
+        }
+        return false;
     });
-    
-    // Format count as 00 Days
+
+    // Holiday details ko console me print karo
+    // console.log("📅 Holiday Details:", holidayDetails);
+
+    // Generate attendance table with holiday data
+    findSalary(holidayDetails);
+
+    // Holiday count ko format karo
     const formattedCount = filteredEntries.length.toString().padStart(2, '0');
-    
-    // Update the count in the holiday-count element with 'Days' suffix
     document.getElementById("holiday-count").textContent = `${formattedCount} Days`;
-    //console.log("✅ Number of holidays updated:", formattedCount);
-    
-    // Get total days count from ttl-mnth-day
+
     const totalDays = parseInt(document.getElementById("ttl-mnth-day").textContent.trim(), 10);
     const holidayCount = parseInt(formattedCount, 10);
-    
-    // Calculate working days
+
     const workingDays = totalDays - holidayCount;
     const formattedWorkingDays = workingDays.toString().padStart(2, '0');
-    
-    // Update working days count
-    document.getElementById("Working-count").textContent = `${formattedWorkingDays} Days`;
-    //console.log("✅ Number of working days updated:", formattedWorkingDays);
-    
 
+    document.getElementById("Working-count").textContent = `${formattedWorkingDays} Days`;
 }
 
 
 
 
 function markAttnDays(response) {
+
+
     //console.log("markAttnDays record", response);
     
     let presentCount = 0;
@@ -2670,7 +2663,7 @@ function markAttnDays(response) {
 
 
 function chkInOutRcd(attrecord) {
-    console.log("Updated attrecord by chkInOutRcd", attrecord);
+    //console.log("Updated attrecord by chkInOutRcd", attrecord);
 
     // Function to format the date from 'yyyy-mm-dd' to 'dd mmm yy'
     function formatDate(dateString) {
@@ -2815,3 +2808,681 @@ function chkInOutRcd(attrecord) {
         });
     });
 }
+
+
+function findSalary(holidayDetails) {
+    // Retrieve and parse the active ticket data from localStorage
+    const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
+
+    if (!activeTicket) {
+        return;
+    }
+
+    const tktuserToken = activeTicket.token;
+    const tktuserId = activeTicket.userId;
+
+    const data = new URLSearchParams();
+    data.append('action', 'findSalary');
+    data.append('token', tktuserToken);
+    data.append('userId', tktuserId);
+
+    fetch('/TFC-Connect/App/config.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Failed to load config.json, status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(config => {
+            if (!config.scriptUrl) {
+                throw new Error("scriptUrl not found in config.json");
+            }
+
+            return fetch(config.scriptUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: data
+            });
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(result => {
+            console.log("Raw Server response:", result);
+
+            
+
+            // Process data into an array of objects
+            const salaryData = [];
+
+            Object.entries(result.salaryData).forEach(([key, value]) => {
+                if (key !== "User ID" && key !== "Name") {
+                    const date = new Date(key);
+                    if (!isNaN(date)) { // Ensure it's a valid date
+                        // Convert to IST manually by adjusting for UTC offset
+                        const istDate = new Date(date.getTime() + (5.5 * 60 * 60 * 1000));
+
+                        // Extract YYYY-MM-DD from IST date
+                        const yyyy = istDate.getFullYear();
+                        const mm = String(istDate.getMonth() + 1).padStart(2, '0'); // Month is 0-based
+                        const dd = String(istDate.getDate()).padStart(2, '0');
+
+                        const formattedDate = `${yyyy}-${mm}-${dd}`;
+
+                        salaryData.push({ date: formattedDate, salary: value });
+                    }
+                }
+            });
+
+
+
+            const paidLeaveData = [];
+
+            Object.entries(result.paidLeaveData).forEach(([key, value]) => {
+                if (key !== "User ID" && key !== "Name") {
+                    const date = new Date(key);
+                    if (!isNaN(date)) { // Ensure it's a valid date
+                        // Convert to IST manually by adjusting for UTC offset
+                        const istDate = new Date(date.getTime() + (5.5 * 60 * 60 * 1000));
+
+                        // Extract YYYY-MM-DD from IST date
+                        const yyyy = istDate.getFullYear();
+                        const mm = String(istDate.getMonth() + 1).padStart(2, '0'); // Month is 0-based
+                        const dd = String(istDate.getDate()).padStart(2, '0');
+
+                        const formattedDate = `${yyyy}-${mm}-${dd}`;
+
+                        paidLeaveData.push({ date: formattedDate, paidLeaveData: value });
+                    }
+                }
+            });
+
+
+
+                        // Process data into an array of objects
+            const justPercentData = [];
+
+            Object.entries(result.justPercentData).forEach(([key, value]) => {
+                if (key !== "User ID" && key !== "Name") {
+                    const date = new Date(key);
+                    if (!isNaN(date)) { // Ensure it's a valid date
+                        // Convert to IST manually by adjusting for UTC offset
+                        const istDate = new Date(date.getTime() + (5.5 * 60 * 60 * 1000));
+
+                        // Extract YYYY-MM-DD from IST date
+                        const yyyy = istDate.getFullYear();
+                        const mm = String(istDate.getMonth() + 1).padStart(2, '0'); // Month is 0-based
+                        const dd = String(istDate.getDate()).padStart(2, '0');
+
+                        const formattedDate = `${yyyy}-${mm}-${dd}`;
+
+                        justPercentData.push({ date: formattedDate, justPercentData: value });
+                    }
+                }
+            });
+
+
+
+
+             const incentiveData = [];
+
+            Object.entries(result.incentiveData).forEach(([key, value]) => {
+                if (key !== "User ID" && key !== "Name") {
+                    const date = new Date(key);
+                    if (!isNaN(date)) { // Ensure it's a valid date
+                        // Convert to IST manually by adjusting for UTC offset
+                        const istDate = new Date(date.getTime() + (5.5 * 60 * 60 * 1000));
+
+                        // Extract YYYY-MM-DD from IST date
+                        const yyyy = istDate.getFullYear();
+                        const mm = String(istDate.getMonth() + 1).padStart(2, '0'); // Month is 0-based
+                        const dd = String(istDate.getDate()).padStart(2, '0');
+
+                        const formattedDate = `${yyyy}-${mm}-${dd}`;
+
+                        incentiveData.push({ date: formattedDate, incentiveData: value });
+                    }
+                }
+            });
+
+
+            
+
+
+                        // Process data into an array of objects
+            const isJustificationData = [];
+               Object.entries(result.isJustificationData).forEach(([key, value]) => {
+                 if (key !== "User ID" && key !== "Name") {
+               const date = new Date(key);
+               if (!isNaN(date)) { // Ensure it's a valid date
+                   // Convert to IST manually by adjusting for UTC offset
+                   const istDate = new Date(date.getTime() + (5.5 * 60 * 60 * 1000))
+                   // Extract YYYY-MM-DD from IST date
+                   const yyyy = istDate.getFullYear();
+                   const mm = String(istDate.getMonth() + 1).padStart(2, '0'); // Month is 0-based
+                   const dd = String(istDate.getDate()).padStart(2, '0')
+                   const formattedDate = `${yyyy}-${mm}-${dd}`
+                   isJustificationData.push({ date: formattedDate, isJustification: value });
+                                }
+                            }
+                        });
+
+            // console.log("Processed Salary Data (IST):", salaryData);
+            generateAttendanceTable(holidayDetails , salaryData, result.userDetails.Join_date, result.userDetails.isCaller, isJustificationData, justPercentData, paidLeaveData, incentiveData );
+        })
+        .catch(error => {
+            console.error("Error in findSalary:", error);
+        });
+}
+
+
+
+function generateAttendanceTable(holidayDetails, salaryData, userDetails, isCaller, isJustificationData, justPercentData, paidLeaveData, incentiveData) {
+    const currentDate = new Date().toISOString().split('T')[0]; // आज की तारीख YYYY-MM-DD
+
+    console.log("isJustificationDataresult", incentiveData);
+
+
+    // console.log("userdetailsresult", userDetails);
+
+    const userDate = new Date(userDetails);
+    const formattedUserDate = userDate.toLocaleString('en-US', { month: 'short', year: 'numeric' }).toUpperCase();
+    const formattedUserDateDDMMYYYY = userDate.toLocaleDateString('en-GB').split('/').join('-');
+
+
+
+
+
+    // **आने वाली छुट्टियों की गिनती निकालें**
+    const adjustedHolidaysCount = holidayDetails.filter(h => h.date < currentDate).length;
+
+    // `ttl-mnt-cnt` se month aur year extract karo
+    const monthYearText = document.getElementById("ttl-mnt-cnt")?.textContent.trim() || "";
+    const [monthText, yearText] = monthYearText.split(" ");
+
+    // salaryData me se current month ka salary filter karo
+    const matchingSalary = salaryData.find(({ date }) => {
+        const itemDate = new Date(date);
+        const itemMonth = itemDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+        const itemYear = itemDate.getFullYear().toString();
+        return itemMonth === monthText && itemYear === yearText;
+    })?.salary || 0;
+
+
+    // salaryData me se previous month ka salary filter karo
+const prevDate = new Date(`${yearText}-${monthText}-01`); // Current month ka first date banao
+prevDate.setMonth(prevDate.getMonth() - 1); // Previous month me shift karo
+
+// Previous month ka short format aur year nikal lo
+const prevMonthText = prevDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+const prevYearText = prevDate.getFullYear().toString();
+
+const monthliIncentive = incentiveData.find(({ date }) => {
+    const itemDate = new Date(date);
+    const itemMonth = itemDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+    const itemYear = itemDate.getFullYear().toString();
+    return itemMonth === prevMonthText && itemYear === prevYearText;
+})?.incentiveData || 0;
+
+
+
+    // salaryData me se current month ka salary filter karo
+    const paidLeave = paidLeaveData.find(({ date }) => {
+        const itemDate = new Date(date);
+        const itemMonth = itemDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+        const itemYear = itemDate.getFullYear().toString();
+        return itemMonth === monthText && itemYear === yearText;
+    })?.paidLeaveData || 0;
+
+
+// isJustify me se current month ka isJustify filter karo
+const justPercent = justPercentData.find(({ date }) => {
+    const itemDate = new Date(date);
+    const itemMonth = itemDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+    const itemYear = itemDate.getFullYear().toString();
+    return itemMonth === monthText && itemYear === yearText;
+})?.justPercentData || 0;  // Default value "No" rakhi agar koi record na mile
+
+
+// isJustify me se current month ka isJustify filter karo
+const isJustify = isJustificationData.find(({ date }) => {
+    const itemDate = new Date(date);
+    const itemMonth = itemDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+    const itemYear = itemDate.getFullYear().toString();
+    return itemMonth === monthText && itemYear === yearText;
+})?.isJustification || "No";  // Default value "No" rakhi agar koi record na mile
+
+
+// Calculate the difference in days (if same month and year)
+let daysBeforeSelectedDate = 0;
+let holidaysBeforeJoin = 0;
+
+if (formattedUserDate === `${monthText} ${yearText}`) {
+    const selectedDay = parseInt(formattedUserDateDDMMYYYY.split('-')[0], 10);
+    daysBeforeSelectedDate = selectedDay - 1; // Pehle ke din count karne ke liye
+
+    // **Check holidays before joining**
+    holidaysBeforeJoin = holidayDetails.filter(h => {
+        const holidayDate = new Date(h.date);
+        return (
+            holidayDate.toLocaleString('en-US', { month: 'short', year: 'numeric' }).toUpperCase() === formattedUserDate &&
+            holidayDate.getDate() < selectedDay
+        );
+    }).length;
+}
+
+    const isCurrentMonth = formattedUserDate === `${monthText} ${yearText}`;
+
+
+
+    const dataMap = [
+        { index: 0, title: "Working Days", id: "Working-count" },
+        { index: 1, title: "No. of Holidays", id: "holiday-count" },
+        { index: 2, title: "Adjusted Holidays", custom: () => adjustedHolidaysCount },
+
+
+        { index: 3, title: "Present Count", id: "ttl_prsnt" },
+
+
+        { index: 4, title: "Full Day Count", custom: () => extractValue("ttl_prsnt") + extractValueByIndex(2) },
+
+
+        { index: 5, title: "Late Adjusted Count", custom: () => {
+            let late = extractValue("ttl_late");
+            return late - (late % 5) - Math.floor(late / 5);
+        }},
+        { index: 6, title: "Late Rem Final", custom: () => extractValue("ttl_late") % 5 - Math.floor((extractValue("ttl_late") % 5) / 3) },
+        { index: 7, title: "Final Adjusted Halfday Count", custom: () => {
+            let halfday = extractValue("ttl_hday");
+            let lateRemDiv3 = Math.floor((extractValue("ttl_late") % 5) / 3);
+            return (halfday + lateRemDiv3 - ((halfday + lateRemDiv3) % 2)) - Math.floor((halfday + lateRemDiv3) / 2);
+        }},
+        { index: 8, title: "Total Adjusted Days", custom: () => {
+            let fullDay = extractValue("ttl_prsnt") + extractValueByIndex(2);
+            let lateAdj = extractValueByIndex(5);
+            let lateRemFinal = extractValueByIndex(6);
+            let finalHalfday = extractValueByIndex(7);
+            return fullDay + lateAdj + lateRemFinal + finalHalfday;
+        }},
+        { index: 9, title: "Late Count", id: "ttl_late" },
+        { index: 10, title: "Late Rem of 5", custom: () => extractValue("ttl_late") % 5 },
+        { index: 11, title: "Late Div by 5 (INT)", custom: () => Math.floor(extractValue("ttl_late") / 5) },
+        { index: 12, title: "Halfday + Late Rem Div by 2 (INT)", custom: () => Math.floor((extractValue("ttl_hday") + extractValueByIndex(16)) / 2) },
+        { index: 13, title: "Absent Count", id: "ttl_absnt" },
+        { index: 14, title: "Final Adjusted Days", custom: () => extractValueByIndex(11) + extractValueByIndex(12) + extractValue("ttl_absnt") },
+        { index: 15, title: "Halfday Count", id: "ttl_hday" },
+        { index: 16, title: "Late Rem Div by 3 (INT)", custom: () => Math.floor((extractValue("ttl_late") % 5) / 3) },
+        { index: 17, title: "Halfday + Late Rem Div by 3", custom: () => extractValue("ttl_hday") + extractValueByIndex(16) },
+        { index: 18, title: "Halfday + Late Rem Mod 2", custom: () => extractValueByIndex(17) % 2 },
+        { index: 19, title: "Total Days in Month", id: "ttl-mnth-day" },
+        { index: 20, title: "Final Present Value", custom: () => extractValueByIndex(8) },
+        { index: 21, title: "Final Halfday Value", custom: () => extractValueByIndex(18) },
+        { index: 22, title: "Final Absent Value", custom: () => extractValueByIndex(14) },
+        { index: 23, title: "Total Coming Days", custom: () => extractValue("ttl_prsnt") + extractValue("ttl_late") + extractValue("ttl_hday") },
+
+
+
+        { index: 24, title: "Total Attend Days", custom: () => {
+            let totalComingDays = extractValueByIndex(23);
+            let totalAdjustedDays = extractValueByIndex(8);
+            let halfdayLateMod2 = extractValueByIndex(18);
+            return totalComingDays === 0 ? 0 : (halfdayLateMod2 === 1 ? totalAdjustedDays + 0.5 : totalAdjustedDays) - extractValueByIndex(32);
+        }},
+
+
+
+        { index: 25, title: "Monthly Salary", custom: () => matchingSalary }, // ✅ Salary ka data add kiya
+        { 
+            index: 26, 
+            title: "Per Day Salary", 
+            custom: () => extractValueByIndex(25) / extractValue("ttl-mnth-day")
+        }
+        ,
+        {
+            index: 27,
+            title: "Current Salary",
+            custom: () => {
+                const value24 = extractValueByIndex(24);
+                const value26 = extractValueByIndex(26);
+                const value25 = extractValueByIndex(25);
+        
+                let currentSalary = Math.round(value24 * value26);
+        
+                return currentSalary > value25 ? value25 : currentSalary;
+            }
+        },        
+        { 
+            index: 28, 
+            title: "Selected Month & Year", 
+            custom: () => `${monthText} ${yearText}` 
+        },
+        { 
+            index: 29, 
+            title: "Joining Month", 
+            custom: () => formattedUserDate
+        },
+        { 
+            index: 30, 
+            title: "Joining Date", 
+            custom: () => formattedUserDateDDMMYYYY
+        },
+        { 
+            index: 31, 
+            title: "Days Before Join", 
+            custom: () => daysBeforeSelectedDate
+        },
+        { 
+            index: 32, 
+            title: "Holidays Before Joining", 
+            custom: () => holidaysBeforeJoin
+        },
+        {
+            index: 33,
+            title: "Casual Leave",
+            custom: () => {
+                if (`${monthText} ${yearText}` === formattedUserDate) {
+                    localStorage.setItem("CasualLeave", "No"); // Store "No" in localStorage
+                    return 0;
+                }
+        
+                let index34Value = extractValueByIndex(34)?.toString().trim().toLowerCase();
+                let index35Value = extractValueByIndex(35)?.toString().trim().toLowerCase();
+        
+                let result = 0; // Default value
+        
+                if (index34Value === "no") {
+                    result = 1;
+                } else if (index34Value === "yes") {
+                    result = index35Value === "yes" ? 1 : 0;
+                }
+        
+               
+        
+                return result;
+            }
+        },           
+        { 
+            index: 34, 
+            title: "isCaller", 
+            custom: () => {
+                localStorage.setItem("isCaller", isCaller);
+        
+                return isCaller;
+            }
+        },
+        {
+            index: 35,
+            title: "isJustify",
+            custom: () => {
+                // Store the value in localStorage
+                localStorage.setItem("isJustify", isJustify);
+        
+                return isJustify;
+            }
+        },
+        
+        {
+            index: 36,
+            title: "justPercentData",
+            custom: () => {
+                const formattedJustPercent = (justPercent * 100).toFixed(0) + "%";
+        
+                // Save to localStorage
+                localStorage.setItem("justPercentData", formattedJustPercent);
+        
+                return formattedJustPercent;
+            }
+        },
+        {
+            index: 37,
+            title: "Paid Leave",
+            custom: () => paidLeave  
+        },
+        {
+            index: 38,
+            title: "Balance Paid Leave",
+            custom: () => {
+                let totalLeave = extractValueByIndex(37) + extractValueByIndex(33); // Previous Leave + Casual Leave
+                let finalAbsent = extractValueByIndex(22);  // Final Absent
+                let finalHalfday = extractValueByIndex(21); // Final Halfday
+        
+                let balanceLeave;
+        
+                if (finalAbsent === 0) {
+                    balanceLeave = totalLeave - finalHalfday;
+                } else if (finalAbsent > totalLeave) {
+                    balanceLeave = 0;
+                } else {
+                    balanceLeave = totalLeave - finalAbsent;
+                }
+        
+                return balanceLeave < 0 ? 0 : balanceLeave; // Ensures negative values return 0
+            }
+        },
+        {
+            index: 39,
+            title: "Leave Adjust",
+            custom: () => {
+                let totalLeave = extractValueByIndex(37) + extractValueByIndex(33);
+                let finalAbsent = extractValueByIndex(22);
+                let finalHalfday = extractValueByIndex(21);
+        
+                // Agar total leave = 0 hai, toh 0 return karo
+                if (totalLeave === 0) {
+                    return 0;
+                }
+        
+                if (finalAbsent === 0) {
+                    return finalHalfday;
+                } else if (finalAbsent > totalLeave) {
+                    return totalLeave;
+                } else {
+                    return finalAbsent;
+                }
+            }
+        }
+        ,
+        {
+            index: 40,
+            title: "Final Payout",
+            custom: () => {
+                const value27 = extractValueByIndex(27);
+                const value25 = extractValueByIndex(25);
+                const value26 = extractValueByIndex(26);
+                const value39 = extractValueByIndex(39);
+                
+                let finalPayout = Math.round(value27 + (value26 * value39));
+                
+                 // Agar final payout, value25 ke 100 ke andar hai, toh value25 return kare
+        if (value25 - finalPayout <= 10 && value25 - finalPayout > 0) {
+            return value25;
+        }
+
+                return finalPayout > value25 ? value25 : finalPayout;
+            }
+        },
+        {
+            index: 41,
+            title: "Wave Out",
+            custom: () => {
+                const value18 = extractValueByIndex(18);
+                const value14 = extractValueByIndex(14);
+                const value26 = extractValueByIndex(26);
+                const value39 = extractValueByIndex(39);
+        
+                // Apply the formula: ((IF(index 18=1, index 14+0.5, index 14)) * index 26) - (index 39 * index 26)
+                const adjustedValue14 = value18 === 1 ? value14 + 0.5 : value14;
+                const waveOut = Math.round((adjustedValue14)*value26) ;
+        
+                return waveOut;
+            }
+        },
+        {
+            index: 42,
+            title: "Expecting Salary",
+            custom: () => {
+                const value25 = extractValueByIndex(25);
+                const value41 = extractValueByIndex(41);
+                const value39 = extractValueByIndex(39);
+                const value26 = extractValueByIndex(26);
+        
+                // Apply the formula: ((IF(index 18=1, index 14+0.5, index 14)) * index 26) - (index 39 * index 26)
+                const preSalary = Math.round(value25 - value41 +(value39 * value26))
+                
+        
+                return preSalary > value25 ? value25 : preSalary;
+            }
+        },
+        { 
+            index: 43, 
+            title: "Leave applied", 
+            custom: () => {
+                if (`${monthText} ${yearText}` === formattedUserDate) {
+                    localStorage.setItem("isPaidLeave", "No"); // Store "No" in localStorage
+                    return 0;
+                } 
+                
+                if (extractValueByIndex(21) === 0 && extractValueByIndex(22) === 0) {
+                    localStorage.setItem("isPaidLeave", "No"); // Store "No" in localStorage
+                    return 0;
+                }
+        
+                let result = 1; // Default to 1 if conditions are met
+        
+                // Pehle index 34 ki value check karni hai (Yes/No case-insensitive)
+                let index34Value = extractValueByIndex(34)?.toString().trim().toLowerCase(); 
+                let index35Value = extractValueByIndex(35)?.toString().trim().toLowerCase();
+        
+                if (index34Value === "no") {
+                    return result;  // Agar index 34 "no" hai, toh actual result return karo
+                } 
+                if (index34Value === "yes") {
+                    if (index35Value === "no") {
+                        localStorage.setItem("isPaidLeave", "No");
+                        return 0;  // Agar index 34 "yes" aur index 35 "no" hai, toh 0 return karo
+                    } else if (index35Value === "yes") {
+                        localStorage.setItem("isPaidLeave", "Yes");
+                        return result;  // Agar dono "yes" hain, toh actual result return karo
+                    }
+                }
+        
+                // Store "Yes" if result is 1, otherwise store "No"
+                localStorage.setItem("isPaidLeave", result === 1 ? "Yes" : "No");
+        
+                return result;
+            }
+        },
+        { 
+            index: 44, 
+            title: "Monthly Incentive", 
+            custom: () => monthliIncentive
+        }
+        
+        
+       
+     
+        
+        
+    ];
+
+    // Extract numbers from text
+    const extractValue = (id) => {
+        let element = document.getElementById(id);
+        let value = element ? element.textContent.trim() : "00 Days";
+        return parseInt(value.match(/\d+/)?.[0] || "0", 10);
+    };
+
+    // Index से वैल्यू एक्सट्रैक्ट करना
+    const extractValueByIndex = (index) => {
+        let row = dataMap.find(item => item.index === index);
+        return row && row.custom ? row.custom() : 0;
+    };
+
+
+
+    // Generate table data
+    let tableData = dataMap
+        .map(({ index, title, id, custom }) => ({
+            Title: index ? `${index}. ${title}` : title,
+            Days: id ? extractValue(id) : custom()
+        }))
+        .filter(item => item.Days !== undefined);
+
+    console.table(tableData);
+
+    // ✅ **डेटा को `updateAttendDays()` फ़ंक्शन में भेजें**
+    updateAttendDays(tableData);
+}
+
+
+function updateAttendDays(data) {
+    if (!data || !Array.isArray(data)) {
+        console.error("🚨 Error: updateAttendDays() received invalid data:", data);
+        return; // Stop execution if data is undefined or not an array
+    }
+
+    // console.log("🔄 Updating Attendance Data:", data);
+
+    // Helper function to get `Days` value and format it as "01 Days"
+    const getValue = (title, isCurrency = false, noFormat = false) => {
+        let item = data.find(row => row.Title.trim() === title);
+        if (!item) return noFormat ? "0" : (isCurrency ? "₹0" : "00 Days"); // Default fallback
+        
+        let value = String(item.Days).padStart(2, "0"); // Ensure 2-digit format
+        
+        if (noFormat) return value; // No formatting (for "44. Monthly Incentive")
+        return isCurrency ? `₹${value}` : `${value} Days`;
+    };
+
+    // Mapping IDs to their respective Titles
+    let elements = {
+        "ttl_attn_days": "24. Total Attend Days",
+        "ttl_prsnt_days": "20. Final Present Value",
+        "ttl_half_days": "21. Final Halfday Value",
+        "ttl_abst_days": "22. Final Absent Value",
+        "ttl_sal_pay": "40. Final Payout",
+        "ttl_Inc_pay": "44. Monthly Incentive" // No formatting required
+    };
+
+    // Loop through elements and update them in DOM
+    Object.entries(elements).forEach(([id, title]) => {
+        let el = document.getElementById(id);
+        if (el) {
+            el.innerText = (id === "ttl_sal_pay") 
+                ? getValue(title, true) // Format as ₹ for salary payout
+                : (id === "ttl_Inc_pay") 
+                    ? getValue(title, false, true) // No formatting for Monthly Incentive
+                    : getValue(title); // Default formatting for other values
+        }
+    });
+}
+
+
+
+function updateProgressBars() {
+    console.log("udpatebarspercent runing");
+    document.querySelectorAll('.progress-wrapper').forEach(section => {
+        let key = section.getAttribute('data-key');  // LocalStorage key से data fetch करने के लिए
+        let percentage = localStorage.getItem(key) || "0%";
+
+        console.log("udpatebarspercent", percentage);
+
+        // `%` हटाकर integer में बदलना
+        percentage = parseInt(percentage.replace('%', ''));
+
+        let progressFill = section.querySelector('.progress-bar-inner');
+        let progressStatus = section.querySelector('.progress-status');
+        let progressPercentage = section.querySelector('.progress-percentage');
+
+        progressFill.style.width = percentage + '%';
+        progressPercentage.innerText = percentage + '%';
+
+        if (percentage >= 100) {
+            progressPercentage.innerText = 'Complete';
+        } 
+    });
+}
+

@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="/TFC-Connect/App/mobile/css/user.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-thin-rounded/css/uicons-thin-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-straight/css/uicons-bold-straight.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
 
 
 
@@ -561,6 +563,7 @@ Welcome Back, <span class="firstName"></span>
        <div class="dashbord-widget widget">
        
             <div class="dly-atn-bx flex-row box-styling" id="dateContainer">
+                <img id="clnLnImg" src="/TFC-Connect/App/assets/loading.gif" alt="">
             </div>
 
             <div class="atn-mrk-bx block">
@@ -862,8 +865,37 @@ Welcome Back, <span class="firstName"></span>
         
             </div>
 
-            <div class="dp-cnt box-styling block">
+            <div class="sal-disp">
+
+            <div class="dp-cnt box-styling  ">
+
+                
                 <div class="carousel">
+
+                    <div class="slide">
+                        <div class="atn-dp-sld1 flex">
+                            <img src="/TFC-Connect/App/assets/anm1.gif" alt="">
+        
+                            <div class="sld-cvr sld-cvr2 flex-coloum">
+                              <h5>Salary Payout</h5>
+                              <h4 id="ttl_sal_pay">₹ 00.00</h4>
+                            </div>
+                        </div>
+                       
+                    </div>
+
+                    <div class="slide">
+                        <div class="atn-dp-sld1 flex">
+                            <img src="/TFC-Connect/App/assets/d6e5b96c5f902d38deb49905785d30e1.jpg" alt="">
+        
+                            <div class="sld-cvr sld-cvr2 sld-cvr3 flex-coloum">
+                              <h5>Incentive Payout</h5>
+                              <h4 id="ttl_Inc_pay">₹ 00.00</h4>
+                            </div>
+                        </div>
+                       
+                    </div>
+
                     <div class="slide">
                         <div class="atn-dp-sld1 flex">
                             <img src="/TFC-Connect/App/assets/4e0ca92d3326e2648c2f6538ff56ba24.gif" alt="">
@@ -872,15 +904,15 @@ Welcome Back, <span class="firstName"></span>
                               <h5>Conversion</h5>
                               <div class="sld-cvr-dt flex-row">
                                 <div class="cnv-bx flex-coloum">
-                                    <h6>10 Days</h6>
-                                    <p>On Time</p>
+                                    <h6 id="ttl_prsnt_days">00 Days</h6>
+                                    <p >Prsent</p>
                                 </div>
                                 <div class="cnv-bx flex-coloum">
-                                    <h6>10 Days</h6>
-                                    <p>Late</p>
+                                    <h6 id="ttl_half_days">00 Days</h6>
+                                    <p>Halfday</p>
                                 </div>
                                 <div class="cnv-bx flex-coloum">
-                                    <h6>10 Days</h6>
+                                    <h6 id="ttl_abst_days">00 Days</h6>
                                     <p>Absent</p>
                                 </div>
                                
@@ -895,26 +927,60 @@ Welcome Back, <span class="firstName"></span>
         
                             <div class="sld-cvr cvr-clr sld-cvr2 flex-coloum">
                               <h5>Total Countable days</h5>
-                              <h4>23.4 Days</h4>
+                              <h4 id="ttl_attn_days">00 Days</h4>
                             </div>
                         </div>
                        
                     </div>
-                    <div class="slide">
-                        <div class="atn-dp-sld1 flex">
-                            <img src="/TFC-Connect/App/assets/66b21b38e0c4263ee1713070b6ce0671.jpg" alt="">
-        
-                            <div class="sld-cvr sld-cvr2 flex-coloum">
-                              <h5>Total Payout</h5>
-                              <h4>₹ 2234</h4>
-                            </div>
-                        </div>
-                       
-                    </div>
+ 
                   
                    
                 </div>
             </div>
+            <!-- <button onclick="changeFlag('isJustify')">Toggle Justify</button>
+            <button onclick="changeFlag('isApproval')">Toggle Approval</button>
+            <button onclick="changeFlag('isVerification')">Toggle Verification</button> -->
+
+
+            <div class="progress-wrapper justify-bar flex-coloum" data-key="justPercentData">
+               
+                <div class="progress-details flex-row">
+                    <span class="progress-status">Justification</span>
+                    <span class="progress-percentage">0%</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-inner"></div>
+                </div>
+            </div>
+
+          
+            <div class="cl-updt flex ">
+
+
+                <div class="toggle-container" data-color="rgb(137, 58, 222)" data-isCaller="no" data-flag="isJustify">
+                    <span class="toggle-icon flex">
+                        <i class="fi swtchNo  flex fi-bs-check"></i>
+                        <i class="fi swtchYes flex fi-br-cross-small"></i>
+                    </span>
+                    <p>Justification</p>
+                   
+                    
+                </div>
+
+                <div class="toggle-container" data-color="rgb(250, 192, 0)" data-isCaller="no" data-flag="isPaidLeave">
+                    <span class="toggle-icon">
+                        <i class="fi swtchNo  flex fi-bs-check"></i>
+                        <i class="fi swtchYes flex fi-br-cross-small"></i>
+                    </span>
+                    <p>C.L Applied</p>
+                   
+                    
+                </div>
+            </div>
+        </div>
+
+
+
 
             <div class="block cal-cont">
                 <div class="title flex-row">

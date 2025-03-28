@@ -20,7 +20,7 @@ function checkScanStatus() {
 
     // Check if the elements exist before accessing their text content
     if (!extSystemIdElement || !extAsignUserElement) {
-        console.error('Required elements not found.');
+        //console.error('Required elements not found.');
         return;
     }
 
@@ -29,7 +29,7 @@ function checkScanStatus() {
 
     // Check if both fields are filled
     if (extSystemId === '' || extAsignUser === '') {
-        console.error('Both fields must be filled.');
+        //console.error('Both fields must be filled.');
         return;
     }
 
@@ -58,24 +58,24 @@ function checkScanStatus() {
             if (response.ok) {
                 return response.json();  // Process the response if successful
             } else {
-                console.error('Request failed with status:', response.status);
+                //console.error('Request failed with status:', response.status);
             }
         })
         .then(data => {
             if (data) {
-                console.log('Response from backend scan:', data.data);
+                //console.log('Response from backend scan:', data.data);
 
                 // Check the response value
                 if (data.data === false) {
                     
-                   console.log("falseeeeeeeeeeeeeeeeee");
+                   //console.log("falseeeeeeeeeeeeeeeeee");
                 } else {
    
                 }
             }
         })
         .catch(error => {
-            console.error('Error occurred:', error);
+            //console.error('Error occurred:', error);
         });
 }
 
@@ -110,7 +110,7 @@ async function startQRCamera() {
         // Start scanning frames
         intervalId = setInterval(scanFrame, 200); // Scan every 200ms
     } catch (err) {
-        console.error("Camera initialization failed:", err);
+        //console.error("Camera initialization failed:", err);
         alert("Could not access the camera. Please allow camera permissions.");
     }
 }
@@ -177,7 +177,7 @@ function displayDecodedResult(code) {
 
 
 function updateQrCode(code) {
-    console.log("run updateQR", code);
+    //console.log("run updateQR", code);
 
     // Check if the code length is 26
     if (code.data.length !== 26) {
@@ -222,7 +222,7 @@ function updateQrCode(code) {
     };
 
     // Log the object to the console
-    console.log("data from updateQR", qrData);
+    //console.log("data from updateQR", qrData);
 
     // Get the current date and time
     const currentTime = new Date();
@@ -274,14 +274,14 @@ function updateQrCode(code) {
                         sendDataToBackend(token, storedUserId, systemId, `TFC-${userId}`, formattedTime, formattedDate);
                     } else {
                         // If user clicks "No", don't send the data
-                        console.log("User did not confirm. Data not sent.");
+                        //console.log("User did not confirm. Data not sent.");
                     }
                 } else {
                     // If user IDs match, proceed with sending data to the backend
                     sendDataToBackend(token, storedUserId, systemId, `TFC-${userId}`, formattedTime, formattedDate);
                 }
             } catch (error) {
-                console.error('Error parsing active ticket:', error);
+                //console.error('Error parsing active ticket:', error);
             }
         }
     }
@@ -317,10 +317,10 @@ function sendDataToBackend(token, userId, systemId, assignUserId, formattedTime,
             .then(data => {
                 // Log success message if data is returned as success
                 if (data.status === 'success') {
-                    console.log('Data sent successfully:', data.message);
+                    //console.log('Data sent successfully:', data.message);
                     hideScanner();
                 } else {
-                    console.log('Error:', data.message);
+                    //console.log('Error:', data.message);
                 }
             })
             .catch(error => console.error('Error sending data:', error));
@@ -366,12 +366,12 @@ function getRowDataBySystemId() {
             if (response.ok) {
                 return response.json();  // Process the response if successful
             } else {
-                console.error('Request failed with status:', response.status);
+                //console.error('Request failed with status:', response.status);
             }
         })
         .then(data => {
             if (data) {
-                console.log('Response from backend getRowDataBySystemId:', data.data);
+                //console.log('Response from backend getRowDataBySystemId:', data.data);
 
                 document.getElementById('systemId').textContent = data.data.systemId;
                 document.getElementById('lastUser').textContent = data.data.lastUser;
@@ -381,6 +381,6 @@ function getRowDataBySystemId() {
             }
         })
         .catch(error => {
-            console.error('Error occurred:', error);
+            //console.error('Error occurred:', error);
         });
 }
