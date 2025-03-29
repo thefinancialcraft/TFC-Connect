@@ -320,8 +320,33 @@ document.getElementById('cam-stp').addEventListener('click', () => {
         let checkinTime = document.getElementById('currentTime')?.textContent || "Unknown Time";
 
         // Remove seconds (ss) part from the time
-        checkinTime = checkinTime.replace(/:\d{2}(\s?[APap][Mm])/, "$1");
-        const watermarkText = `${formattedDate} ${checkinTime}`;
+        function convertTo24HourFormat(time) {
+            let match = time.match(/(\d{1,2}):(\d{2}):?(\d{2})?\s?([APap][Mm])?/);
+            if (!match) return time; // अगर फॉर्मेट मैच नहीं हुआ तो वही रिटर्न करो
+        
+            let hours = parseInt(match[1], 10);
+            let minutes = match[2];
+            let seconds = match[3] || "00"; // अगर सेकंड नहीं मिले तो "00" सेट करो
+            let period = match[4] ? match[4].toUpperCase() : null;
+        
+            if (period) {
+                if (period === "PM" && hours !== 12) {
+                    hours += 12;
+                } else if (period === "AM" && hours === 12) {
+                    hours = 0;
+                }
+            }
+        
+            // `padStart(2, '0')` का उपयोग करके `01:02:02` जैसा फॉर्मेट सुनिश्चित करें
+            return `${String(hours).padStart(2, "0")}:${minutes}:${seconds}`;
+        }
+        
+      
+        
+        const watermarkText = `${formattedDate} ${convertTo24HourFormat(checkinTime)}`;
+        
+        // console.log("watermarkText", watermarkText);
+
 
         // Watermark and flip logic
         ctx.save();
@@ -390,7 +415,7 @@ document.getElementById('cam-stp').addEventListener('click', () => {
         snapshotImage.src = restoreCtx.canvas.toDataURL('image/png');
 
         // Call checkInUpdate function to get checkinData
-        const checkinData = checkInUpdate(formattedDate, checkinTime);
+        const checkinData = checkInUpdate(formattedDate, convertTo24HourFormat(checkinTime));
 
         // Log checkinData and snapshot before sending to backend
         // ////console.log("Check-in Data: ", checkinData);
@@ -425,7 +450,7 @@ function checkInUpdate(formattedDate, checkinTime) {
      const seconds = String(currentDate.getSeconds()).padStart(2, '0');
      
      // Generate the atn_token
-     const atnToken = `${day}${month}${year}${last3Digits}`;
+     const atnToken = `${day}${month}${year}${last3Digits}`;    
 
      const officeTiming = JSON.parse(localStorage.getItem('officeTiming'));
 
@@ -435,69 +460,131 @@ function checkInUpdate(formattedDate, checkinTime) {
           element.textContent = checkinTime;
       });
 
+
       const officeCheckIn = officeTiming.checkinTime;
-     
+      const checkinStamp = `${formattedDate} ${checkinTime}`;
 
 
-     const convertTimeFormat = (timeString) => {
-        if (!timeString || typeof timeString !== 'string') return 'N/A';
+        let checkinDate = checkinStamp.split(" ")[0]; // "29/03/25"
         
-        // Remove "am" or "pm" and trim spaces
-        const match = timeString.match(/(\d{1,2}):(\d{2})\s*(am|pm)/i);
+        // officeCheckIn से समय निकालें
+        let officeTime = officeCheckIn.split(" ")[1] || officeCheckIn; // "01:03:00"
         
-        if (!match) return 'N/A';
+        // नई तारीख और समय को जोड़ें
+        let updatedOfficeCheckIn = checkinDate + " " + officeTime;
+    
+
+        function convertToISTTimestamp(dateTimeStr) {
+            let [date, time] = dateTimeStr.split(" ");
+            let [day, month, year] = date.split("/");
+            year = "20" + year; // 25 को 2025 बनाएं
         
-        let [_, hour, minute, period] = match;
+            // Date Object को IST में सेट करें
+            let dateObj = new Date(`${year}-${month}-${day}T${time}+05:30`);
         
-        // Convert to 24-hour format
-        hour = parseInt(hour, 10);
-        if (period.toLowerCase() === 'am' && hour === 12) {
-            hour = 0;  // Midnight case (12 AM is 00:00)
-        } else if (period.toLowerCase() === 'pm' && hour !== 12) {
-            hour += 12;  // Afternoon case (PM, except 12 PM which remains unchanged)
+            // Timestamp (milliseconds since epoch)
+            return dateObj.getTime();
         }
         
-        // Format hour and minute to ensure 2-digit representation and return the result
-        return `${hour.toString().padStart(2, '0')}:${minute}:00`;
-    };
+
+        let checkinTimestamp = convertToISTTimestamp(checkinStamp);
+        let officeCheckinTimestamp = convertToISTTimestamp(updatedOfficeCheckIn);
+        
+        console.log("checkinStamp Timestamp:", checkinTimestamp);
+        console.log("officeCheckIn Timestamp:", officeCheckinTimestamp);
+        
+     
+
+      console.log("checkinStamp", checkinStamp);
+      console.log("officeCheckIn", updatedOfficeCheckIn);
+
+
+
     
-    const userCheckIn = convertTimeFormat(checkinTime);
+    const userCheckIn = checkinTimestamp;
 
-    function addTimeToCheckIn(officeCheckIn, timeToAdd) {
-        const [checkInHours, checkInMinutes, checkInSeconds] = officeCheckIn.split(":").map(Number);
-        const [addHours, addMinutes, addSeconds] = timeToAdd.split(":").map(Number);
-
-        const totalSeconds = 
-            checkInSeconds + addSeconds + 
-            (checkInMinutes + addMinutes) * 60 + 
-            (checkInHours + addHours) * 3600;
-
-        const hours = Math.floor(totalSeconds / 3600) % 24;
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-
-        // Format time as "hh:mm:ss"
-        return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    function addTimeToTimestamp(timestamp, minutesToAdd, secondsToAdd) {
+        // नए टाइमस्टैम्प में मिनट और सेकंड जोड़ें
+        return timestamp + (minutesToAdd * 60 + secondsToAdd) * 1000;
     }
 
+    function subTimeToTimestamp(timestamp, minutesToAdd, secondsToAdd) {
+        // नए टाइमस्टैम्प में मिनट और सेकंड जोड़ें
+        return timestamp - (minutesToAdd * 60 + secondsToAdd) * 1000;
+    }
+    
+    function addCustomTime(officeCheckInTimestamp, timeToAdd) {
+        // "HH:MM:SS" को घंटे, मिनट, सेकंड में स्प्लिट करें
+        let [hours, minutes, seconds] = timeToAdd.split(":").map(Number);
+    
+        // कुल मिनट निकालें (घंटे * 60 + मिनट)
+        let totalMinutesToAdd = hours * 60 + minutes; 
+    
+        // सेकंड्स को जोड़ने के लिए पास करें
+        return addTimeToTimestamp(officeCheckInTimestamp, totalMinutesToAdd, seconds);
+    }
+
+    function subCustomTime(officeCheckInTimestamp, timeToAdd) {
+        // "HH:MM:SS" को घंटे, मिनट, सेकंड में स्प्लिट करें
+        let [hours, minutes, seconds] = timeToAdd.split(":").map(Number);
+    
+        // कुल मिनट निकालें (घंटे * 60 + मिनट)
+        let totalMinutesToAdd = hours * 60 + minutes; 
+    
+        // सेकंड्स को जोड़ने के लिए पास करें
+        return subTimeToTimestamp(officeCheckInTimestamp, totalMinutesToAdd, seconds);
+    }
+
+
     // Create deadlines
-    const truserCheckIn = addTimeToCheckIn(userCheckIn, "00:00:00");
-    const lateDeadline = addTimeToCheckIn(officeCheckIn, "00:16:00");
-    const halfdayDeadline = addTimeToCheckIn(officeCheckIn, "00:46:00");
-    const absentDeadline = addTimeToCheckIn(officeCheckIn, "06:16:00");
+    const truserCheckIn = addCustomTime(userCheckIn, "01:00:00");
+    const lateDeadline = addCustomTime(officeCheckinTimestamp, "00:16:00");
+    const halfdayDeadline = addCustomTime(officeCheckinTimestamp, "00:46:00");
+    const absentDeadline = addCustomTime(officeCheckinTimestamp, "06:16:00");
+    const preEntryDeadline = subCustomTime(officeCheckinTimestamp, "01:15:00");
+
 
     ////console.log('office Check in Timing', officeCheckIn);
     ////console.log('office Check out Timing', officeTiming.checkoutTime);
     ////console.log('User Reached at', userCheckIn);
     
     // Output the deadlines
-    ////console.log("Trail time:", truserCheckIn);
-    ////console.log("Late Deadline:", lateDeadline);
-    ////console.log("Halfday Deadline:", halfdayDeadline);
-    ////console.log("Absent Deadline:", absentDeadline);
+    console.log("Checkin time:", truserCheckIn);
+    console.log("Late Deadline:", lateDeadline);
+    console.log("Halfday Deadline:", halfdayDeadline);
+    console.log("Absent Deadline:", absentDeadline);
+    console.log("Pre Entry Deadline:", preEntryDeadline);
+
+
+    function convertFromISTTimestamp(timestamp) {
+        let dateObj = new Date(timestamp);
+    
+        // दिन, महीना और साल निकालें
+        let day = String(dateObj.getDate()).padStart(2, "0");
+        let month = String(dateObj.getMonth() + 1).padStart(2, "0"); // JS में महीने 0 से शुरू होते हैं
+        let year = String(dateObj.getFullYear()).slice(-2); // केवल आखिरी दो अंक लें
+    
+        // घंटे और मिनट निकालें
+        let hours = String(dateObj.getHours()).padStart(2, "0");
+        let minutes = String(dateObj.getMinutes()).padStart(2, "0");
+        let seconds = String(dateObj.getSeconds()).padStart(2, "0");
+    
+        // फॉर्मेट में कन्वर्ट करें → "DD/MM/YY HH:MM"
+        return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+    }
+    
+    // उदाहरण के लिए
+
+    console.log("Trail time:", convertFromISTTimestamp(truserCheckIn));
+    console.log("Late Deadline:",convertFromISTTimestamp(lateDeadline));
+    console.log("Halfday Deadline:", convertFromISTTimestamp(halfdayDeadline));
+    console.log("Absent Deadline:", convertFromISTTimestamp(halfdayDeadline));
+    console.log("Pre Entry Deadline:", convertFromISTTimestamp(preEntryDeadline));
+
+
 
     // Call updateCheckInStatus with the proper arguments
-    const checkinstatus = updateCheckInStatus(truserCheckIn, lateDeadline, halfdayDeadline, absentDeadline);
+    const checkinstatus = updateCheckInStatus(truserCheckIn, lateDeadline, halfdayDeadline, absentDeadline, preEntryDeadline);
    
 
    
@@ -537,46 +624,29 @@ function checkInUpdate(formattedDate, checkinTime) {
     };
 }
 
-
-// Function to compare times
-function isTimeGreaterThanOrEqual(time1, time2) {
-    const [h1, m1, s1] = time1.split(":").map(Number);
-    const [h2, m2, s2] = time2.split(":").map(Number);
-
-    if (h1 > h2 || (h1 === h2 && m1 > m2) || (h1 === h2 && m1 === m2 && s1 >= s2)) {
-        return true;
-    }
-    return false;
+// Function to check if timestamp1 is less than timestamp2
+function isTimeLessThan(timestamp1, timestamp2) {
+    return timestamp1 < timestamp2;
 }
 
-// Function to compare times
-function isTimeLessThan(time1, time2) {
-    const [h1, m1, s1] = time1.split(":").map(Number);
-    const [h2, m2, s2] = time2.split(":").map(Number);
-
-    if (h1 < h2 || (h1 === h2 && m1 < m2) || (h1 === h2 && m1 === m2 && s1 < s2)) {
-        return true;
-    }
-    return false;
+// Function to check if timestamp1 is greater than timestamp2
+function isTimeGreaterThan(timestamp1, timestamp2) {
+    return timestamp1 > timestamp2;
 }
 
-const isTimeGreaterThan = (time1, time2) => {
-    // Convert both times to Date objects for comparison
-    const [h1, m1, s1] = time1.split(':').map(Number);
-    const [h2, m2, s2] = time2.split(':').map(Number);
+// Function to check if timestamp1 is greater than or equal to timestamp2
+function isTimeGreaterThanOrEqual(timestamp1, timestamp2) {
+    return timestamp1 >= timestamp2;
+}
 
-    const t1 = new Date(0, 0, 0, h1, m1, s1);
-    const t2 = new Date(0, 0, 0, h2, m2, s2);
 
-    return t1 > t2;
-};
 
 
 // Function to update check-in status
-function updateCheckInStatus(truserCheckIn, lateDeadline, halfdayDeadline, absentDeadline) {
+function updateCheckInStatus(truserCheckIn, lateDeadline, halfdayDeadline, absentDeadline, preEntryDeadline) {
     
     // If userCheckIn is less than lateDeadline, return "On-time"
-    if (isTimeLessThan(truserCheckIn, lateDeadline) && isTimeGreaterThan(truserCheckIn, "07:00:00")) {
+    if (isTimeLessThan(truserCheckIn, lateDeadline) && isTimeGreaterThan(truserCheckIn, preEntryDeadline)) {
         return "On time";
     } else if (isTimeGreaterThanOrEqual(truserCheckIn, absentDeadline)) {
         return "Absent";
@@ -585,10 +655,12 @@ function updateCheckInStatus(truserCheckIn, lateDeadline, halfdayDeadline, absen
     } else if (isTimeGreaterThanOrEqual(truserCheckIn, lateDeadline)) {
         return "Late";
     }
-    
     // Default to "Absent" if no condition matches
     return "Absent"; // Default condition
+
+
 }
+
 
 
 // Function to upload checkinData and snapshot
@@ -868,6 +940,8 @@ function uploadCheckinData(checkinData, snapshotData) {
 
 
 
+
+
 let progress = 0;
 const progressText = document.getElementById("progress-text");
 const progressCircle = document.querySelector(".progress-circle");
@@ -1127,7 +1201,7 @@ function createCalendarFromSpan(attrecord, response = []) {
                 else if (isHoliday) color = '#4931e7';
 
                 let spanHTML = !isToday 
-                    ? `<span style="display: inline-block; border-radius: 12px; width: 13px; height: 3.5px; background-color: ${color};"></span>`
+                    ? `<span class="cl-indic" style=" background-color: ${color};"></span>`
                     : '';
 
                 table += `<td class="${isToday ? 'current-day bx-anm' : ''}">
@@ -1515,7 +1589,13 @@ if (checkinstatusresponse === "On Time") {
             markstatusReason = `Due to the early exit by ${latediffrence}`;
 
             ////console.log("status update", checkOutStatus);
-        } else if (checkinstatusresponse === "Halfday") {
+        } else if (checkinstatusresponse === "Late") {
+            checkOutStatus = "Halfday";
+            markstatus = "H";
+            markstatusReason = `Due to the early exit by ${latediffrence}`;
+            ////console.log("status update", checkOutStatus);
+        } 
+        else if (checkinstatusresponse === "Halfday") {
             checkOutStatus = "Absent";
             markstatus = "A";
             markstatusReason = `Due to the early exit by ${latediffrence}`;
@@ -2045,7 +2125,7 @@ function markActivity(data) {
             checkInCard.classList.add("act-card", "flex", "box-styling");
             checkInCard.innerHTML = `
                 <div class="act-cd-prf box-styling">
-                    <i style="transform: rotateY(180deg);" class="fi fi-rs-arrow-left-from-arc"></i>
+                    <i style="transform: rotateY(180deg);" class="fi flex fi-rs-arrow-left-from-arc"></i>
                 </div>
                 <div class="act-txt-bx flex-row">
                     <div class="sts-cd">
@@ -2065,7 +2145,7 @@ function markActivity(data) {
                 checkOutCard.classList.add("act-card", "flex", "box-styling");
                 checkOutCard.innerHTML = `
                     <div class="act-cd-prf box-styling">
-                        <i class=" fi fi-rs-arrow-left-from-arc"></i>
+                        <i class=" fi flex fi-rs-arrow-left-from-arc"></i>
                     </div>
                     <div class="act-txt-bx flex-row">
                         <div class="sts-cd">
@@ -3485,4 +3565,3 @@ function updateProgressBars() {
         } 
     });
 }
-

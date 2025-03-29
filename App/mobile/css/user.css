@@ -830,7 +830,7 @@ body::-webkit-scrollbar{
 }
 
 .notifyBtn, .logout-icon{
-    padding-top: 10px;
+    padding-top: 1px;
 }
 .user-prf-pic-cont{
     width: 50px;
@@ -2156,6 +2156,7 @@ header{
                     
                     .progress-ring .bg {
                         stroke: #e6e6e673;
+                        r:25px;
                     }
                     
                     .progress-ring .progress {
@@ -2163,6 +2164,7 @@ header{
                         stroke-dasharray: 157; /* Circumference for radius 25 */
                         stroke-dashoffset: 157; /* Initial offset */
                         transition: stroke-dashoffset .5s ease-in; /* Apply smooth transition for the stroke offset */
+                        r:25px;
                     }
                     
                     .progress-ring .progress-value {
@@ -2196,13 +2198,14 @@ header{
   }
   
   .progress-svg {
+    
     transform: rotate(-90deg); /* Rotate for correct starting point */
   }
   
-  .bg-circle {
+  .bg-circle, .progress-circle {
     fill: none;
-    stroke: #e0e0e05a;
     stroke-width: 12;
+    r: 70px;    
   }
 
 
@@ -2260,14 +2263,18 @@ header{
   }
   
 
-  .circle-background {
+  .circle-background{
     fill: none;
-    stroke: #e0e0e05a; /* Light grey for the background circle */
+    stroke: #e0e0e05a;
+ /* Light grey for the background circle */
     stroke-width: 20;
+    r: 80px;
+
   }
   
   .circle-foreground {
-    fill: none;
+    /* fill: none; */
+    r: 80px;
     stroke-width: 20;
     stroke-linecap: round;
     stroke-dasharray: 502.65; /* Circumference of the circle (2 * π * r) */
@@ -2280,7 +2287,7 @@ header{
   .segment3 { stroke: #ffa033; }
   .segment4 { stroke: #ff4000; }
   
-  
+
 
 .sts-crd{
     background-color: #2811bc ;
@@ -2377,7 +2384,7 @@ header{
     justify-content: center;
     align-items: center;
     /* background-color: lightblue; */
-    font-size: 2rem; /* Adjust the font size as needed */
+    font-size: 1.8rem; /* Adjust the font size as needed */
     text-align: center;
 }
 
@@ -2535,6 +2542,14 @@ header{
        
         
     }
+
+    .cl-indic{
+        display:inline-block ;
+        border-radius: 12px;
+        width: 14px;
+        height: 3.5px;
+    }
+    
     
 
 }
@@ -3195,3 +3210,5 @@ box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.1);
 
 .progress-wrapper:nth-child(2) .progress-bar-inner { background: rgb(137, 58, 222); } /* Red */
 .progress-wrapper:nth-child(2) .progress-percentage { color: rgb(137, 58, 222); }
+
+

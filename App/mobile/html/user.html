@@ -11,6 +11,7 @@
     
     <!-- <link rel="stylesheet" href="/TFC-Connect/TFC-Connect/App/css/user.css"> -->
     <link rel="stylesheet" href="/TFC-Connect/App/mobile/css/user.css">
+    <link rel="stylesheet" href="/TFC-Connect/App/mobile/css/screen.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-thin-rounded/css/uicons-thin-rounded.css'>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-straight/css/uicons-bold-straight.css'>
@@ -100,7 +101,7 @@
 
         <div class="scnr-heder flex-row">
 
-            <div id="scnrBack" onclick="hideScanner()" class="user-prf-pic-cont flex ">
+            <div  id="scnrBack" onclick="hideScanner()" class="user-prf-pic-cont flex ">
            
                 <i class="fi flex fi-rr-angle-left"></i>
               </div>
@@ -183,7 +184,6 @@
                 </div>
 
                 <div class="info-detail box-styling">
-
                 </div>
 
 
@@ -308,7 +308,7 @@
 
             <div class="flex date-picker-container">
                 <!-- Start Date Picker -->
-                <div class="date-display-container start-date">
+                <div class="date-display-container flex  start-date">
                     <span id="act-st-dt" class="selected-date-text start-date-text act-start-1">Select Date</span>
                 </div>
                 <span class="resetDate flex" style="display: none;">
@@ -319,7 +319,7 @@
 
             <div class="flex date-picker-container">
                 <!-- current date picker -->
-                <div class="date-display-container current-date ">
+                <div class="date-display-container flex current-date ">
                     <span id="act-ed-dt" class="selected-date-text act-end-1 current-date-text">Select Date</span>
                 </div>
                 <span class="resetDate flex" style="display: none;"><i class="fi flex fi-rr-time-past"></i></span>
@@ -330,7 +330,7 @@
              <!-- end date picker -->
             <!-- <div class="flex date-picker-container">
                
-                <div class="date-display-container end-date ">
+                <div class="date-display-container flex end-date ">
                     <span class="selected-date-text  end-date-text">Select Date</span>
                 </div>
                 <span class="resetDate flex" style="display: none;"><i class="fi flex fi-rr-time-past"></i></span>
@@ -377,7 +377,7 @@
 
             <div class="flex date-picker-container">
                 <!-- Start Date Picker -->
-                <div class="date-display-container start-date">
+                <div class="date-display-container flex start-date">
                     <span id="rcd-st-dt" class="selected-date-text start-date-text act-start-2">Select Date</span>
                 </div>
                 <span class="resetDate flex" style="display: none;">
@@ -388,7 +388,7 @@
 
             <div class="flex date-picker-container">
                 <!-- current date picker -->
-                <div class="date-display-container current-date ">
+                <div class="date-display-container flex current-date ">
                     <span id="rcd-ed-dt" class="selected-date-text act-end-2 current-date-text">Select Date</span>
                 </div>
                 <span class="resetDate flex" style="display: none;"><i class="fi flex fi-rr-time-past"></i></span>
@@ -399,7 +399,7 @@
              <!-- end date picker -->
             <!-- <div class="flex date-picker-container">
                
-                <div class="date-display-container end-date ">
+                <div class="date-display-container flex end-date ">
                     <span class="selected-date-text  end-date-text">Select Date</span>
                 </div>
                 <span class="resetDate flex" style="display: none;"><i class="fi flex fi-rr-time-past"></i></span>
@@ -489,18 +489,18 @@
         
         <div  class="user-prf-pic-cont flex notifyBtn">
           <!-- <i class="fa-solid icon-style flex fa-person-walking"></i> -->
-          <i class="fi fi-rr-bell-notification-social-media"></i>
+          <i class="fi flex fi-rr-bell-notification-social-media"></i>
 
           <span style="display: none;" class="flex">19</span>
         </div>
         
-        <div style="display: none;" onclick="logout()" class="user-prf-pic-cont flex logout-icon">
+        <div  onclick="logout()" class="user-prf-pic-cont flex logout-icon">
            
-            <i class="fi fi-rr-leave"></i>
+            <i class="fi flex fi-rr-leave"></i>
           </div>
 
 
-        <div id="scnrBtn" onclick="showScanner()" class="user-prf-pic-cont flex ">
+        <div id="scnrBtn" style="display: none;" onclick="showScanner()" class="user-prf-pic-cont flex ">
            
             <i class="fi flex fi-rr-qr-scan"></i>
           </div>
@@ -510,7 +510,7 @@
     </div>
 
               <!-- navbar -->
-   <div id="navBar" class="menu-card navbar box-styling ">
+   <div id="navBar" style="display: none;" class="menu-card navbar box-styling ">
          
                 <div class="menu-opn flex menu-card">
                     <ul id="menu-opn">
@@ -553,7 +553,7 @@
 Welcome Back, <span class="firstName"></span>
 </p>
 <div class="dashboard-title-container flex-row">
-<h2 class="h-styling" id="dashbord">Dashboard</h2>
+<h2 class="h-styling h-sm-sty" id="dashbord">Dashboard</h2>
 
 
 
@@ -609,10 +609,10 @@ Welcome Back, <span class="firstName"></span>
             <div class="daily-atn block">
 
                 <div class="title flex-row">
-                 <h3 class="h-styling" >Attendance</h3>
+                 <h3 class="h-styling h-sm-sty" >Attendance</h3>
 
                   <div class="flex date-picker-container">
-                    <div class="date-display-container">
+                    <div class="date-display-container flex">
                       <span id="checkInOutDate" class="selected-date-text">Select Date</span>
                     </div>
                    
@@ -692,7 +692,7 @@ Welcome Back, <span class="firstName"></span>
             <div id="daily-atn" style="display: none;"  class="daily-atn atn-activity block">
 
                 <div class="title flex-row">
-                 <h3 class="h-styling" >Activity</h3>
+                 <h3 class="h-styling h-sm-sty" >Activity</h3>
                  <p id="vewAllAct" onclick="showActivity()" class="vall">View All</p>
                 </div>
         
@@ -708,7 +708,7 @@ Welcome Back, <span class="firstName"></span>
             <div class="daily-atn atn-summary block">
 
                 <div class="title flex-row">
-                    <h3 class="h-styling" >Summary</h3>
+                    <h3 class="h-styling h-sm-sty" >Summary</h3>
 
              <div class="flex-row custom-mnth-year-picker">
                 <select class="custom-date-mnth custom-month-dropdown"></select>
@@ -734,24 +734,23 @@ Welcome Back, <span class="firstName"></span>
                     <div class="atn-ovr-vw flex-row">
                       
                         <div class="ovr-vw-bar flex">
-                            
                             <div class="progress-container flex">
                                 
                                 <svg class="progress-svg" width="160" height="160">
                                     
-                                    <circle class="bg-circle" cx="80" cy="80" r="70" />
-                                    <circle class="progress-circle" cx="80" cy="80" r="70" />
+                                    <circle class="bg-circle" style="   stroke: #e0e0e05a;" cx="80" cy="80" />
+                                    <circle class="progress-circle" cx="80" cy="80" />
                                   </svg>
                                   
                                 <div class="progress-text" id="progress-text">0%</div>
         
                                 <div class="chld-bar flex">
                                     <svg width="120" height="120" viewBox="0 0 200 200">
-                                        <circle class="circle-background" cx="100" cy="100" r="80" />
-                                        <circle class="circle-foreground segment1" cx="100" cy="100" r="80" />
-                                        <circle class="circle-foreground segment2" cx="100" cy="100" r="80" />
-                                        <circle class="circle-foreground segment3" cx="100" cy="100" r="80" />
-                                        <circle class="circle-foreground segment4" cx="100" cy="100" r="80" />
+                                        <circle class="circle-background" cx="100" cy="100" />
+                                        <circle class="circle-foreground segment1" cx="100" cy="100" />
+                                        <circle class="circle-foreground segment2" cx="100" cy="100" />
+                                        <circle class="circle-foreground segment3" cx="100" cy="100" />
+                                        <circle class="circle-foreground segment4" cx="100" cy="100" />
                                       </svg>
                                       
                                 </div>
@@ -789,8 +788,8 @@ Welcome Back, <span class="firstName"></span>
                                 <div class="progress-ring">
                                     <span class="progress-value">0%</span>
                                     <svg>
-                                      <circle class="bg" cx="30" cy="30" r="25"></circle>
-                                      <circle class="progress" cx="30" cy="30" r="25"></circle>
+                                      <circle class="bg" cx="30" cy="30" ></circle>
+                                      <circle class="progress" cx="30" cy="30"  r="25" ></circle>
                                     </svg>
                                   </div>
                                   
@@ -901,8 +900,8 @@ Welcome Back, <span class="firstName"></span>
                             <img src="/TFC-Connect/App/assets/4e0ca92d3326e2648c2f6538ff56ba24.gif" alt="">
         
                             <div class="sld-cvr flex-coloum">
-                              <h5>Conversion</h5>
-                              <div class="sld-cvr-dt flex-row">
+                              <h5 style="margin-top: 20px;">Conversion</h5>
+                        <div class="sld-cvr-dt flex-row">
                                 <div class="cnv-bx flex-coloum">
                                     <h6 id="ttl_prsnt_days">00 Days</h6>
                                     <p >Prsent</p>
@@ -921,6 +920,7 @@ Welcome Back, <span class="firstName"></span>
                         </div>
                        
                     </div>
+
                     <div class="slide">
                         <div class="atn-dp-sld1 flex">
                             <img src="/TFC-Connect/App/assets/c0e29421325ca3618e5131e38c6d1adc (1).jpg" alt="">
@@ -982,9 +982,9 @@ Welcome Back, <span class="firstName"></span>
 
 
 
-            <div class="block cal-cont">
+            <div class="block flex-coloum cal-cont">
                 <div class="title flex-row">
-                    <h3 class="h-styling" >Calender</h3>
+                    <h3 class="h-styling h-sm-sty" >Calender</h3>
                     <div class="flex-row custom-mnth-year-picker">
                         <select class="custom-date-mnth custom-month-dropdown"></select>
                     
@@ -999,7 +999,7 @@ Welcome Back, <span class="firstName"></span>
                     
                    </div>
         
-                   <div class="calender box-styling" id="calendar"></div>
+                   <div class="calender flex box-styling" id="calendar"></div>
         
         
             </div>
@@ -1007,7 +1007,7 @@ Welcome Back, <span class="firstName"></span>
 
             <div class="block mnth-rcrd">
                 <div class="title flex-row">
-                    <h3 class="h-styling" >All Record</h3>
+                    <h3 class="h-styling h-sm-sty" >All Record</h3>
                     <p onclick="showAttnRecord()" class="vall">View All</p>
                 </div>
 

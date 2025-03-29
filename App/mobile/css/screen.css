@@ -1,0 +1,1914 @@
+/* Extra small devices (Very small phones) */
+@media screen and (min-width: 0px) and (max-width: 320px) {
+   .mb-header{
+    height: 60px;
+   }
+
+   .box-styling{
+    border: .8px solid #ffffff;
+    border-radius: 10px;
+   }
+
+   .user-prf-pic-cont{
+    width: 40px;
+    height: 40px;
+   }
+
+   .user-id-cont{
+    width: calc(100% - 160px);
+    align-items: start;
+    
+}
+.user-id-cont h2{
+
+    font-size: 16px;
+   
+}
+
+.user-disp p{
+    font-size: 9px;
+
+}
+
+.h-sm-sty{
+
+        font-size: 1.35em !important;
+
+}
+
+
+
+.welcome-box-cont{
+    p{
+        font-size: 10px;
+    }
+   
+}
+
+.dly-atn-bx{
+    height: 50px;
+
+    .atn-bx{
+        width: 35px;
+        height: 35px;
+        margin-top: -6px;
+
+        .date{
+            font-size: 12px;
+           
+        }
+        .month{
+            font-size: 6.5px;
+            margin-top: -8px;
+          
+        }
+    }
+
+    .bx-anm{
+        .month{
+            margin-top: -7px;
+
+        }
+    }
+
+    .indicator{
+        width: 8px !important;
+        height: 2px !important;
+    }
+}
+
+.atn-mrk-bx {
+    .atn-dsl-card {
+        height: 165px;
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+}
+
+
+.atn-switch {
+    height: 35px;
+    margin-top: 6px;
+    border-radius: 50px;
+
+    .resetCont{
+
+        span{
+            height: 28px;
+            font-size: 16px;
+            width: 28px;
+        }
+
+        p{
+            font-weight: 600;
+            padding-left: 10px !important;
+            font-size: 12px;
+            color: #fff ;
+
+
+        }
+    }
+}
+.chkn-switch{
+    width: 100px;
+
+    p{
+    font-size: 12px ;
+}
+
+}
+
+
+.block{
+
+.title{
+    h3{
+        font-size: 1.2em !important;
+    }
+
+    .vall{
+
+        font-size: 12px;
+      }
+}
+
+.date-display-container {
+    width: 80px;
+    height: 100%;
+    font-size: 9px;
+
+}
+
+
+.activity-card{
+    width: 100%;
+    margin-top: 12px;
+
+    .act-card{
+
+        height: 50px;
+
+
+        .act-cd-prf{
+
+            width: 40px;
+            height: 40px;
+
+            i{
+                font-size: 13px;
+            }
+        }
+
+        .act-txt-bx{
+            width: calc(100% - 50px);
+
+            .sts-cd{
+                width: 80px;
+
+                h3{
+                    font-size: 14px;
+                }
+
+                p{
+                    font-size: 9px;
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+.card-box {
+    .card{
+
+        height: 100px;
+        padding: 10px;
+    
+        h2{
+            margin-top: 12px;
+            font-size: 18px;
+        }
+
+        p{
+
+            font-size: 10px;
+        }
+
+        .bsc-title{
+            width: 100%;
+
+            .icon-bx{
+                width: 25px;
+                height: 25px;
+
+
+                i{
+                    font-size: 11px;
+                    transform: rotate(180deg);
+                }
+
+            }
+
+            p{
+
+                font-size: 10px;
+            }
+        }
+      
+    }
+}
+}
+
+
+.date-picker-container {
+    position: relative;
+    min-width: 75px;
+    height: 20px;
+
+    .resetDate{
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+        color: #1E3653;
+        transition: width 0.3s ease-in-out;
+    }
+  }
+
+
+  .custom-mnth-year-picker{
+
+    height: 20px;
+
+
+    .mnyr-rst{
+        width: 20px;
+        height: 20px;
+        font-size: 9px;
+    }
+
+
+    .custom-date-mnth{
+        width: 50px;
+        font-size: 9px;
+      
+    }
+
+
+    .custom-year-dropdown   {
+        width: 40px;
+        font-size: 10px;
+        font-weight: 600;
+    }
+
+}
+
+
+.bg-circle, .progress-circle {
+    fill: none;
+    stroke-width: 8;
+    r: 50px;    
+  }
+
+.progress-text {
+    font-size: 15px;
+
+    p{
+        font-size: 6px;
+    }
+}
+
+
+  
+  .circle-background{
+    fill: none;
+    stroke: #e0e0e05a;
+ /* Light grey for the background circle */
+    stroke-width: 12;
+    r: 55px;
+
+  }
+
+  .circle-foreground {
+    /* fill: none; */
+    r: 55px;
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 502.65; /* Circumference of the circle (2 * π * r) */
+    stroke-dashoffset: 502.65; /* Initially hide the progress */
+    transition: stroke-dashoffset 1s ease, transform 1s ease;
+  }
+
+
+
+.atn-rcrd-card{
+    height: 280px;
+
+
+    .atn-ovr-vw{
+
+        .ovr-vw-dta{
+
+
+            .ln{
+                width: 1px;
+
+            }
+
+            .col-dta{
+                width: 90%;
+                height: 100%;
+
+                .col-titl{
+                    font-size: 9px;
+                    margin-bottom: 12px;
+                }
+
+                .col-val{
+                    font-size: 16px;
+
+                    
+                }
+            }
+        }
+
+    }
+
+    .atn-brk-dwn{
+        border-radius: 12px;
+        margin-bottom: 12px;
+
+
+        .atn-prm-cnt{
+
+            .atn-sc-cnt{
+
+                .data-ov-box{
+
+                    h4{
+                        margin-top: 6px;
+                        font-weight: 500;
+                        font-size: 12px ;
+                    }
+
+                    p{
+                        font-size: 8px;
+                        color: #1E3653;
+                    }
+                }
+
+
+                .sng-ov-box{
+                    width: 50px;
+                    
+                    .progress-ring circle {
+
+                        stroke-width: 4;
+                    }
+                    
+                    .progress-ring .bg {
+
+                        r:18px;
+                    }
+                    
+                    .progress-ring .progress {
+                        stroke: #31e774; /* Default color */
+                        stroke-dasharray: 157; /* Circumference for radius 25 */
+                        stroke-dashoffset: 157; /* Initial offset */
+                        transition: stroke-dashoffset .5s ease-in; /* Apply smooth transition for the stroke offset */
+                        r:18px;
+                    }
+                    
+                    .progress-ring .progress-value {
+
+                        font-size: 9px;
+                        font-weight: 600;
+
+                    }
+                    
+                      
+                    
+                }
+
+                .data-ov-box{
+                    width: calc(100% - 50px);
+
+                }
+            }
+        }
+    }
+}
+
+
+.mnth-cout{
+    width: 30px;
+    height: 30px;
+    border-radius: 0 10px 0 10px;
+
+
+    h3{
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: -5px;
+        margin-top: -1px;
+
+    }
+    p{
+        font-size: 6px;
+        font-weight: 500;
+    }
+}
+
+
+.atn-dp-sld1{
+
+
+    .sld-cvr{
+
+        h5{
+            margin-top: 12px;
+            font-weight: 600;
+            /* margin-top: 20px; */
+        }
+
+        .sld-cvr-dt{
+
+            .cnv-bx{
+                width: 75px;
+                height: 50px;
+                border-radius: 8px;
+  
+
+                h6{
+                    font-size: 13px;
+                    font-weight: 600;
+                    
+                }
+                p{
+                    font-size: 9px;
+                }
+            }
+        }
+    }
+}
+
+
+
+
+.progress-wrapper {
+
+    height: auto;
+    margin-top: 10px;
+
+}
+.progress-bar-container {
+    height: 5px;
+
+}
+
+
+.progress-details {
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 10.5px;
+
+}
+
+
+.sal-disp{
+
+
+     .cl-updt{
+
+        height: 40px;
+        margin:  10px 0;
+ 
+       
+        .toggle-container {
+            width: 46%;
+            height: 30px;
+
+        }
+
+        .toggle-container p {
+            width: calc(100% - 25px);
+            font-size: 12px;
+        }
+
+        .toggle-icon {
+            width: 24px;
+            height: 24px;
+
+        }
+
+        .swtchNo {
+            display: none;
+        }
+     }
+
+}
+
+
+.cal-cont{
+
+    .calender {
+
+        padding: 10px 5px;
+    }
+    
+
+    .calender th {
+
+        padding: 12px;
+        font-size: 10px;
+
+    }
+    
+    .calender td {
+        height: 38px;
+        padding: 1px;
+        font-size: 10px;
+
+        
+
+        .tc-c{
+            span{
+                margin-top: 2px;
+            }
+        }
+    }
+    
+    
+    .calender .current-day {
+        font-size: 10px !important;
+       
+        
+    }
+
+    .cl-indic{
+        display:inline-block ;
+        border-radius: 12px;
+        width: 10px;
+        height: 2px;
+        margin-top: 2px !important;
+    }
+    
+
+}
+
+
+
+.mnth-rcrd{
+    width: 100%;
+    margin-top: 20px;
+
+    
+
+
+
+    .rcrd-brd{
+
+        height: 240px;
+
+    
+    .tabel-container{
+    width: 100%;
+    padding: 6px;
+
+    .t-head{
+
+        p{
+            color: #fff;
+            font-size: 9px;
+            font-weight: 500;
+        }
+
+    }
+}
+
+
+.mnth-dt-filt{
+    width: 100%;
+    height: 30px;
+
+    p{
+        font-size: 12px;
+    }
+    .mnth-btn{
+        width: 25px !important;
+        height: 25px !important;
+        border-radius: 5px;
+    
+    
+    }
+ 
+}
+
+
+
+
+.td-ex-pol-thd-cont{
+
+    height: 30px;
+    
+}
+
+
+
+.call-link i{
+
+font-size: 9px;
+
+}
+
+.td-ex-tbl-hd-frt{
+
+font-size: 9px;
+
+}    
+
+
+
+    }
+}
+
+
+.allActivity{
+
+
+
+    .act-flt-cnt{
+
+        height: 30px;
+
+    }
+
+
+
+    .alac-hd{
+
+        height: 40px;
+
+
+        .alact-back{
+            width: 30px;
+            height: 30px;
+
+
+            i{
+                font-size: 15px;
+            }
+        }
+
+        h2{
+            font-size: 20px;
+        }
+    }
+}
+
+
+.date-display-container {
+    width: 80px;
+    height: 20px;
+    font-size: 9px;
+  
+  }
+
+
+  .end-msg{
+
+    font-size: 11px;
+  
+    
+    h5{
+        margin-top: 30px;
+        opacity: 1;
+        font-size: 18px;
+        opacity: .1;
+      
+    }
+}
+
+#anm-icn i {
+    font-size: 30px; /* Icon size */
+  }
+
+
+  .btn1{
+  
+    font-size: 12px;
+}
+
+
+.sidebar{
+
+
+    .sideLogo{
+        width: 100%;
+        /* background-color: #1E3653; */
+        height: 50px;
+
+    
+    }
+    
+}
+
+.logo{
+    width: 65%;
+    height: 100%;
+    /* background-color: #1E3653; */
+
+}
+
+.logo-icon-box{
+    width: 30px;
+    height: 30px;
+
+}
+
+.logo-icon-box img{
+    width: 40%;
+    height: 40%;
+
+} 
+
+
+.logo h1{
+    font-weight: 700;
+    font-size: 20px;
+
+}
+
+.sdScrlBdy{
+
+    .prf-card{
+        padding: 20px 0;
+        width: 100%;
+        margin-bottom: 12px;
+
+
+        img{
+            width: 70px;
+            height: 70px;
+        }
+
+        h3{
+
+            font-size: 20px;
+
+        }
+
+        p{
+            font-size: 10px;
+
+        }
+
+        span{
+            width: 3px;
+            height: 3px;
+        }
+
+}
+
+     .prfInfo{
+        width: 100%;
+        min-height: 40px;
+
+
+        .info-card{
+
+            width: 100%;
+            height: 40px;
+
+            h4{
+                font-size: 13px;
+
+            }
+    
+            i{
+                width: 40px;
+                height: 30px;
+                font-size: 18px;
+
+            }
+         }
+    
+         .info-detail {
+      
+            width: 100%;
+            /* margin-bottom: 100px; */
+            display: none;
+            overflow: hidden;  /* Hide anything that overflows during transition */
+            max-height: 0; 
+            transition: max-height 0.5s ease; /* Smooth transition for max-height */
+        }
+      
+}
+
+
+}
+
+.cmr-cnt{
+
+
+    .ent-ext-tim{
+     
+
+        .show-time{
+            width: 90px;
+            height: 25px;
+            font-size: 10px;
+          
+            p{
+                margin-right: 3px;
+                width: 75px;
+            }
+
+        
+        }
+    }
+
+
+    .cm-info-bx{
+       
+        min-height: 200px;
+       
+
+        .inf-bx{
+            width: 90%;
+            min-height: 200px;
+           
+            /* background-color: #06acff; */
+
+            .alrt-bx{
+
+                height: 30px;
+                margin-top: 10px;
+                font-size: 10px;
+                border: .5px solid rgb(255, 153, 153) ;
+                border-radius: 8px !important;
+
+            }
+
+
+            .cur-date-cnt {
+                font-size: 12px;
+                color: #827cac;
+                margin-top: 5px;
+
+                .crn-date{
+                    margin-left: 8px;
+                }
+            }
+
+            .cur-time{
+                font-size: 22px;
+                height: 30px;
+
+
+                i{
+                    padding: 8px;
+                    font-size: 16px;
+                    border-radius: 6px;
+                }
+            }
+
+            .cm-usr-info{
+ 
+                height: 30px;
+                font-size: 16px;
+                margin-bottom: 10px;
+              
+            }
+
+            .lcn-cnt{
+               font-size: 12px;
+              
+
+                p{
+                    font-size: 10px;
+                    margin-top: 15px;
+                  
+                }
+
+
+
+            }
+        }
+
+        .cam-btn-cnts{
+            height: 40px;
+          
+        }
+    }
+   
+}
+
+
+
+.button1{
+    height: 35px;
+    font-size: 12px;
+
+
+}
+
+.button2{
+    height: 35px;
+    font-size: 12px;
+
+}
+
+
+.calendar-container {
+  
+    width: 230px;
+  
+  }
+
+  .current-month-year{
+    font-size: 10px;
+  }
+  .calendar-header-button {
+
+    font-size: 8.5px;
+
+  }
+
+  .calendar-grid-container {
+    gap: 5px;
+    padding: 10px;
+  }
+
+  .calendar-day {
+    padding: 8px;
+    font-size: 8px;
+
+  }
+
+
+
+
+}
+
+/* Small phones (Most common phones) */
+@media screen and (min-width: 321px) and (max-width: 375px) {
+
+    .mb-header{
+        height: 60px;
+       }
+    
+       .box-styling{
+        border: 1px solid #ffffff;
+        border-radius: 10px;
+       }
+    
+       .user-prf-pic-cont{
+        width: 45px;
+        height: 45px;
+       }
+    
+       .user-id-cont{
+        width: calc(100% - 160px);
+        align-items: start;
+        
+    }
+    .user-id-cont h2{
+    
+        font-size: 18px;
+       
+    }
+    
+    .user-disp p{
+        font-size: 10px;
+    
+    }
+    
+    .h-sm-sty{
+    
+            font-size: 1.5em !important;
+    
+    }
+    
+    
+    
+    .welcome-box-cont{
+        p{
+            font-size: 11px;
+        }
+       
+    }
+    
+    .dly-atn-bx{
+        height: 60px;
+    
+        .atn-bx{
+            width: 40px;
+            height: 40px;
+            margin-top: -6px;
+    
+            .date{
+                font-size: 14px;
+               
+            }
+            .month{
+                font-size: 8px;
+                margin-top: -8px;
+              
+            }
+        }
+    
+
+        .indicator{
+            width: 8px !important;
+            height: 2.5px !important;
+        }
+    }
+    
+    .atn-mrk-bx {
+        .atn-dsl-card {
+            height: 200px;
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+    }
+    
+    
+    .atn-switch {
+        height: 40px;
+        margin-top: 10px;
+        border-radius: 50px;
+    
+        .resetCont{
+    
+            span{
+                height: 28px;
+                font-size: 16px;
+                width: 28px;
+            }
+    
+            p{
+                font-weight: 600;
+                padding-left: 10px !important;
+                font-size: 12px;
+                color: #fff ;
+    
+    
+            }
+        }
+    }
+
+    .chkn-switch{
+        width: 100px;
+    
+        p{
+        font-size: 12px ;
+    }
+    
+    }
+    
+    
+    .block{
+    
+    .title{
+        h3{
+            font-size: 1.2em !important;
+        }
+    
+        .vall{
+    
+            font-size: 12.5px;
+          }
+    }
+    
+    .date-display-container {
+        width: 85px;
+        height: 25px;
+        font-size: 10px;
+    
+    }
+    
+    
+    .activity-card{
+        width: 100%;
+        margin-top: 12px;
+    
+        .act-card{
+    
+            height: 60px;
+    
+    
+            .act-cd-prf{
+    
+                width: 45px;
+                height: 45px;
+    
+                i{
+                    font-size: 14px;
+                }
+            }
+    
+            .act-txt-bx{
+                width: calc(100% - 60px);
+    
+                .sts-cd{
+                    width: 80px;
+    
+                    h3{
+                        font-size: 14.5px;
+                        margin-bottom: 2px;
+                    }
+    
+                    p{
+                        font-size: 9.5px;
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    .card-box {
+        .card{
+    
+            height: 120px;
+            padding: 10px;
+        
+            h2{
+                margin-top: 25px !important;
+                font-size: 18.5px;
+            }
+    
+            p{
+                margin-top: 2px;
+                font-size: 11px;
+            }
+    
+            .bsc-title{
+                width: 100%;
+    
+                .icon-bx{
+                    width: 28px;
+                    height: 28px;
+    
+    
+                    i{
+                        font-size: 11.5px;
+                        transform: rotate(180deg);
+                    }
+    
+                }
+    
+                p{
+    
+                    font-size: 12px;
+                }
+            }
+          
+        }
+    }
+    }
+    
+    
+    .date-picker-container {
+        min-width: 75px;
+        height: 25px;
+    
+        .resetDate{
+            width: 25px;
+            height: 25px;
+            font-size: 12px;
+
+        }
+      }
+    
+    
+      .custom-mnth-year-picker{
+    
+        height: 25px;
+    
+        .mnyr-rst{
+            width: 25px;
+            height: 25px;
+            font-size: 10px;
+        }
+    
+    
+        .custom-date-mnth{
+            width: 65px;
+            font-size: 10px;
+          
+        }
+    
+    
+        .custom-year-dropdown   {
+            width: 42px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+    
+    }
+    
+    
+    .bg-circle, .progress-circle {
+        fill: none;
+        stroke-width: 9;
+        r: 55px;    
+      }
+    
+    .progress-text {
+        font-size: 17px;
+    
+        p{
+            font-size: 7px;
+            margin-top: -3px;
+        }
+    }
+    
+    
+      
+      .circle-background{
+
+        stroke-width: 14;
+        r: 65px;
+    
+      }
+    
+      .circle-foreground {
+        /* fill: none; */
+        r: 65px;
+        stroke-width: 14;
+     
+      }
+    
+    
+    
+    .atn-rcrd-card{
+        height: 280px;
+    
+    
+        .atn-ovr-vw{
+    
+            .ovr-vw-dta{
+    
+    
+                .ln{
+                    width: 1.5px;
+    
+                }
+    
+                .col-dta{
+                    width: 90%;
+                    height: 100%;
+    
+                    .col-titl{
+                        font-size: 10px;
+                        margin-bottom: 12px;
+                    }
+    
+                    .col-val{
+                        font-size: 17px;
+    
+                        
+                    }
+                }
+            }
+    
+        }
+    
+        .atn-brk-dwn{
+            border-radius: 12px;
+            margin-bottom: 12px;
+    
+    
+            .atn-prm-cnt{
+    
+                .atn-sc-cnt{
+    
+                    .data-ov-box{
+    
+                        h4{
+                            margin-top: 6px;
+                            font-weight: 600;
+                            font-size: 12.5px ;
+                        }
+    
+                        p{
+                            font-size: 8.5px;
+                            color: #1E3653;
+                        }
+                    }
+    
+    
+                    .sng-ov-box{
+                        width: 50px;
+                        
+                        .progress-ring circle {
+    
+                            stroke-width: 4;
+                        }
+                        
+                        .progress-ring .bg {
+    
+                            r:18px;
+                        }
+                        
+                        .progress-ring .progress {
+
+                            r:18px;
+                        }
+                        
+                        .progress-ring .progress-value {
+    
+                            font-size: 9.5px;
+                            font-weight: 600;
+    
+                        }
+                        
+                          
+                        
+                    }
+    
+                    .data-ov-box{
+                        width: calc(100% - 50px);
+    
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    .mnth-cout{
+        width: 38px;
+        height: 38px;
+        border-radius: 0 10px 0 10px;
+    
+    
+        h3{
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: -5px;
+            margin-top: -1px;
+    
+        }
+        p{
+            font-size: 8px;
+            font-weight: 500;
+        }
+    }
+    
+    .slide{
+        font-size: 1.5em;
+    }
+    
+    .atn-dp-sld1{
+    
+    
+        .sld-cvr{
+    
+            h5{
+                margin-top: 12px;
+                font-weight: 600;
+                /* margin-top: 20px; */
+            }
+    
+            .sld-cvr-dt{
+    
+                .cnv-bx{
+                    width: 75px;
+                    height: 50px;
+                    border-radius: 8px;
+      
+    
+                    h6{
+                        font-size: 13px;
+                        font-weight: 600;
+                        
+                    }
+                    p{
+                        font-size: 9px;
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    
+    
+    .progress-wrapper {
+    
+        height: auto;
+        margin-top: 15px;
+    
+    }
+    .progress-bar-container {
+        height: 5px;
+    
+    }
+    
+    
+    .progress-details {
+        width: 100%;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        font-size: 12px;
+    
+    }
+    
+    
+    .sal-disp{
+    
+    
+         .cl-updt{
+    
+            height: 45px;
+            margin:  10px 0;
+     
+           
+            .toggle-container {
+                width: 46%;
+                height: 35px;
+    
+            }
+    
+            .toggle-container p {
+                width: calc(100% - 25px);
+                font-size: 12px;
+            }
+    
+            .toggle-icon {
+                width: 24px;
+                height: 24px;
+    
+            }
+    
+            .swtchNo {
+                display: none;
+            }
+         }
+    
+    }
+    
+    
+    .cal-cont{
+    
+        .calender {
+    
+            padding: 10px 5px;
+        }
+        
+    
+        .calender th {
+    
+            padding: 12px;
+            font-size: 12px;
+    
+        }
+        
+        .calender td {
+            height: 38px;
+            padding: 1px;
+            font-size: 12px;
+    
+            
+    
+            .tc-c{
+                span{
+                    margin-top: 2px;
+                }
+            }
+        }
+        
+        
+        .calender .current-day {
+            font-size: 12px !important;
+           
+            
+        }
+    
+        .cl-indic{
+            display:inline-block ;
+            border-radius: 12px;
+            width: 10.5px;
+            height: 2.5px;
+            margin-top: 2px !important;
+        }
+        
+    
+    }
+    
+    
+    
+    .mnth-rcrd{
+        width: 100%;
+        margin-top: 20px;
+    
+        
+    
+    
+    
+        .rcrd-brd{
+    
+            height: 240px;
+    
+        
+        .tabel-container{
+        width: 100%;
+        padding: 6px;
+    
+        .t-head{
+    
+            p{
+                color: #fff;
+                font-size: 10px;
+                font-weight: 500;
+            }
+    
+        }
+    }
+    
+    
+    .mnth-dt-filt{
+        width: 100%;
+        height: 30px;
+    
+        p{
+            font-size: 12px;
+        }
+        .mnth-btn{
+            width: 25px !important;
+            height: 25px !important;
+            border-radius: 5px;
+        
+        
+        }
+     
+    }
+    
+    
+    
+    
+    .td-ex-pol-thd-cont{
+    
+        height: 30px;
+        
+    }
+    
+    
+    
+    .call-link i{
+    
+    font-size: 10px;
+    
+    }
+    
+    .td-ex-tbl-hd-frt{
+    
+    font-size: 10px;
+    
+    }    
+    
+    
+    
+        }
+    }
+    
+    
+    .allActivity{
+    
+    
+    
+        .act-flt-cnt{
+    
+            height: 30px;
+    
+        }
+    
+    
+    
+        .alac-hd{
+    
+            height: 40px;
+    
+    
+            .alact-back{
+                width: 35px;
+                height: 35px;
+    
+    
+                i{
+                    font-size: 16px;
+                }
+            }
+    
+            h2{
+                font-size: 20px;
+            }
+        }
+    }
+    
+    
+    .date-display-container {
+        width: 80px;
+        height: 25px;
+        font-size: 9px;
+      
+      }
+    
+    
+      .end-msg{
+    
+        font-size: 15px;
+      
+        
+        h5{
+            margin-top: 30px;
+            opacity: 1;
+            font-size: 18px;
+            opacity: .1;
+          
+        }
+    }
+    
+    #anm-icn i {
+        font-size: 35px; /* Icon size */
+      }
+    
+    
+      .btn1{
+      
+        font-size: 12px;
+    }
+    
+    
+    .sidebar{
+    
+    
+        .sideLogo{
+            width: 100%;
+            /* background-color: #1E3653; */
+            height: 50px;
+    
+        
+        }
+        
+    }
+    
+    .logo{
+        width: 55%;
+        height: 100%;
+        /* background-color: #1E3653; */
+    
+    }
+    
+    .logo-icon-box{
+        width: 30px;
+        height: 30px;
+    
+    }
+    
+    .logo-icon-box img{
+        width: 40%;
+        height: 40%;
+    
+    } 
+    
+    
+    .logo h1{
+        font-weight: 700;
+        font-size: 20px;
+    
+    }
+    
+    .sdScrlBdy{
+    
+        .prf-card{
+            padding: 30px 0;
+            width: 100%;
+            margin-bottom: 12px;
+    
+    
+            img{
+                width: 75px;
+                height: 75px;
+            }
+    
+            h3{
+    
+                font-size: 22px;
+    
+            }
+    
+            p{
+                font-size: 11px;
+    
+            }
+    
+            span{
+                width: 3px;
+                height: 3px;
+            }
+    
+    }
+    
+         .prfInfo{
+            width: 100%;
+            min-height: 40px;
+    
+    
+            .info-card{
+    
+                width: 100%;
+                height: 50px;
+    
+                h4{
+                    font-size: 13.5px;
+    
+                }
+        
+                i{
+                    width: 40px;
+                    height: 30px;
+                    font-size: 18.5px;
+    
+                }
+             }
+        
+             .info-detail {
+          
+                width: 100%;
+                /* margin-bottom: 100px; */
+                display: none;
+                overflow: hidden;  /* Hide anything that overflows during transition */
+                max-height: 0; 
+                transition: max-height 0.5s ease; /* Smooth transition for max-height */
+            }
+          
+    }
+    
+    
+    }
+    
+    .cmr-cnt{
+    
+    
+        .ent-ext-tim{
+         
+    
+            .show-time{
+                width: 90px;
+                height: 25px;
+                font-size: 10px;
+              
+                p{
+                    margin-right: 3px;
+                    width: 75px;
+                }
+    
+            
+            }
+        }
+    
+    
+        .cm-info-bx{
+           
+            min-height: 200px;
+           
+    
+            .inf-bx{
+                width: 90%;
+                min-height: 200px;
+               
+                /* background-color: #06acff; */
+    
+                .alrt-bx{
+    
+                    height: 30px;
+                    margin-top: 10px;
+                    font-size: 10px;
+                    border: .5px solid rgb(255, 153, 153) ;
+                    border-radius: 8px !important;
+    
+                }
+    
+    
+                .cur-date-cnt {
+                    font-size: 11.5px;
+                    color: #827cac;
+                    margin-top: 5px;
+    
+                    .crn-date{
+                        margin-left: 8px;
+                    }
+                }
+    
+                .cur-time{
+                    font-size: 22px;
+                    height: 30px;
+    
+    
+                    i{
+                        padding: 8px;
+                        font-size: 16px;
+                        border-radius: 6px;
+                    }
+                }
+    
+                .cm-usr-info{
+     
+                    height: 30px;
+                    font-size: 16px;
+                    margin-bottom: 10px;
+                  
+                }
+    
+                .lcn-cnt{
+                   font-size: 12px;
+                  
+    
+                    p{
+                        font-size: 10px;
+                        margin-top: 15px;
+                      
+                    }
+    
+    
+    
+                }
+            }
+    
+            .cam-btn-cnts{
+                height: 40px;
+              
+            }
+        }
+       
+    }
+    
+    
+    
+    .button1{
+        height: 40px;
+        font-size: 12px;
+    
+    
+    }
+    
+    .button2{
+        height: 40px;
+        font-size: 12px;
+    
+    }
+    
+    
+    .calendar-container {
+      
+        width: 280px;
+      
+      }
+    
+      .current-month-year{
+        font-size: 12px;
+      }
+      .calendar-header-button {
+    
+        font-size: 10px;
+    
+      }
+    
+      .calendar-grid-container {
+        gap: 5.5px;
+        padding: 10px;
+      }
+    
+      .calendar-day {
+        padding: 8px;
+        font-size: 10.5px;
+    
+      }
+    
+    
+    
+    
+    
+
+}
+
+/* Medium phones (iPhone 6/7/8, etc.) */
+@media screen and (min-width: 376px) and (max-width: 425px) {
+   
+}
