@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+    <link rel="icon" href="path/to/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.5.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.5.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.5.0/uicons-solid-straight/css/uicons-solid-straight.css">
+
+    
+    <!-- <link rel="stylesheet" href="/TFC-Connect/TFC-Connect/App/css/user.css"> -->
+    <link rel="stylesheet" href="/TFC-Connect/App/desktop/css/user.css">
+
+
+    <meta name="description" content="Welcome to the user page where you can manage your account.">
+</head>
+<body>
+   <nav>
+     <div class="prf-card flex-coloum">
+        <img class="userImage" src="/TFC-Connect/App/assets/user.png" alt="">
+        <h3 class="userName"></h3>
+        <div class="usrDtl flex-row">
+            <p class="userId"></p>
+            <span></span>
+            <p class="userType"></p>
+        </div>
+     </div>
+
+
+
+
+    <div  id="menuCard" class="menu-card">
+        <div class="menu-opn">
+            <p>Menu</p>
+            <ul id="menu-opn">
+                <li class="active">
+                    <span class="active"></span>
+                    <i class="fi fi-rr-home"></i>
+                    Dashboard</li>
+                <li>
+                    <span></span>
+                    <i class="fi fi-rr-fingerprint"></i>
+                    Attendance</li>
+                <li>
+                    <span></span>
+                    <i class="fi fi-rr-folder-open"></i>
+                    Payment Grid</li>
+                <li>
+                    <span></span>
+                    <i class="fi fi-rr-chart-pie-alt"></i>
+                    Report</li>
+                <li>
+                    <span></span>
+                    <i class="fi fi-rr-wallet-income"></i>
+                    Wallet</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="logDetails" style="display: none;"  class="menu-card flex-coloum">
+        <p>All Loged Details</p>
+        <div id="device-opn" class="device-opn">
+    
+
+
+
+            
+        </div>
+    </div>
+
+
+
+
+
+    <div class="logout-card">
+
+        <button  class="button2">
+
+            <i class="fa-solid fa-user"></i>
+                Profile
+
+        </button>
+       
+                
+           
+        <button onclick="logout()" class="button1">
+            <i class="fa-solid fa-right-from-bracket"></i>
+           Logout
+        </button>
+
+
+        <p id="switchMenu" class="switchMenu flex" onclick="switchMenu()" >All Loged Account 
+        <span>
+            <i class="fi fi-rr-angle-small-right"></i>
+        </span>
+            
+        </p>
+
+        <p id="switchMenuBack"  style="display: none;" class="switchMenu flex" onclick="switchMenuBack()" > 
+            <span>
+                <i class="fi fi-rr-angle-small-left"></i>
+            </span> Back to Menu
+        </p>
+      
+    </div>
+    
+   </nav>
+   <main>
+    <div class="main-top flex-row ">
+        <div class="welcome-box-cont flex-coloum">
+                
+            <p>
+                <i id="wlcHand" class="fi fi-sr-hand-wave"></i>
+                Welcome Back, <span class="firstName"></span>
+            </p>
+            <div class="dashboard-title-container flex-row">
+            <h2 class="h-styling" id="dashbord">Dashboard</h2>
+
+            
+           
+           </div>
+</div>
+
+<div class="sideLogo flex">
+    <div class="logo flex">
+        <div class="logo-icon-box flex">
+            <img src="https://lh3.googleusercontent.com/d/1ac7vZtb76pk7Xy3a3PtfrxYVPUOpF5Zd" alt="">
+        </div>
+        <h1>tfc<span>Connect</span></h1>
+        </div>
+        <div class="user-prf-pic-cont flex sideBackBtn">
+           
+            <i class="fi flex fi-rr-bell-notification-social-media"></i>
+         </div>
+</div>
+
+    </div>
+
+    <div class="notify-panel"></div>
+
+    <div class="main-body">
+
+       
+
+
+    </div>
+    
+   </main>
+
+    <!-- <script src="/TFC-Connect/TFC-Connect/App/js/user.js"></script> -->
+    <script src="https://kit.fontawesome.com/ff989e0e08.js" crossorigin="anonymous"></script>
+    <script src="/TFC-Connect/App/desktop/js/user.js"></script>
+    
+</body>
+</html>

@@ -232,26 +232,48 @@ function moveToNext(current, nextFieldId) {
         });
     }
        
-
 // Function to log 'ticketDetails' data as an array of objects
-function logTicketDetailsAsObjects() {
+function logTicketDetailsAsObjects(deviceType) {
     const key = "ticketDetails";
     const value = localStorage.getItem(key);
 
     if (value) {
-        // Parse the value as JSON, assuming it's an array format like '[{"id":1,"name":"example"},...]'
-        const ticketDetailsArray = JSON.parse(value);
+        let ticketDetailsArray;
+        try {
+            // Parse the value as JSON, assuming it's an array format like '[{"id":1,"name":"example"},...]'
+            ticketDetailsArray = JSON.parse(value);
+            
+            // Ensure the parsed data is an array before mapping
+            if (!Array.isArray(ticketDetailsArray)) {
+                console.error("Error: Parsed ticketDetails is not an array", ticketDetailsArray);
+                return;
+            }
+        } catch (error) {
+            console.error("Error parsing ticketDetails JSON:", error);
+            return;
+        }
 
-        // Transform each entry into an object if it’s an array
+        // Transform each entry into an object with indexed keys
         const ticketDetailsObjects = ticketDetailsArray.map((detail, index) => ({
             [`ticketDetail_${index + 1}`]: detail
         }));
 
-        console.log(ticketDetailsObjects);
+        console.log("deviceType:", deviceType);
+
+        const heroCont = document.getElementById("hero-cont");
+        const formCont = document.getElementById("form-cont");
+
+        if (deviceType && deviceType.toLowerCase() === "mobile") {
+            if (heroCont) heroCont.style.display = "none";
+            if (formCont) formCont.style.display = "flex";
+
+        }
+        console.log("Stored Tickets:", ticketDetailsObjects);
     } else {
         console.log("No data found for 'ticketDetails'");
     }
 }
+
 
 
 
@@ -1385,6 +1407,8 @@ async function submitNewPassword(event) {
 
 
 function checkAndLogActiveTickets() {
+    showSpinner();
+    console.log("am runing");
     const ticketDetails = localStorage.getItem('ticketDetails');
 
     if (ticketDetails) {
@@ -1416,6 +1440,7 @@ function checkAndLogActiveTickets() {
 
                 } else {
                     console.log(`Ticket expired. Removing from list.`);
+
                     return false; // Remove expired tickets
                 }
             }
@@ -1424,6 +1449,7 @@ function checkAndLogActiveTickets() {
 
         if (!activeFound) {
             console.log('No active ticket found.');
+            hideSpinner();
         }
 
         // Update localStorage with the filtered tickets
@@ -1431,6 +1457,7 @@ function checkAndLogActiveTickets() {
 
     } else {
         console.log('No ticketDetails available in localStorage');
+        hideSpinner();
     }
 }
 
@@ -1546,6 +1573,8 @@ function checkAndLogActiveTickets() {
 
 
 function loginSavedId() {
+
+    showSpinner();
     const token = JSON.parse(localStorage.getItem("isActivefalseId"));
     console.log("login token for Saved details", token);
 
@@ -1582,9 +1611,11 @@ function loginSavedId() {
            
         } else {
             console.log("isActive is already true");
+            hideSpinner();
         }
     } else {
         console.log("No matching ticket found.");
+        hideSpinner();
     }
 }
 
@@ -1696,6 +1727,10 @@ function getDeviceDetails() {
         const windowsModelMatch = userAgent.match(/Windows\s+NT\s+\d+\.\d+\s*;\s*([^;]+)/);
         deviceModel = windowsModelMatch ? windowsModelMatch[1].trim() : "Windows Device";
     }
+
+    logTicketDetailsAsObjects(deviceType);
+
+
 
     return {
         deviceType,

@@ -181,8 +181,11 @@ function generateDates(attrecord, holidays = []) {
          if (data.results && data.results.length > 0) {
              const addressComponents = data.results[0].components;
 
-             ////console.log("add",  addressComponents);
+             console.log("addGeo",  addressComponents);
+             console.log("addGeo",  lat);
+             console.log("addGeo",  lng);
  
+
              // Extract the specified components, leave blank if not available
              
              const road = addressComponents.road || "";
@@ -2317,7 +2320,7 @@ function updateAtnCells(data) {
     }
 }
 
-setInterval (updateAtnCellsByDate(formattedDate), 1000);
+setInterval (updateAtnCellsByDate, 1000);
 
 async function updateAtnCellsByDate(formattedDate) {
     if (!formattedDate) {
@@ -3062,8 +3065,10 @@ function findSalary(holidayDetails) {
 
 function generateAttendanceTable(holidayDetails, salaryData, userDetails, isCaller, isJustificationData, justPercentData, paidLeaveData, incentiveData) {
     const currentDate = new Date().toISOString().split('T')[0]; // आज की तारीख YYYY-MM-DD
+    
 
     console.log("isJustificationDataresult", incentiveData);
+
 
 
     // console.log("userdetailsresult", userDetails);

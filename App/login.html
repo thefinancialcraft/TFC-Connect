@@ -24,7 +24,7 @@
 <div class="main-container flex">
 
 
-    <div class="hero-container">
+    <div class="hero-container" id="hero-cont">
         
         <div class="hero-small-container">
             <div class="logo flex">
@@ -109,7 +109,7 @@
     
 
     
- <div class="form-container flex">
+ <div class="form-container flex" id="form-cont">
 
 
     <div id="error-message" style="display: none;">
@@ -409,7 +409,11 @@
 
 
 <p id="token_id" class="token_id"></p>
-    <button onclick="loginSavedId();"  class="login-button2" >Login</button>
+    <button onclick="loginSavedId();"  class="login-button2" >
+        <p class="button-text">Login</p>
+        <div class="spinner" style="display: none;"></div>
+        
+    </button>
 </div>
 
 

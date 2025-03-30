@@ -454,6 +454,7 @@ body::-webkit-scrollbar{
         font-size: 14px;
         font-weight: 700;
         border: none;
+        background-color: #fff !important;
         margin-right: 2px;
         appearance: none; /* Remove default dropdown styling */
         -webkit-appearance: none; /* Remove default dropdown styling in WebKit browsers */

@@ -189,8 +189,8 @@ function logout() {
     const tktuserToken = activeTicket.token;
     const tktuserId = activeTicket.userId;
 
-    //console.log("Token:", tktuserToken);
-    //console.log("UserId:", tktuserId);
+    console.log("Token:", tktuserToken);
+    console.log("UserId:", tktuserId);
 
     // Create data object to send to the backend, with action included
     const data = new URLSearchParams();
@@ -198,7 +198,7 @@ function logout() {
     data.append('token', tktuserToken);
     data.append('userId', tktuserId);
 
-    //console.log('Data being sent to the server:', data);
+    console.log('Data being sent to the server:', data);
 
     // Fetch scriptUrl from config.json and then make the logout request
     fetch('/TFC-Connect/App/config.json')
@@ -220,7 +220,7 @@ function logout() {
             }
         })
         .then(data => {
-            //console.log("Logout successful:", data);
+            console.log("Logout successful:", data);
 
             // Update the specific ticket in localStorage's ticketDetails array
             if (data.userDetails) {
@@ -946,69 +946,67 @@ function loadFlags() {
 }
     
     
-    // ✅ Update all toggles based on flag values
-    function updateToggles() {
-        let justifyBar = document.querySelector('.justify-bar');  // ✅ Get closest .cl-updt
-    
-        console.log("%c[INFO] Updating toggles based on flag values...", "color: blue; font-weight: bold;");
-    
-        document.querySelectorAll('.toggle-container').forEach(container => {
-            let customColor = container.getAttribute('data-color');
-            let isCaller = localStorage.getItem("isCaller");  // Default "no"
-            let flagKey = container.getAttribute('data-flag');
+function updateToggles() {
+    let justifyBar = document.querySelector('.justify-bar');  
 
-            console.log("isCallerResult",isCaller);
-    
-            if (!flagKey || !customColor) {
-                console.warn("[WARNING] Missing attributes in:", container);
-                return;
-            }
-    
-            let iconContainer = container.querySelector('.toggle-icon');
-            let text = container.querySelector('p');
-            let checkIcon = container.querySelector('.swtchYes');
-            let crossIcon = container.querySelector('.swtchNo');
-            let clUpdate = container.closest('.cl-updt');  // ✅ Get closest .cl-updt
-          
-            // ✅ Check if elements exist
-            if (!iconContainer || !text || !checkIcon || !crossIcon) {
-                console.error("[ERROR] One or more elements missing in:", container);
-                return;
-            }
-    
-            // ✅ Hide `.cl-updt` if `isCaller` is "no"
-            if (clUpdate) {
-                clUpdate.style.display = isCaller.toLowerCase() === "no" ? "none" : "flex";
-                justifyBar.style.display = isCaller.toLowerCase() === "no" ? "none" : "flex";
-            }
-    
-            let isActive = flagValues[flagKey]?.toLowerCase() === "yes";
-            console.log(`[DEBUG] Toggle "${flagKey}" isActive: ${isActive}`);
-    
-            // ✅ Apply styles based on flag state
-            if (isActive) {
-                container.style.backgroundColor = customColor;
-                container.style.borderColor = customColor;
-                iconContainer.style.backgroundColor = "#fff";
-                iconContainer.style.color = customColor;
-                text.style.color = "#fff";
-                checkIcon.style.display = "none";
-                crossIcon.style.display = "flex";
-                container.style.flexDirection = "row-reverse";
-            } else {
-                container.style.backgroundColor = "#ffffffd3";
-                container.style.borderColor = customColor;
-                iconContainer.style.backgroundColor = customColor;
-                iconContainer.style.color = "#fff";
-                text.style.color = customColor;
-                checkIcon.style.display = "flex";
-                crossIcon.style.display = "none";
-                container.style.flexDirection = "row";
-            }
-        });
-    
-        console.log("%c[INFO] Toggle updates completed.", "color: green; font-weight: bold;");
-    }
+    console.log("%c[INFO] Updating toggles based on flag values...", "color: blue; font-weight: bold;");
+
+    let isCaller = localStorage.getItem("isCaller") || "no"; // ✅ Default "no"
+
+    document.querySelectorAll('.toggle-container').forEach(container => {
+        let customColor = container.getAttribute('data-color');
+        let flagKey = container.getAttribute('data-flag');
+
+        if (!flagKey || !customColor) {
+            console.warn("[WARNING] Missing attributes in:", container);
+            return;
+        }
+
+        let iconContainer = container.querySelector('.toggle-icon');
+        let text = container.querySelector('p');
+        let checkIcon = container.querySelector('.swtchYes');
+        let crossIcon = container.querySelector('.swtchNo');
+        let clUpdate = container.closest('.cl-updt');
+
+        if (!iconContainer || !text || !checkIcon || !crossIcon) {
+            console.error("[ERROR] One or more elements missing in:", container);
+            return;
+        }
+
+        // ✅ Safe check before calling .toLowerCase()
+        if (clUpdate) {
+            let isCallerLower = isCaller ? isCaller.toLowerCase() : "no";
+            clUpdate.style.display = isCallerLower === "no" ? "none" : "flex";
+            justifyBar.style.display = isCallerLower === "no" ? "none" : "flex";
+        }
+
+        let isActive = flagValues[flagKey]?.toLowerCase() === "yes";
+        console.log(`[DEBUG] Toggle "${flagKey}" isActive: ${isActive}`);
+
+        if (isActive) {
+            container.style.backgroundColor = customColor;
+            container.style.borderColor = customColor;
+            iconContainer.style.backgroundColor = "#fff";
+            iconContainer.style.color = customColor;
+            text.style.color = "#fff";
+            checkIcon.style.display = "none";
+            crossIcon.style.display = "flex";
+            container.style.flexDirection = "row-reverse";
+        } else {
+            container.style.backgroundColor = "#ffffffd3";
+            container.style.borderColor = customColor;
+            iconContainer.style.backgroundColor = customColor;
+            iconContainer.style.color = "#fff";
+            text.style.color = customColor;
+            checkIcon.style.display = "flex";
+            crossIcon.style.display = "none";
+            container.style.flexDirection = "row";
+        }
+    });
+
+    console.log("%c[INFO] Toggle updates completed.", "color: green; font-weight: bold;");
+}
+
     
     // ✅ Change flag value & update UI
     function changeFlag(flagKey) {
