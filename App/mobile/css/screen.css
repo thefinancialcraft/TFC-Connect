@@ -958,7 +958,7 @@ font-size: 9px;
 }
 
 /* Small phones (Most common phones) */
-@media screen and (min-width: 321px) and (max-width: 375px) {
+@media screen and (min-width: 321px) and (max-width: 395px) {
 
     .mb-header{
         height: 60px;
@@ -1909,6 +1909,3 @@ font-size: 9px;
 }
 
 /* Medium phones (iPhone 6/7/8, etc.) */
-@media screen and (min-width: 376px) and (max-width: 425px) {
-   
-}
