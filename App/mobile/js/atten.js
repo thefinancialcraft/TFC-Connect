@@ -1,6 +1,26 @@
+function updateAttendanceTimes() {
+    const userDetails = JSON.parse(localStorage.getItem('userDetails'));
+
+    if (userDetails) {
+        let entryTime = userDetails.Entry_time.replace(/"/g, '').trim();
+        let exitTime = userDetails.Exit_time.replace(/"/g, '').trim();
+
+        document.getElementById('entry-time').textContent = entryTime;
+        document.getElementById('exit-time').textContent = exitTime;
+    } else {
+        console.warn("User details not found in localStorage.");
+    }
+}
+
+updateAttendanceTimes();
+
 // Function to generate dates
 let timeInterval; // To store the time interval for updating the clock
 let lastTime; // To store the last displayed time
+let punchInInterval; // Global variable for interval
+
+
+
 
 function updateTime() {
   const now = new Date();
@@ -304,6 +324,8 @@ function startCamera() {
 document.getElementById('cam-stp').addEventListener('click', () => {
     // Stop the time update and freeze the current time
     stopTimeUpdate();
+    document.getElementById('punchWhts').style.display = 'none';
+    document.getElementById('punchToDash').style.display = 'none';
 
     // Capture snapshot logic
     if (videoElement && mediaStream) {
@@ -666,63 +688,200 @@ function updateCheckInStatus(truserCheckIn, lateDeadline, halfdayDeadline, absen
 
 
 
-// Function to upload checkinData and snapshot
-function uploadCheckinData(checkinData, snapshotData) {
-    // Log the data before sending it
-    // ////console.log("Uploading data...");
-    ////console.log("Uploading Check-in Data: ", checkinData);
-    ////console.log("Snapshot Data (Base64): ", snapshotData);
 
-    // Convert checkinData to a URL-encoded string
-    const data = new URLSearchParams(checkinData).toString();
 
-    // Fetch backend URL from config.json
-    fetch('/TFC-Connect/App/config.json')
-        .then(response => response.json())
-        .then(config => {
-            const scriptUrl = config.scriptUrl;
 
-            // Prepare the request data including the snapshot (base64 image)
-            const requestData = {
-                ...checkinData,   // Merge checkinData
-                snapshot: snapshotData // Include the base64 snapshot image
-            };
+// Function to upload checkinData and snapshot with timeout, network issue handling, and local storage backup
+async function uploadCheckinData(checkinData, snapshotData) {
+    console.log("Uploading data...");
 
-            // Convert request data to URL-encoded format
-            const requestPayload = new URLSearchParams(requestData).toString();
+    if (!navigator.onLine) {
+        console.error("Network issue: Please check your internet connection");
+        saveToLocalStorage(checkinData, snapshotData);
+        return;
+    }
 
-            // Make POST request to upload the data and snapshot
-            return fetch(scriptUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: requestPayload
-            });
-        })
-        .then(response => response.json())
-        .then(data => {
+    try {
+        const response = await fetch('/TFC-Connect/App/config.json');
+        const config = await response.json();
+        const scriptUrl = config.scriptUrl;
 
-            
+        const requestData = {
+            ...checkinData,
+            snapshot: snapshotData
+        };
 
-            ////console.log("attendance Data uploaded successfully:", data);
-            document.getElementById('cam-stp').style.display = 'none';
-            document.getElementById('SnapWhts').style.display = 'block';
-            document.getElementById('bcToDash').style.display = 'block';
-            document.getElementById('camCancel').style.display = 'none';
-            document.querySelector('.loader').style.display = 'none';
+        const requestPayload = new URLSearchParams(requestData).toString();
 
-            localStorage.setItem('whatsAppData', JSON.stringify(data.uploadedData));
-            
-            
-        })
-        .catch(error => {
-            //console.error("attendance Error uploading data:", error);
+        const fetchResponse = await fetch(scriptUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: requestPayload
         });
+
+        if (!fetchResponse.ok) {
+            throw new Error(`Server error: ${fetchResponse.status} ${fetchResponse.statusText}`);
+        }
+
+        const data = await fetchResponse.json();
+
+        // ✅ Data upload hone ke baad local storage se hata do
+        localStorage.removeItem('punchInData');
+
+        console.log("Attendance Data uploaded successfully:", data);
+
+        document.getElementById('cam-stp').style.display = 'none';
+        document.getElementById('SnapWhts').style.display = 'block';
+        document.getElementById('bcToDash').style.display = 'block';
+        document.getElementById('camCancel').style.display = 'none';
+        document.querySelector('.loader').style.display = 'none';
+
+        localStorage.setItem('whatsAppData', JSON.stringify(data.uploadedData));
+
+        return true; // ✅ Return success
+    } catch (error) {
+        console.error("Error uploading data:", error.message);
+        saveToLocalStorage(checkinData, snapshotData);
+        return false; // ❌ Return failure
+    }
 }
 
 
 
+
+// Function to save checkinData & snapshotData in local storage
+function saveToLocalStorage(checkinData, snapshotData) {
+    const punchInData = {
+        checkinData,
+        snapshotData,
+        timestamp: new Date().toLocaleDateString('en-GB'), // Format as DD/MM/YYYY
+        isAtnMarked: false // Add flag to track attendance marking status
+    };
+    
+    localStorage.setItem('punchInData', JSON.stringify(punchInData));
+    console.log("Data saved to local storage as 'punchInData' due to an error.");
+      
+    document.getElementById('cam-stp').style.display = 'none';
+    document.getElementById('punchWhts').style.display = 'block';
+    document.getElementById('punchToDash').style.display = 'block';
+    document.getElementById('camCancel').style.display = 'none';
+    document.querySelector('.loader').style.display = 'none';
+
+
+    startPunchInCheck();
+
+
+   
+}
+
+
+  document.getElementById('punchWhts').addEventListener('click', () => {
+      // Stop the camera stream and hide video container
+      if (mediaStream) {
+          mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
+      }
+
+      camCont.style.display = 'none'; // Hide video container
+  
+
+      document.getElementById('atn-switch').style.display = 'flex';
+      document.getElementById('resetCont').style.display = 'flex';
+      document.getElementById('actBtn').style.display = 'none';
+      document.getElementById('chknBtn').style.display = 'none';
+
+      const punchInData = JSON.parse(localStorage.getItem('punchInData'));
+  
+      
+      var message = '*Reached*, ' + punchInData.checkinData.userName + '\n' +
+                    'Date: ' + punchInData.checkinData.date + '\n' +
+                    'Time: ' + punchInData.checkinData.checkinTime + '\n' 
+                    + '\n' +
+                    'Currently am facing network issue, Update Soon';
+
+                 
+                    var encodedMessage = encodeURIComponent(message);
+                    var whatsappUrl = 'https://wa.me/?text=' + encodedMessage;
+      
+                    window.open(whatsappUrl, '_blank');
+
+
+  });
+
+  // bcToDash button functionality: Stop the stream and hide cam-cnt, reset UI
+  document.getElementById('punchToDash').addEventListener('click', () => {
+    // Stop the camera stream and hide video container
+    if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
+    }
+    camCont.style.display = 'none'; // Hide video container
+
+    document.getElementById('atn-switch').style.display = 'flex';
+    document.getElementById('resetCont').style.display = 'flex';
+    document.getElementById('actBtn').style.display = 'none';
+    document.getElementById('chknBtn').style.display = 'none';
+});
+
+
+
+
+
+// Function to Start the Interval
+function startPunchInCheck() {
+    if (!punchInInterval) {  // Agar interval pehle se chalu nahi hai toh hi start karo
+        punchInInterval = setInterval(checkPunchInStatus, 30000);
+        console.log("Interval started.");
+    }
+}
+
+// Function to Stop the Interval
+function stopPunchInCheck() {
+    if (punchInInterval) {  // Agar interval chalu hai toh hi stop karo
+        clearInterval(punchInInterval);
+        punchInInterval = null; // Reset the variable
+        console.log("Interval stopped.");
+    }
+}
+
+
+async function checkPunchInStatus() {
+    console.log("am runung checkPunchStatus");
+    try {
+        const punchInData = JSON.parse(localStorage.getItem('punchInData'));
+        const today = new Date().toLocaleDateString('en-GB'); // DD/MM/YYYY
+
+        if (punchInData && punchInData.timestamp !== today) {
+            console.log("Old data found, removing from local storage...");
+            localStorage.removeItem('punchInData');
+            return;
+        }
+
+        if (punchInData && punchInData.isAtnMarked === false) {
+            document.getElementById('atn-switch').style.display = 'flex';
+            document.getElementById('resetCont').style.display = 'flex';
+            document.getElementById('actBtn').style.display = 'none';
+            document.getElementById('chknBtn').style.display = 'none';
+            document.getElementById('checkDotCont').style.display = 'none';
+
+            const { checkinData, snapshotData } = punchInData;
+
+            if (checkinData && snapshotData) {
+                const uploadSuccess = await uploadCheckinData(checkinData, snapshotData);
+                
+                if (uploadSuccess) {
+                    stopPunchInCheck();
+                    console.log("checkPunchStatus uploading Done");
+                }
+            } else {
+                console.error("Invalid checkinData or snapshotData");
+            }
+        } else {
+            console.log("No valid punch-in data found");
+        }
+    } catch (error) {
+        console.error("Error:", error.message);
+        console.log("Trying again...");
+    }
+}
 
 
   
@@ -773,6 +932,7 @@ function uploadCheckinData(checkinData, snapshotData) {
       var message = '*Reached*, ' + whatsAppData.userName + '\n' +
                     'Date: ' + whatsAppData.date + '\n' +
                     'Time: ' + whatsAppData.checkinTime + '\n' +
+                    'Status: ' + whatsAppData.checkinstatus + '\n' +
                     'location: *' + whatsAppData.location + '*\n' +
                     'Image Link: ' + whatsAppData.snapshotLink;
 
@@ -806,6 +966,9 @@ function uploadCheckinData(checkinData, snapshotData) {
       slider.style.left = `${newLeft}px`;
   });
 
+
+
+
   slider.addEventListener('touchend', () => {
     if (!isTouching) return;
 
@@ -813,132 +976,98 @@ function uploadCheckinData(checkinData, snapshotData) {
     const maxLeft = switchContainer.offsetWidth - slider.offsetWidth;
     const currentLeft = parseInt(getComputedStyle(slider).left, 10);
 
-    // If slider is dragged more than halfway, complete the slide
     if (currentLeft > maxLeft / 2) {
-        slider.style.left = `${maxLeft}px`; // Snap to the right
+        slider.style.left = `${maxLeft}px`;
         sliderText.textContent = 'Wait';
-        sliderText.classList.add('wait-animate'); // Add animation
+        sliderText.classList.add('wait-animate');
         checkinCont.style.display = "none";
         actionCont.style.display = "flex";
         camCont.style.display = "flex";
 
-        // **Fetch active ticket from local storage**
         const activeTicket = localStorage.getItem('receiveData');
         if (activeTicket) {
             try {
-                const ticketData = JSON.parse(activeTicket); // Parse the JSON string
-                const userId = ticketData.userId || 'N/A'; // Extract userId
-                const token = ticketData.token || 'N/A';   // Extract token
+                const ticketData = JSON.parse(activeTicket);
+                const userId = ticketData.userId || 'N/A';
+                const token = ticketData.token || 'N/A';
 
-                // Create an object and console log it
-                const ticketObject = { UserId: userId, Token: token };
-                ////console.log('Active Ticket:', ticketObject);
-
-                // **Fetch backend URL from config.json and send the object**
                 fetch('/TFC-Connect/App/config.json')
                     .then(response => response.json())
                     .then(config => {
                         const scriptUrl = config.scriptUrl;
-
-                        // Create data to send
                         const data = new URLSearchParams();
                         data.append('action', 'validTicketForAttendance');
                         data.append('token', token);
                         data.append('userId', userId);
 
-                        // Make POST request to the backend
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 15000);
+
                         return fetch(scriptUrl, {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: data
-                        });
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: data,
+                            signal: controller.signal
+                        }).finally(() => clearTimeout(timeoutId));
                     })
-                    .then(response => response.json()) // Parse backend response to JSON
+                    .then(response => response.json())
                     .then(attendanceData => {
-                        // Check if the response indicates success
                         if (attendanceData.status === "success") {
-                            console.log('Attendance Data for Backend:', attendanceData);
-                        
                             document.querySelector(".ent-ext-tim").style.display = "flex";
                             document.querySelector("#cam-stp").style.display = "block";
                             document.querySelector(".loader").style.display = "none";
-                            
-                        
-                            // Update entry and exit times in the DOM
-                            let entryTime = attendanceData.entryTime;  // Assuming entry time is sent in response
-                            let exitTime = attendanceData.exitTime;    // Assuming exit time is sent in response
-                        
-                            // Remove the quotes around entryTime and exitTime, if any
-                            entryTime = entryTime.replace(/"/g, '').trim();  // Remove quotes
-                            exitTime = exitTime.replace(/"/g, '').trim();    // Remove quotes
-                        
-                            // Set the entry and exit times in the respective DOM elements
+
+                            let entryTime = attendanceData.entryTime.replace(/"/g, '').trim();
+                            let exitTime = attendanceData.exitTime.replace(/"/g, '').trim();
+
                             document.getElementById('entry-time').textContent = entryTime;
                             document.getElementById('exit-time').textContent = exitTime;
                         } else {
                             console.warn('Backend validation failed:', attendanceData.message);
-                        
-                            // Reset UI and stop stream
                             resetUI();
                         }
-                        
                     })
                     .catch(error => {
-                        //console.error('Error during fetch:', error);
-
-                        // Reset UI and stop stream
-                        resetUI();
+                        if (!navigator.onLine || error.name === 'AbortError') {
+                            document.querySelector(".ent-ext-tim").style.display = "flex";
+                            document.querySelector("#cam-stp").style.display = "block";
+                            document.querySelector(".loader").style.display = "none";
+                        } else {
+                            resetUI();
+                        }
                     });
-            } catch (err) {
-                //console.error('Error parsing activeTicket from localStorage:', err);
-
-                // Reset UI and stop stream
+            } catch (error) {
                 resetUI();
             }
         } else {
             console.warn('No activeTicket found in local storage.');
-
-            // Reset UI and stop stream
             resetUI();
         }
-
-        // Start camera and update location
         startCamera();
     } else {
         resetUI();
     }
 
-    // Helper function to reset the UI and stop the camera stream
     function resetUI() {
-        slider.style.left = '0px'; // Snap back to the left
-        sliderText.classList.remove('wait-animate'); // Remove animation
-        sliderText.textContent = 'Check In'; // Reset the text
+        slider.style.left = '0px';
+        sliderText.classList.remove('wait-animate');
+        sliderText.textContent = 'Check In';
         checkinCont.style.display = "flex";
         actionCont.style.display = "none";
         camCont.style.display = "none";
-
-        // Stop the camera stream
         stopCamera();
     }
 
-    // Function to stop the camera stream
     function stopCamera() {
-        const videoElement = document.querySelector('video'); // Select the video element
+        const videoElement = document.querySelector('video');
         if (videoElement && videoElement.srcObject) {
             const stream = videoElement.srcObject;
-            const tracks = stream.getTracks(); // Get all tracks (audio/video)
-
-            // Stop each track
+            const tracks = stream.getTracks();
             tracks.forEach(track => track.stop());
-
-            // Clear the video source
             videoElement.srcObject = null;
         }
     }
 });
-
 
 
 
@@ -1240,24 +1369,34 @@ function observeDateChange() {
 
 
 
-
 async function getCheckinInfo() {
+    // Retrieve punchInData from localStorage
+    const punchInData = JSON.parse(localStorage.getItem('punchInData'));
+
+    // Get today's date in DD/MM/YYYY format
+    const today = new Date().toLocaleDateString('en-GB'); // DD/MM/YYYY
+
+    // If punchInData exists and conditions match, update UI accordingly
+    if (punchInData && punchInData.isAtnMarked === false && punchInData.timestamp === today) {
+        document.getElementById('atn-switch').style.display = 'flex';
+        document.getElementById('resetCont').style.display = 'flex';
+        document.getElementById('actBtn').style.display = 'none';
+        document.getElementById('chknBtn').style.display = 'none';
+        document.getElementById('checkDotCont').style.display = 'none';
+        startPunchInCheck();
+        return; // Function exits here if condition matches
+    }
+
     // Retrieve the active ticket from localStorage
     const activeTicket = localStorage.getItem('receiveData');
     if (!activeTicket) {
-        //console.error('No active ticket found in localStorage.');
         return;
     }
 
     try {
-        // Parse the JSON string from localStorage
         const ticketData = JSON.parse(activeTicket);
         const userId = ticketData.userId || 'N/A';
         const token = ticketData.token || 'N/A';
-
-        // Log the active ticket object
-        const ticketObject = { UserId: userId, Token: token };
-        ////console.log('Active Ticket:', ticketObject);
 
         // Fetch the backend URL from config.json
         const response = await fetch('/TFC-Connect/App/config.json');
@@ -1270,59 +1409,44 @@ async function getCheckinInfo() {
         data.append('token', token);
         data.append('userId', userId);
 
-        // Send the data to the backend via POST
+        // Send request to backend
         const backendResponse = await fetch(scriptUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: data
         });
 
-        // Parse the backend response
         const result = await backendResponse.json();
-        ////console.log('Backend Response for checkin:', result);
 
         const convertTimeFormat = (timeString) => {
             if (!timeString || typeof timeString !== 'string') return 'N/A';
-        
-            // Remove "am" or "pm" and trim spaces
             const match = timeString.match(/(\d{1,2}):(\d{2})\s*(am|pm)/i);
-            if (!match) return 'N/A'; // Invalid format
-        
+            if (!match) return 'N/A';
+
             let [_, hours, minutes, modifier] = match;
-        
-            // Convert hours to 24-hour format
             if (modifier.toLowerCase() === 'pm' && hours !== '12') {
-                hours = (parseInt(hours) + 12).toString(); // Convert PM to 24-hour
+                hours = (parseInt(hours) + 12).toString();
             } else if (modifier.toLowerCase() === 'am' && hours === '12') {
-                hours = '00'; // Midnight case
+                hours = '00';
             }
-        
-            // Return in 24-hour format with seconds set to '00'
+
             return `${hours}:${minutes}:00`;
         };
-        
-    // Remove quotes around checkinTime and checkoutTime, if any
-     let checkinTime = result.checkInTime.replace(/"/g, '').trim();  // Remove quotes and trim 
-    let checkoutTime = result.checkOutTime.replace(/"/g, '').trim();  // Remove quotes and trim spaces
 
-// Save userId, checkinTime, and checkoutTime in localStorage
-if (result.status === 'success') {
-    const officeTiming = {
-        userId: userId,
-        checkinTime: convertTimeFormat(checkinTime), // Use updated checkinTime
-        checkoutTime: convertTimeFormat(checkoutTime) // Use updated checkoutTime
-    };
-    localStorage.setItem('officeTiming', JSON.stringify(officeTiming));
-    ////console.log('Office Timing saved to localStorage:', officeTiming);
-}
+        let checkinTime = result.checkInTime.replace(/"/g, '').trim();
+        let checkoutTime = result.checkOutTime.replace(/"/g, '').trim();
 
+        if (result.status === 'success') {
+            const officeTiming = {
+                userId: userId,
+                checkinTime: convertTimeFormat(checkinTime),
+                checkoutTime: convertTimeFormat(checkoutTime)
+            };
+            localStorage.setItem('officeTiming', JSON.stringify(officeTiming));
+        }
 
-        // First, hide the checkDotCont
         document.getElementById('checkDotCont').style.display = 'none';
 
-        // Check the result message and perform actions accordingly
         if (result.message === 'hideAll') {
             document.getElementById('atn-switch').style.display = 'none';
         } else if (result.message === 'showCheckOut') {
@@ -1335,29 +1459,67 @@ if (result.status === 'success') {
             document.getElementById('actBtn').style.display = 'none';
             document.getElementById('chknBtn').style.display = 'flex';
             document.getElementById('resetCont').style.display = 'none';
+
             const sliderText = document.getElementById('sliderText');
             const slider = document.getElementById('slider');
-            slider.style.left = '0px'; // Snap back to the left
-            sliderText.classList.remove('wait-animate'); // Remove animation
+            slider.style.left = '0px';
+            sliderText.classList.remove('wait-animate');
             sliderText.textContent = 'Check In';
-            // Reset the text
-            // document.getElementById('snapshotImage').style.display = 'none';
-            // document.getElementById('videoElement').style.display = 'flex';
-
-            
-
         } else if (result.message === 'moveForward') {
-            document.getElementById('atn-switch').style.display = 'flex';
-            document.getElementById('resetCont').style.display = 'flex';
-            document.getElementById('actBtn').style.display = 'none';
-            document.getElementById('chknBtn').style.display = 'none';
+            checkWhatsAppDate();
         }
 
         return result;
     } catch (error) {
-        //console.error('Error processing active ticket:', error);
+        console.error('Error processing active ticket:', error);
     }
 }
+
+
+
+function checkWhatsAppDate() {
+    // LocalStorage se data lo
+    let whatsAppData = JSON.parse(localStorage.getItem('userDetails'));
+
+    // Agar data available hai to uska date format convert karo
+    let storedDateFormatted = '';
+    if (whatsAppData && whatsAppData.date) {
+        let dateParts = whatsAppData.date.split('/'); // ['dd', 'mm', 'yy']
+        let day = dateParts[0];
+        let month = dateParts[1];
+        let year = '20' + dateParts[2]; // '25' ko '2025' me convert karna
+
+        storedDateFormatted = `${year}-${month}-${day}`; // YYYY-MM-DD format
+    }
+
+    // Aaj ki date bhi YYYY-MM-DD format me nikalo
+    let today = new Date();
+    let todayFormatted = today.toISOString().split('T')[0]; // YYYY-MM-DD
+
+    // Date match kare to pehla block execute hoga
+    if (storedDateFormatted === todayFormatted) {
+        document.getElementById('atn-switch').style.display = 'flex';
+        document.getElementById('resetCont').style.display = 'flex';
+        document.getElementById('actBtn').style.display = 'none';
+        document.getElementById('chknBtn').style.display = 'none';
+    } 
+    // Date match na ho to doosra block execute hoga
+    else {
+        document.getElementById('atn-switch').style.display = 'flex';
+        document.getElementById('actBtn').style.display = 'none';
+        document.getElementById('chknBtn').style.display = 'flex';
+        document.getElementById('resetCont').style.display = 'none';
+
+        const sliderText = document.getElementById('sliderText');
+        const slider = document.getElementById('slider');
+        slider.style.left = '0px';
+        sliderText.classList.remove('wait-animate');
+        sliderText.textContent = 'Check In';
+    }
+}
+
+
+
 
 let noRecd ;
 noRecd = "hide";
@@ -3052,6 +3214,10 @@ function findSalary(holidayDetails) {
                                 }
                             }
                         });
+
+
+
+            localStorage.setItem("userDetails", JSON.stringify(result.userDetails));
 
             // console.log("Processed Salary Data (IST):", salaryData);
             generateAttendanceTable(holidayDetails , salaryData, result.userDetails.Join_date, result.userDetails.isCaller, isJustificationData, justPercentData, paidLeaveData, incentiveData );

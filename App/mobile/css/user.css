@@ -466,8 +466,22 @@ body::-webkit-scrollbar{
     
 }
 
+.logout-icon{
 
+    background-color: #FAFAFA !important;
 
+    .wIcn{
+        width: 30px;
+        height: 30px;
+    }
+  .wifi-icon {
+            width: 30px;
+            height: 30px;
+        }
+        .wifi-path {
+            transition: fill .3s ease-in-out;
+        }
+    }
 
 
 .date-picker-container {

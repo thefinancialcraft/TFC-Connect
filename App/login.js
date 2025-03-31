@@ -207,7 +207,7 @@ function moveToNext(current, nextFieldId) {
     function showSpinner() {
         var spinners = document.querySelectorAll(".spinner");
         var buttonTexts = document.querySelectorAll(".button-text"); // Corrected variable name
-    
+
         // Hide the button text and show the spinner
         buttonTexts.forEach(buttonText => {
             buttonText.style.display = "none"; // Use the correct variable name
@@ -222,6 +222,9 @@ function moveToNext(current, nextFieldId) {
         var spinners = document.querySelectorAll(".spinner");
         var buttonTexts = document.querySelectorAll(".button-text");
     
+        document.querySelector(".login-button").disabled = false;
+
+
         // Hide the spinner and show the button text again
         spinners.forEach(spinner => {
             spinner.style.display = "none";
@@ -267,7 +270,7 @@ function logTicketDetailsAsObjects(deviceType) {
             if (heroCont) heroCont.style.display = "none";
             if (formCont) formCont.style.display = "flex";
 
-        }
+        } 
         console.log("Stored Tickets:", ticketDetailsObjects);
     } else {
         console.log("No data found for 'ticketDetails'");
@@ -1407,7 +1410,9 @@ async function submitNewPassword(event) {
 
 
 function checkAndLogActiveTickets() {
+
     showSpinner();
+    
     console.log("am runing");
     const ticketDetails = localStorage.getItem('ticketDetails');
 
@@ -1573,8 +1578,12 @@ function checkAndLogActiveTickets() {
 
 
 function loginSavedId() {
+    
 
     showSpinner();
+
+    
+    
     const token = JSON.parse(localStorage.getItem("isActivefalseId"));
     console.log("login token for Saved details", token);
 
