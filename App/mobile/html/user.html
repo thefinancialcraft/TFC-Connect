@@ -301,11 +301,57 @@
     </div>
 
 
-    <div id="brkAlertBox"   class="brk-alrt flex-coloum">
+    <div id="brkAlertBox"   class="brk-alrt box flex-coloum">
         <img src="/TFC-Connect/App/assets/underork.gif" alt="">
         <h1>Break System </h1>
         <p>Under Construction</p>
         <button onclick="brkAlrt()"  id="hideAlrt" >Go Back</button>
+    </div>
+
+
+    <div style="display: none;"  class="mail-verify flex-coloum">
+        <h1 >Let's Update</h1>
+        <p class="p-styling">Your credentials</p>
+        <p class="p-styling">Enter the email associated with your account and we’ll send a Verification OTP.</p>
+       <img src="/TFC-Connect/App/assets/Mobile login-pana.png" alt="">
+
+
+
+       <div class="eml-verfy flex-coloum">
+       <input type="email" id="findMailId" placeholder="Enter Your Mail" name="findMailId" required="">
+       <p>Send OTP</p>
+
+
+       <div class="otp-box flex-row">
+        <input type="text" id="otp-pass-1" name="passOtp" maxlength="1" required="" oninput="moveToNext(this, 'otp-pass-2')" onkeydown="moveToPrevious(event, this, 'otp-pass-1')">
+        <input type="text" id="otp-pass-2" name="passOtp" maxlength="1" required="" oninput="moveToNext(this, 'otp-pass-3')" onkeydown="moveToPrevious(event, this, 'otp-pass-1')">
+        <input type="text" id="otp-pass-3" name="passOtp" maxlength="1" required="" oninput="moveToNext(this, 'otp-pass-4')" onkeydown="moveToPrevious(event, this, 'otp-pass-2')">
+        <input type="text" id="otp-pass-4" name="passOtp" maxlength="1" required="" oninput="moveToNext(this, 'otp-pass-5')" onkeydown="moveToPrevious(event, this, 'otp-pass-3')">
+        <input type="text" id="otp-pass-5" name="passOtp" maxlength="1" required="" oninput="moveToNext(this, 'otp-pass-6')" onkeydown="moveToPrevious(event, this, 'otp-pass-4')">
+        <input type="text" id="otp-pass-6" name="passOtp" maxlength="1" required="" onkeydown="moveToPrevious(event, this, 'otp-pass-5')">
+    </div>
+
+    <button class="login-button">Next</button>
+
+
+</div>
+
+
+       <div style="display: none;" class="eml-verfy flex-coloum">
+       <input type="password" id="enterPswd" placeholder="Enter Password" name="enterPswd" required="">
+       <input type="text" id="ReEnterPswd" placeholder="Re Enter Password" name="ReEnterPswd" required="">
+
+
+       
+
+    <button class="login-button">Submit</button>
+
+
+</div>
+
+
+
+
     </div>
 
 
@@ -1151,6 +1197,7 @@ Welcome Back, <span class="firstName"></span>
     <script src="/TFC-Connect/App/mobile/js/atten.js"></script>
     <script src="/TFC-Connect/App/mobile/js/qrScanner.js"></script>
     <script src="/TFC-Connect/App/mobile/js/signal.js"></script>
+
     
 </body>
 </html>

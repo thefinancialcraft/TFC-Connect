@@ -471,8 +471,8 @@ body::-webkit-scrollbar{
     background-color: #FAFAFA !important;
 
     .wIcn{
-        width: 30px;
-        height: 30px;
+        width: 25px;
+        /* height: 30px; */
     }
   .wifi-icon {
             width: 30px;
@@ -3023,6 +3023,102 @@ box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.1);
         top: 110%;
         opacity: 0.2;
     }
+}
+
+
+
+.mail-verify{
+     /* display: none; */
+     width: 100%;
+     height: 100%;
+     position: absolute;
+     z-index: 99;
+     background-color: #fff;
+
+     /* justify-content: space-evey; */
+  
+     transition: transform 0.7s ease-out;
+
+     .eml-verfy{
+        width: 100%;
+
+        p{
+            color: #847fa5;
+            font-weight: 400;
+            margin-top: 10px;
+            font-size: 12px;
+            width: 90%;
+            text-align: right;
+            /* margin-bottom: -px !important; */
+        }
+     }
+
+     img{
+        width: 80%;
+        height: 40%;
+        /* background-color: #fff; */
+        overflow: hidden;
+        margin-top: 20px;
+     }
+
+     h1{
+        width: 100%;
+        padding: 0 20px ;
+        color: #1E3653;
+        margin-top: 40px;
+        text-align: left !important;
+     }
+
+
+     p{
+        width: 100%;
+        padding: 0 20px ;
+        color: #2811bc;
+        font-weight: 500;
+        font-size: 18px;
+     }
+     
+     p:nth-child(3){
+        color: #847fa5;
+        font-weight: 400;
+        margin-top: 20px;
+        font-size: 14px;
+        margin-bottom: 20px;
+     }
+
+     input{
+        width: 80%;
+        height: 50px;
+
+        margin-top: 10px;
+        border-radius: 30px;
+        border: 1.5px solid #8773da8e;
+        padding: 0 15px;
+     }
+
+     button{
+        background-color: #4931e7;
+    font-size: 16px;
+    color: white;
+    /* font-weight: 500; */
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    margin-top: 20px;
+    width: 80%;
+    height: 50px;
+    /* margin-top: 10px; */
+    box-shadow: 1px 2px 30px #4931e710;
+     }
+
+    
+
+     .otp-box{
+        width: 80%;
+        gap: 10px;
+     }
+
+
 }
 
 

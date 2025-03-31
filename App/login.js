@@ -1285,6 +1285,8 @@ async function submitPassOtp(event) {
 }
 
 
+
+
 function handleSuccessfulPassVerification() {
     console.log("OTP verification successful. Proceeding to password update form.");
 
