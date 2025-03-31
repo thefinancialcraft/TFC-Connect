@@ -11,6 +11,30 @@
     padding: 0;
     box-sizing: border-box;
 }
+// Helper function to reset message display
+function resetMessageDisplay(element) {
+    element.textContent = '';
+    element.style.display = 'none';
+    element.style.backgroundColor = ''; // Reset background color
+    element.style.boxShadow = ''; // Reset box shadow
+}
+
+// Function to display messages
+function showMessage(element, message, type) {
+    element.textContent = message;
+    element.style.display = 'block'; // Show the message
+
+    if (type === 'error') {
+        element.style.backgroundColor = 'rgb(255, 72, 72)'; // Error background color
+        element.style.color = 'white'; // Error text color
+        element.style.boxShadow = '0px 5px 30px rgba(255, 0, 0, 0.292)';
+    } else if (type === 'success') {
+        element.style.backgroundColor = 'rgb(11, 239, 38)'; // Success background color
+        element.style.color = 'white'; // Success text color
+        element.style.boxShadow = '0px 5px 30px rgba(64, 255, 0, 0.292)'; // Box shadow for success
+    }
+}
+
 
 
 body{

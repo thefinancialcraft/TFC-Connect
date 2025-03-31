@@ -1903,7 +1903,92 @@ font-size: 9px;
     
     
     
-    
+      .mail-verify{
+      
+   
+        .eml-verfy{
+
+   
+           p{
+               color: #847fa5;
+               font-weight: 400;
+               margin-top: 10px;
+               font-size: 10.5px;
+               width: 90%;
+               text-align: right;
+               /* margin-bottom: -px !important; */
+           }
+        }
+   
+        img{
+           width: 80%;
+           height: 30%;
+           object-fit: contain;
+           /* background-color: #fff; */
+           overflow: hidden;
+           margin-top: 20px;
+        }
+   
+        h1{
+            font-size: 28px;
+           width: 100%;
+           padding: 0 20px ;
+           color: #1E3653;
+           margin-top: 40px;
+           text-align: left !important;
+        }
+   
+   
+        p{
+           width: 100%;
+           padding: 0 20px ;
+           color: #2811bc;
+           font-weight: 500;
+           font-size: 16px;
+        }
+        
+        p:nth-child(3){
+           color: #847fa5;
+           font-weight: 400;
+           margin-top: 20px;
+           font-size: 12px;
+           margin-bottom: 20px;
+        }
+   
+        input{
+           width: 80%;
+           height: 40px;
+   
+           margin-top: 10px;
+           border-radius: 30px;
+           border: 1.5px solid #8773da8e;
+           padding: 0 15px;
+        }
+   
+        button{
+           background-color: #4931e7;
+       font-size: 16px;
+       color: white;
+       /* font-weight: 500; */
+       border: none;
+       border-radius: 50px;
+       cursor: pointer;
+       margin-top: 25px;
+       width: 80%;
+       height: 40px;
+       /* margin-top: 10px; */
+       box-shadow: 1px 2px 30px #4931e710;
+        }
+   
+       
+   
+        .otp-box{
+           width: 80%;
+           gap: 10px;
+        }
+   
+   
+   }
     
 
 }

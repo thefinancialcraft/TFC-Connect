@@ -522,51 +522,70 @@ function submitIdLoginForm(event) {
 
     const formData = new FormData(event.target);
     const data = new URLSearchParams();
+    let server = false; // Server connection flag
 
     data.append('action', 'loginbyid');
-    const token = generateToken(); // Assuming generateToken() is defined elsewhere
-    const tokenGenTime = new Date().toISOString();
+    
+    try {
+        const token = generateToken(); // Assuming generateToken() is defined elsewhere
+        const tokenGenTime = new Date().toISOString();
 
-    data.append('token', token);
-    data.append('tokenGenTime', tokenGenTime);
+        data.append('token', token);
+        data.append('tokenGenTime', tokenGenTime);
 
-    const deviceDetails = getDeviceDetails();
-    data.append('deviceType', deviceDetails.deviceType);
-    data.append('deviceModel', deviceDetails.deviceModel);
-    data.append('os', deviceDetails.os);
-    data.append('browser', deviceDetails.browser);
+        const deviceDetails = getDeviceDetails();
+        data.append('deviceType', deviceDetails.deviceType);
+        data.append('deviceModel', deviceDetails.deviceModel);
+        data.append('os', deviceDetails.os);
+        data.append('browser', deviceDetails.browser);
+    } catch (error) {
+        showErrorMessage(document.getElementById('error-message'), "Error in generating token or fetching device details.");
+        console.error('Error:', error);
+        hideSpinner();
+        return;
+    }
 
     formData.forEach((value, key) => {
         data.append(key, value);
     });
 
-      // Log data to be sent
-      const dataToStore = Object.fromEntries(data.entries());
-      console.log('Data to store:', dataToStore);  // Debugging line
-      localStorage.setItem('sentData', JSON.stringify(dataToStore)); // Store data
+    localStorage.setItem('sentData', JSON.stringify(Object.fromEntries(data.entries())));
 
     fetch('config.json')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Failed to load config.json: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
         .then(config => {
-            const scriptUrl = config.scriptUrl;
-            return fetch(scriptUrl, {
+            if (!config.scriptUrl) {
+                throw new Error("scriptUrl is missing in config.json");
+            }
+            return fetch(config.scriptUrl, {
                 method: 'POST',
                 body: data
             });
         })
         .then(response => {
-            if (response.headers.get('content-type')?.includes('application/json')) {
-                return response.json();
-            } else {
-                throw new Error("Invalid JSON response");
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status} ${response.statusText}`);
             }
+            if (!response.headers.get('content-type')?.includes('application/json')) {
+                throw new Error("Invalid JSON response from server.");
+            }
+            return response.json();
         })
         .then(result => {
+            if (!result.server) {
+                throw new Error(" Network issue, Server connection error");
+            }
+            server = true; // Set flag to true if server is reachable
             handleResponse(result);
         })
         .catch(error => {
             console.error('Error:', error);
-            showErrorMessage(document.getElementById('error-message'), 'An error occurred while submitting the form.');
+            showErrorMessage(document.getElementById('error-message'), " Network issue, Server connection error");
             highlightInputFields();
         })
         .finally(() => {
@@ -1065,6 +1084,9 @@ function showMessage(element, message, type) {
     }
 }
 
+
+
+
 // Handle successful OTP verification
 function handleSuccessfulVerification() {
     document.getElementById("id-otp-verify-form").style.display = "none"; // Hide OTP form
@@ -1106,6 +1128,7 @@ async function sendPassOtp() {
 
     // Generate a token
     const token = Math.random().toString(36).substr(2, 9); // Random token generation
+
     console.log('Generated token:', token);
 
     var payload = {
@@ -1189,6 +1212,8 @@ function startPassTimer(duration) {
         }
     }, 1000);
 }
+
+
 
 function resetPassUi() {
     const emailInput = document.getElementById('passMailId');
@@ -1630,18 +1655,24 @@ function loginSavedId() {
     }
 }
 
-
 // Function to send token to backend
 async function sendTokenToBackend(token, tokenGenTime, deviceType, deviceModel, os, browser, action) {
-    const payload = { token: token, tokenGenTime: tokenGenTime, deviceType: deviceType, deviceModel: deviceModel, os:os, browser: browser,  action: action };
+    const payload = { token: token, tokenGenTime: tokenGenTime, deviceType: deviceType, deviceModel: deviceModel, os: os, browser: browser, action: action };
     console.log('Sending token to backend:', payload);
 
+    let server = false; // Server connection flag
 
     try {
         // Load the config.json file to get the script URL
         const configResponse = await fetch('config.json');
+        if (!configResponse.ok) {
+            throw new Error(`Failed to load config.json: ${configResponse.status} ${configResponse.statusText}`);
+        }
         const config = await configResponse.json();
         const scriptUrl = config.scriptUrl; // Get the script URL from config
+        if (!scriptUrl) {
+            throw new Error("scriptUrl is missing in config.json");
+        }
         console.log('Script URL loaded:', scriptUrl);
 
         // Make the POST request to the App Script endpoint
@@ -1653,29 +1684,39 @@ async function sendTokenToBackend(token, tokenGenTime, deviceType, deviceModel, 
             body: new URLSearchParams(payload) // Send form data
         });
 
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+        }
+
         // Check if the response is actually JSON
         const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            const result = await response.json(); // Parse JSON response
-            console.log("Server Response:", result);
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error("Invalid JSON response from server.");
+        }
 
-            if (result.status === 'success') {
-                handleResponse(result);
-              
-            } else {
-                // Display error message from the server response
-                document.getElementById('error-message').style.display = 'block';
-                document.getElementById('error-message').innerText = result.message;
-            }
+        const result = await response.json(); // Parse JSON response
+        console.log("Server Response:", result);
+
+        if (!result.server) {
+            throw new Error("Server connection error");
+        }
+
+        server = true; // Set flag to true if server is reachable
+
+        if (result.status === 'success') {
+            handleResponse(result);
         } else {
-            throw new Error("Invalid JSON response");
+            // Display error message from the server response
+            document.getElementById('error-message').style.display = 'block';
+            document.getElementById('error-message').innerText = result.message;
         }
     } catch (error) {
         console.error('Error:', error); // Log any error that occurs
-        document.getElementById('error-message').innerText = 'An error occurred';
+        showErrorMessage(document.getElementById('error-message'), " Network issue, Server connection error");
+        hideSpinner();
+        
     }
 }
-
 
 
 
@@ -1823,3 +1864,29 @@ function checkAllTicketsValidity() {
         });
 }
 
+
+
+
+// Helper function to reset message display
+function resetMessageDisplay(element) {
+    element.textContent = '';
+    element.style.display = 'none';
+    element.style.backgroundColor = ''; // Reset background color
+    element.style.boxShadow = ''; // Reset box shadow
+}
+
+// Function to display messages
+function showMessage(element, message, type) {
+    element.textContent = message;
+    element.style.display = 'block'; // Show the message
+
+    if (type === 'error') {
+        element.style.backgroundColor = 'rgb(255, 72, 72)'; // Error background color
+        element.style.color = 'white'; // Error text color
+        element.style.boxShadow = '0px 5px 30px rgba(255, 0, 0, 0.292)';
+    } else if (type === 'success') {
+        element.style.backgroundColor = 'rgb(11, 239, 38)'; // Success background color
+        element.style.color = 'white'; // Success text color
+        element.style.boxShadow = '0px 5px 30px rgba(64, 255, 0, 0.292)'; // Box shadow for success
+    }
+}

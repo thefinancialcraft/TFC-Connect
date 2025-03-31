@@ -74,7 +74,7 @@ function generateDates(attrecord, holidays = []) {
 
     // Check if the container exists
     if (!dateContainer) {
-        //console.error("Element with id 'dateContainer' not found!");
+        ////console.error("Element with id 'dateContainer' not found!");
         return;
     }
 
@@ -201,9 +201,9 @@ function generateDates(attrecord, holidays = []) {
          if (data.results && data.results.length > 0) {
              const addressComponents = data.results[0].components;
 
-             console.log("addGeo",  addressComponents);
-             console.log("addGeo",  lat);
-             console.log("addGeo",  lng);
+             //console.log("addGeo",  addressComponents);
+             //console.log("addGeo",  lat);
+             //console.log("addGeo",  lng);
  
 
              // Extract the specified components, leave blank if not available
@@ -229,7 +229,7 @@ function generateDates(attrecord, holidays = []) {
              throw new Error("No results found.");
          }
      } catch (error) {
-         //console.error("Error fetching area name:", error);
+         ////console.error("Error fetching area name:", error);
          return "Unable to fetch area name.";
      }
  }
@@ -251,7 +251,7 @@ function generateDates(attrecord, holidays = []) {
                locationElement.textContent = `${areaName}`;
            },
            (error) => {
-               //console.error("Error fetching location: ", error);
+               ////console.error("Error fetching location: ", error);
                locationElement.textContent = "Unable to fetch location.";
            },
            {
@@ -261,7 +261,7 @@ function generateDates(attrecord, holidays = []) {
            }
        );
    } else {
-       //console.error("Geolocation is not supported in this browser.");
+       ////console.error("Geolocation is not supported in this browser.");
        locationElement.textContent = "Geolocation is not supported by your browser.";
    }
  }
@@ -276,7 +276,7 @@ function generateDates(attrecord, holidays = []) {
 // Modify startCamera function to update location
 function startCamera() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      //console.error("getUserMedia is not supported in your browser.");
+      ////console.error("getUserMedia is not supported in your browser.");
       alert("Your browser does not support camera access. Please try using a modern browser like Chrome, Firefox, or Safari.");
       return;
   }
@@ -302,7 +302,7 @@ function startCamera() {
 
   .then((stream) => {
      
-      ////console.log("Camera stream started successfully.");
+      //////console.log("Camera stream started successfully.");
       videoElement = document.getElementById('videoElement');
       videoElement.srcObject = stream;
       videoElement.autoplay = true;
@@ -316,7 +316,7 @@ function startCamera() {
       camCont.style.perspective = '1500px'; // Optional styling for camera container
   })
   .catch((err) => {
-      //console.error('Error accessing the camera: ', err);
+      ////console.error('Error accessing the camera: ', err);
       alert("Error accessing the camera. Please try again.");
   });
 }
@@ -370,7 +370,7 @@ document.getElementById('cam-stp').addEventListener('click', () => {
         
         const watermarkText = `${formattedDate} ${convertTo24HourFormat(checkinTime)}`;
         
-        // console.log("watermarkText", watermarkText);
+        // //console.log("watermarkText", watermarkText);
 
 
         // Watermark and flip logic
@@ -443,8 +443,8 @@ document.getElementById('cam-stp').addEventListener('click', () => {
         const checkinData = checkInUpdate(formattedDate, convertTo24HourFormat(checkinTime));
 
         // Log checkinData and snapshot before sending to backend
-        // ////console.log("Check-in Data: ", checkinData);
-        // ////console.log("Flipped Snapshot Data (Base64): ", flippedSnapshot);
+        // //////console.log("Check-in Data: ", checkinData);
+        // //////console.log("Flipped Snapshot Data (Base64): ", flippedSnapshot);
 
         // Upload checkinData and snapshot to the backend
         uploadCheckinData(checkinData, flippedSnapshot);
@@ -515,13 +515,13 @@ function checkInUpdate(formattedDate, checkinTime) {
         let checkinTimestamp = convertToISTTimestamp(checkinStamp);
         let officeCheckinTimestamp = convertToISTTimestamp(updatedOfficeCheckIn);
         
-        console.log("checkinStamp Timestamp:", checkinTimestamp);
-        console.log("officeCheckIn Timestamp:", officeCheckinTimestamp);
+        //console.log("checkinStamp Timestamp:", checkinTimestamp);
+        //console.log("officeCheckIn Timestamp:", officeCheckinTimestamp);
         
      
 
-      console.log("checkinStamp", checkinStamp);
-      console.log("officeCheckIn", updatedOfficeCheckIn);
+      //console.log("checkinStamp", checkinStamp);
+      //console.log("officeCheckIn", updatedOfficeCheckIn);
 
 
 
@@ -569,16 +569,16 @@ function checkInUpdate(formattedDate, checkinTime) {
     const preEntryDeadline = subCustomTime(officeCheckinTimestamp, "01:15:00");
 
 
-    ////console.log('office Check in Timing', officeCheckIn);
-    ////console.log('office Check out Timing', officeTiming.checkoutTime);
-    ////console.log('User Reached at', userCheckIn);
+    //////console.log('office Check in Timing', officeCheckIn);
+    //////console.log('office Check out Timing', officeTiming.checkoutTime);
+    //////console.log('User Reached at', userCheckIn);
     
     // Output the deadlines
-    console.log("Checkin time:", truserCheckIn);
-    console.log("Late Deadline:", lateDeadline);
-    console.log("Halfday Deadline:", halfdayDeadline);
-    console.log("Absent Deadline:", absentDeadline);
-    console.log("Pre Entry Deadline:", preEntryDeadline);
+    //console.log("Checkin time:", truserCheckIn);
+    //console.log("Late Deadline:", lateDeadline);
+    //console.log("Halfday Deadline:", halfdayDeadline);
+    //console.log("Absent Deadline:", absentDeadline);
+    //console.log("Pre Entry Deadline:", preEntryDeadline);
 
 
     function convertFromISTTimestamp(timestamp) {
@@ -600,11 +600,11 @@ function checkInUpdate(formattedDate, checkinTime) {
     
     // उदाहरण के लिए
 
-    console.log("Trail time:", convertFromISTTimestamp(truserCheckIn));
-    console.log("Late Deadline:",convertFromISTTimestamp(lateDeadline));
-    console.log("Halfday Deadline:", convertFromISTTimestamp(halfdayDeadline));
-    console.log("Absent Deadline:", convertFromISTTimestamp(halfdayDeadline));
-    console.log("Pre Entry Deadline:", convertFromISTTimestamp(preEntryDeadline));
+    //console.log("Trail time:", convertFromISTTimestamp(truserCheckIn));
+    //console.log("Late Deadline:",convertFromISTTimestamp(lateDeadline));
+    //console.log("Halfday Deadline:", convertFromISTTimestamp(halfdayDeadline));
+    //console.log("Absent Deadline:", convertFromISTTimestamp(halfdayDeadline));
+    //console.log("Pre Entry Deadline:", convertFromISTTimestamp(preEntryDeadline));
 
 
 
@@ -627,8 +627,8 @@ function checkInUpdate(formattedDate, checkinTime) {
     }
 
 // Ab `statusMark` ko updated value mil gayi hai
-////console.log("Check-in Status:", checkinstatus);
-////console.log("Status Mark:", statusMark);
+//////console.log("Check-in Status:", checkinstatus);
+//////console.log("Status Mark:", statusMark);
 
 
 
@@ -693,10 +693,10 @@ function updateCheckInStatus(truserCheckIn, lateDeadline, halfdayDeadline, absen
 
 // Function to upload checkinData and snapshot with timeout, network issue handling, and local storage backup
 async function uploadCheckinData(checkinData, snapshotData) {
-    console.log("Uploading data...");
+    //console.log("Uploading data...");
 
     if (!navigator.onLine) {
-        console.error("Network issue: Please check your internet connection");
+        //console.error("Network issue: Please check your internet connection");
         saveToLocalStorage(checkinData, snapshotData);
         return;
     }
@@ -728,7 +728,7 @@ async function uploadCheckinData(checkinData, snapshotData) {
         // ✅ Data upload hone ke baad local storage se hata do
         localStorage.removeItem('punchInData');
 
-        console.log("Attendance Data uploaded successfully:", data);
+        //console.log("Attendance Data uploaded successfully:", data);
 
         document.getElementById('cam-stp').style.display = 'none';
         document.getElementById('SnapWhts').style.display = 'block';
@@ -740,7 +740,7 @@ async function uploadCheckinData(checkinData, snapshotData) {
 
         return true; // ✅ Return success
     } catch (error) {
-        console.error("Error uploading data:", error.message);
+        //console.error("Error uploading data:", error.message);
         saveToLocalStorage(checkinData, snapshotData);
         return false; // ❌ Return failure
     }
@@ -759,7 +759,7 @@ function saveToLocalStorage(checkinData, snapshotData) {
     };
     
     localStorage.setItem('punchInData', JSON.stringify(punchInData));
-    console.log("Data saved to local storage as 'punchInData' due to an error.");
+    //console.log("Data saved to local storage as 'punchInData' due to an error.");
       
     document.getElementById('cam-stp').style.display = 'none';
     document.getElementById('punchWhts').style.display = 'block';
@@ -829,7 +829,7 @@ function saveToLocalStorage(checkinData, snapshotData) {
 function startPunchInCheck() {
     if (!punchInInterval) {  // Agar interval pehle se chalu nahi hai toh hi start karo
         punchInInterval = setInterval(checkPunchInStatus, 30000);
-        console.log("Interval started.");
+        //console.log("Interval started.");
     }
 }
 
@@ -838,19 +838,19 @@ function stopPunchInCheck() {
     if (punchInInterval) {  // Agar interval chalu hai toh hi stop karo
         clearInterval(punchInInterval);
         punchInInterval = null; // Reset the variable
-        console.log("Interval stopped.");
+        //console.log("Interval stopped.");
     }
 }
 
 
 async function checkPunchInStatus() {
-    console.log("am runung checkPunchStatus");
+    //console.log("am runung checkPunchStatus");
     try {
         const punchInData = JSON.parse(localStorage.getItem('punchInData'));
         const today = new Date().toLocaleDateString('en-GB'); // DD/MM/YYYY
 
         if (punchInData && punchInData.timestamp !== today) {
-            console.log("Old data found, removing from local storage...");
+            //console.log("Old data found, removing from local storage...");
             localStorage.removeItem('punchInData');
             return;
         }
@@ -869,17 +869,17 @@ async function checkPunchInStatus() {
                 
                 if (uploadSuccess) {
                     stopPunchInCheck();
-                    console.log("checkPunchStatus uploading Done");
+                    //console.log("checkPunchStatus uploading Done");
                 }
             } else {
-                console.error("Invalid checkinData or snapshotData");
+                //console.error("Invalid checkinData or snapshotData");
             }
         } else {
-            console.log("No valid punch-in data found");
+            //console.log("No valid punch-in data found");
         }
     } catch (error) {
-        console.error("Error:", error.message);
-        console.log("Trying again...");
+        //console.error("Error:", error.message);
+        //console.log("Trying again...");
     }
 }
 
@@ -1247,14 +1247,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 function createCalendarFromSpan(attrecord, response = []) {
-    ////console.log("attrecord Data:", attrecord);
-    ////console.log("Holidays Data:", response);
+    //////console.log("attrecord Data:", attrecord);
+    //////console.log("Holidays Data:", response);
 
     const calendar = document.getElementById('calendar');
     const dateSpan = document.getElementById('crt-atn-clndr');
 
     if (!dateSpan) {
-        //console.error("Element with id 'crt-atn-clndr' not found!");
+        ////console.error("Element with id 'crt-atn-clndr' not found!");
         return;
     }
 
@@ -1265,7 +1265,7 @@ function createCalendarFromSpan(attrecord, response = []) {
     const month = monthNames.indexOf(monthText.toUpperCase());
 
     if (month === -1 || isNaN(year)) {
-        //console.error("Invalid date format in span. Expected 'MMM YYYY' format.");
+        ////console.error("Invalid date format in span. Expected 'MMM YYYY' format.");
         return;
     }
 
@@ -1471,7 +1471,7 @@ async function getCheckinInfo() {
 
         return result;
     } catch (error) {
-        console.error('Error processing active ticket:', error);
+        //console.error('Error processing active ticket:', error);
     }
 }
 
@@ -1544,7 +1544,7 @@ async function getAttenData() {
     // Retrieve the active ticket from localStorage
     const activeTicket = localStorage.getItem('receiveData');
     if (!activeTicket) {
-        //console.error('No active ticket found in localStorage.');
+        ////console.error('No active ticket found in localStorage.');
         return;
     }
 
@@ -1568,7 +1568,7 @@ async function getAttenData() {
    
       // Log the active ticket object
       const ticketObject = { UserId: userId, Token: token, atnToken: atnToken};
-      ////console.log('Active Ticket:', ticketObject);
+      //////console.log('Active Ticket:', ticketObject);
 
       // Fetch the backend URL from config.json
       const response = await fetch('/TFC-Connect/App/config.json');
@@ -1611,22 +1611,22 @@ if (selectedDateText === formattedCurrentDate) {
         resetAttenStatus();
         let noRecd = "show";
         localStorage.setItem('noRecd', noRecd);
-        ////console.log("Data available hai:", data);
+        //////console.log("Data available hai:", data);
     } else {
-        ////console.log("Data undefined hai, 'noRecd' ko 'hide' set nahi kiya gaya.");
+        //////console.log("Data undefined hai, 'noRecd' ko 'hide' set nahi kiya gaya.");
     }
 } else {
-    ////console.log("Selected date aur current date match nahi kar rahe, function execute nahi hoga.");
+    //////console.log("Selected date aur current date match nahi kar rahe, function execute nahi hoga.");
 }
 
 
-    ////console.log('data get from getAttenData:', result);
+    //////console.log('data get from getAttenData:', result);
  
     
     let checkinstatusresponse;
 
     if (!result.data || typeof result.data.Check_in_status === 'undefined') {
-        ////console.log('Check_in_status is undefined or result.data is missing');
+        //////console.log('Check_in_status is undefined or result.data is missing');
         checkinstatusresponse = 'Default value';  // Set a default value or handle it accordingly
     } else if (typeof result.data.Check_in_status === 'string') {
         // If Check_in_status is a plain string like "Absent", no need to parse it.
@@ -1636,7 +1636,7 @@ if (selectedDateText === formattedCurrentDate) {
         try {
             checkinstatusresponse = JSON.parse(result.data.Check_in_status);
         } catch (error) {
-            ////console.log('Error parsing Check_in_status:', error);
+            //////console.log('Error parsing Check_in_status:', error);
             checkinstatusresponse = result.data.Check_in_status;  // Fallback to raw value
         }
     }
@@ -1689,19 +1689,19 @@ function hideSpinner() {
 async function checkoutFuntion() {
     showSpinner();
     const checkinstatusresponse = localStorage.getItem('Check_in_status');
-    ////console.log(`Data of getAttenData:`, checkinstatusresponse);
+    //////console.log(`Data of getAttenData:`, checkinstatusresponse);
 
     // Ensure the checkinstatusresponse is valid
     if (!checkinstatusresponse) {
-        ////console.log('checkinstatusresponse is not defined or is null.');
+        //////console.log('checkinstatusresponse is not defined or is null.');
         return;
     }
-    ////console.log('checkinstatusresponse:', checkinstatusresponse);
+    //////console.log('checkinstatusresponse:', checkinstatusresponse);
 
     // Get office timing from localStorage
     const officeTiming = JSON.parse(localStorage.getItem('officeTiming'));
     if (!officeTiming || !officeTiming.checkoutTime) {
-        ////console.log('Checkout time not found in localStorage.');
+        //////console.log('Checkout time not found in localStorage.');
         return;
     }
     
@@ -1714,17 +1714,17 @@ async function checkoutFuntion() {
         timeZone: 'Asia/Kolkata', // Indian Standard Time
     });
 
-    ////console.log(`Checkout time: ${userCheckOut}, Current time: ${currentTime}`);
+    //////console.log(`Checkout time: ${userCheckOut}, Current time: ${currentTime}`);
 
     // Calculate the time difference between currentTime and userCheckOut
     const latediffrence = calculateTimeDifference(currentTime, userCheckOut);
 
-    ////console.log(`Time difference: ${latediffrence}`);
+    //////console.log(`Time difference: ${latediffrence}`);
 
     // Check if the current time is earlier than the checkout time - 15 minutes
     const fifteenMinutesBeforeCheckout = subtractTime(userCheckOut, "00:15:00");  // Subtract 15 minutes
 
-    ////console.log(`Fifteen minutes before checkout: ${fifteenMinutesBeforeCheckout}`);
+    //////console.log(`Fifteen minutes before checkout: ${fifteenMinutesBeforeCheckout}`);
 
     let checkOutStatus = "On Time";  // This can be "On Time", "Halfday", "Late", or "Absent"
 let markstatus = "P";
@@ -1740,12 +1740,12 @@ if (checkinstatusresponse === "On Time") {
     markstatus = "A";  // A for Absent
 }
 
-////console.log(markstatus);
+//////console.log(markstatus);
 
 
     // Compare the current time and fifteen minutes before checkout directly as strings
     if (currentTime < fifteenMinutesBeforeCheckout) {
-        ////console.log(`User is early by ${currentTime} compared to ${fifteenMinutesBeforeCheckout}.`);
+        //////console.log(`User is early by ${currentTime} compared to ${fifteenMinutesBeforeCheckout}.`);
     
         // Check the value of checkinstatusresponse
         if (checkinstatusresponse === "On Time") {
@@ -1753,32 +1753,32 @@ if (checkinstatusresponse === "On Time") {
             markstatus = "H";
             markstatusReason = `Due to the early exit by ${latediffrence}`;
 
-            ////console.log("status update", checkOutStatus);
+            //////console.log("status update", checkOutStatus);
         } else if (checkinstatusresponse === "Late") {
             checkOutStatus = "Halfday";
             markstatus = "H";
             markstatusReason = `Due to the early exit by ${latediffrence}`;
-            ////console.log("status update", checkOutStatus);
+            //////console.log("status update", checkOutStatus);
         } 
         else if (checkinstatusresponse === "Halfday") {
             checkOutStatus = "Absent";
             markstatus = "A";
             markstatusReason = `Due to the early exit by ${latediffrence}`;
-            ////console.log("status update", checkOutStatus);
+            //////console.log("status update", checkOutStatus);
         } else if (checkinstatusresponse === "Absent") {
             checkOutStatus = "Absent";
             markstatus = "A";
-            ////console.log("status update", checkOutStatus);
+            //////console.log("status update", checkOutStatus);
         }
     
     } else {
         // If the user is not early enough, no change
-        ////console.log(`User is not early enough to trigger status change.`);
+        //////console.log(`User is not early enough to trigger status change.`);
     }
 
     const activeTicket = localStorage.getItem('receiveData');
     if (!activeTicket) {
-        //console.error('No active ticket found in localStorage.');
+        ////console.error('No active ticket found in localStorage.');
         
         return;
 
@@ -1812,7 +1812,7 @@ if (checkinstatusresponse === "On Time") {
         decision: "By Attendance",
         markstatusReason: markstatusReason
     };
-    ////console.log('checkout reponse sending data:', ticketObject);
+    //////console.log('checkout reponse sending data:', ticketObject);
 
     const data = new URLSearchParams(ticketObject);
 
@@ -1832,7 +1832,7 @@ if (checkinstatusresponse === "On Time") {
     
     // Handle the response if needed
     const result = await backendResponse.json();
-    ////console.log('Backend from checkout:', result);
+    //////console.log('Backend from checkout:', result);
     const checkOutBtn = document.getElementById('checkOutBtn');
 
     // Clear the button's current content
@@ -2046,7 +2046,7 @@ function updateMonthDates(index) {
     let endSpan = document.querySelector(`.act-end-${index}`);
     
     if (!monthSpan || !startSpan || !endSpan) {
-        //console.error("One or more elements not found for index:", index);
+        ////console.error("One or more elements not found for index:", index);
         return;
     }
     
@@ -2054,7 +2054,7 @@ function updateMonthDates(index) {
     let date = new Date(monthYearText);
     
     if (isNaN(date.getTime())) {
-        //console.error("Invalid date format in act-mnth-slt-", index);
+        ////console.error("Invalid date format in act-mnth-slt-", index);
         return;
     }
     
@@ -2099,7 +2099,7 @@ observeMonthSpan(2);
 
 
 function checkInOutDate(data) {
-    ////console.log("Data received in checkInOutDate: ", data); // Log the data to check what's being passed
+    //////console.log("Data received in checkInOutDate: ", data); // Log the data to check what's being passed
 
 
 // Get the date from the element with class "selected-date-text"
@@ -2119,12 +2119,12 @@ if (selectedDateText === formattedCurrentDate) {
     if (typeof data !== "undefined") {
         let noRecd = "hide";
         localStorage.setItem('noRecd', noRecd);
-        ////console.log("Data available hai:", data);
+        //////console.log("Data available hai:", data);
     } else {
-        ////console.log("Data undefined hai, 'noRecd' ko 'hide' set nahi kiya gaya.");
+        //////console.log("Data undefined hai, 'noRecd' ko 'hide' set nahi kiya gaya.");
     }
 } else {
-    ////console.log("Selected date aur current date match nahi kar rahe, function execute nahi hoga.");
+    //////console.log("Selected date aur current date match nahi kar rahe, function execute nahi hoga.");
 }
 
 
@@ -2132,13 +2132,13 @@ if (selectedDateText === formattedCurrentDate) {
 
     // Check if the element exists
     if (!checkInOutDate) {
-        //console.error("Element with ID 'checkInOutDate' not found in the DOM!");
+        ////console.error("Element with ID 'checkInOutDate' not found in the DOM!");
         return;
     }
 
     const dateValue = checkInOutDate.innerText.trim(); // Get the text content of the span
     if (!dateValue || dateValue === "Select Date") {
-        ////console.log("No valid date selected.");
+        //////console.log("No valid date selected.");
         return;
     }
 
@@ -2147,32 +2147,32 @@ if (selectedDateText === formattedCurrentDate) {
 
     if (parsedDate) {
         const formattedDate = formatDateToDDMMYY(parsedDate);
-        ////console.log(`Formatted date (dd/mm/yy): ${formattedDate}`);
+        //////console.log(`Formatted date (dd/mm/yy): ${formattedDate}`);
 
         // Check if the formatted date matches today's date
         const currentDate = getCurrentDateInDDMMYY();
         if (formattedDate === currentDate) {
-            ////console.log("Formatted date matches the current date. Running function A...");
+            //////console.log("Formatted date matches the current date. Running function A...");
             updateAtnCells(data);
         } else {
-            ////console.log("Formatted date does not match the current date. Skipping function A.", formattedDate);
+            //////console.log("Formatted date does not match the current date. Skipping function A.", formattedDate);
             updateAtnCellsByDate(formattedDate);
             
         }
     } else {
-        ////console.log("Invalid date format. Please use 'DD MMM YYYY'");
+        //////console.log("Invalid date format. Please use 'DD MMM YYYY'");
     }
 }
 
 
 function activityDataRecord() {
-    ////console.log("Function running: activityDataRecord");
+    //////console.log("Function running: activityDataRecord");
 
     // Retrieve and parse the active ticket data from localStorage
     const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
 
     if (!activeTicket) {
-        //console.error("No active ticket found.");
+        ////console.error("No active ticket found.");
         return;
     }
 
@@ -2180,8 +2180,8 @@ function activityDataRecord() {
     const tktuserToken = activeTicket.token;
     const tktuserId = activeTicket.userId;
 
-    ////console.log("Token:", tktuserToken);
-    ////console.log("UserId:", tktuserId);
+    //////console.log("Token:", tktuserToken);
+    //////console.log("UserId:", tktuserId);
 
     // Create data object to send to the backend, with action included
     const data = new URLSearchParams();
@@ -2189,7 +2189,7 @@ function activityDataRecord() {
     data.append('token', tktuserToken);
     data.append('userId', tktuserId);
 
-    ////console.log('Data being sent from activityDataRecord:', data.toString());
+    //////console.log('Data being sent from activityDataRecord:', data.toString());
 
     // Fetch config.json to get script URL
     fetch('/TFC-Connect/App/config.json')
@@ -2221,11 +2221,11 @@ function activityDataRecord() {
             markActivity(result.data);
             markAttnDays(result.data);
             findHoliday(result.data)
-            console.log("Server response activityDataRecord:", result);
+            //console.log("Server response activityDataRecord:", result);
 
         })
         .catch(error => {
-            //console.error("Error in activityDataRecord:", error);
+            ////console.error("Error in activityDataRecord:", error);
         });
 
         markActivity();  
@@ -2236,7 +2236,7 @@ function markActivity(data) {
     // ✅ Ensure `data` is always an object, otherwise use fake data
     // 🔹 Agar data null ya undefined hai, toh function exit kar de
 
-    console.log("markac", data);
+    //console.log("markac", data);
   
     let activityContainer = document.getElementById("activityContainer");
     let allActCnt = document.getElementById("allActCnt");
@@ -2245,7 +2245,7 @@ function markActivity(data) {
 
     // Check karein agar sirf ek entry hai aur sabhi values empty hain
     if (entries.length === 1 && Object.values(entries[0]).every(val => val === "")) {
-        console.warn("⚠ Empty data detected, skipping UI rendering.");
+        // console.warn("⚠ Empty data detected, skipping UI rendering.");
         return;
     }
     
@@ -2427,7 +2427,7 @@ function getCurrentDateInDDMMYY() {
 function updateAtnCells(data) {
     
     if (data !== undefined) {
-        ////console.log("Data received in updateAtnCells: ", data); // Log the data if it's not undefined
+        //////console.log("Data received in updateAtnCells: ", data); // Log the data if it's not undefined
 
         resetAttenStatus();
      
@@ -2478,7 +2478,7 @@ function updateAtnCells(data) {
         
         
     } else {
-        ////console.log("Data received in: undifined", );
+        //////console.log("Data received in: undifined", );
     }
 }
 
@@ -2486,17 +2486,17 @@ setInterval (updateAtnCellsByDate, 1000);
 
 async function updateAtnCellsByDate(formattedDate) {
     if (!formattedDate) {
-        //console.error("formattedDate is not defined or invalid");
+        ////console.error("formattedDate is not defined or invalid");
         return; // Return early if formattedDate is not available
     }
 
-    ////console.log("Data received in updateAtnCellsByDate: ", formattedDate);
+    //////console.log("Data received in updateAtnCellsByDate: ", formattedDate);
 
     try {
         // Parse the JSON string from localStorage
         const activeTicket = localStorage.getItem('receiveData'); // Assuming activeTicket is stored in localStorage
         if (!activeTicket) {
-            //console.error("No active ticket data found in localStorage.");
+            ////console.error("No active ticket data found in localStorage.");
             return; // Return early if there is no active ticket data
         }
         const ticketData = JSON.parse(activeTicket);
@@ -2505,7 +2505,7 @@ async function updateAtnCellsByDate(formattedDate) {
 
         // Log the active ticket object
         const ticketObject = { UserId: userId, Token: token };
-        ////console.log('Active Ticket:', ticketObject);
+        //////console.log('Active Ticket:', ticketObject);
 
         // Extract day, month, and year from formattedDate (assuming it's in the format "dd/mm/yy")
         const dateParts = formattedDate.split('/');
@@ -2518,7 +2518,7 @@ async function updateAtnCellsByDate(formattedDate) {
 
         // Create the atnToken using the day, month, year, and last 3 digits of userId
         const atnToken = `${day}${month}${year}${last3Digits}`;
-        ////console.log('Generated ATN Token:', atnToken);
+        //////console.log('Generated ATN Token:', atnToken);
 
         // Fetch the backend URL from config.json
         const response = await fetch('/TFC-Connect/App/config.json');
@@ -2543,12 +2543,12 @@ async function updateAtnCellsByDate(formattedDate) {
 
       
         // Log the backend response before further processing
-        ////console.log("Backend Response:", backendResponse);
+        //////console.log("Backend Response:", backendResponse);
 
         // Check if the response is successful
         if (backendResponse.ok) {
             const backendData = await backendResponse.json();
-            ////console.log("Backend response data:", backendData);
+            //////console.log("Backend response data:", backendData);
             // Handle the backend data as needed
             if (backendData && backendData.data) {
 
@@ -2563,7 +2563,7 @@ async function updateAtnCellsByDate(formattedDate) {
 
             } else {
 
-                ////console.log("No data found in backend response.");
+                //////console.log("No data found in backend response.");
                 resetAttenStatus();
                
                 let noRecd ;
@@ -2577,11 +2577,11 @@ async function updateAtnCellsByDate(formattedDate) {
             }
         } else {
             // If backend request is not OK
-            //console.error("Backend request failed with status:", backendResponse.status);
+            ////console.error("Backend request failed with status:", backendResponse.status);
             resetAttenStatus(); // Call a function to reset the status
         }
     } catch (error) {
-        //console.error("Error in updateAtnCellsByDate:", error);
+        ////console.error("Error in updateAtnCellsByDate:", error);
         resetAttenStatus(); // Call a function to reset the status
     }
 }
@@ -2590,7 +2590,7 @@ async function updateAtnCellsByDate(formattedDate) {
 
 function showRecdfun(){
     const noRecdRes = localStorage.getItem('noRecd');
-    ////console.log("noRecdRes", noRecdRes);
+    //////console.log("noRecdRes", noRecdRes);
     
     if(noRecdRes === "show"){
         document.getElementById('crd-bx-cnt').style.display = "none";
@@ -2603,7 +2603,7 @@ function showRecdfun(){
 
 function hideRecdfun(){
     const noRecdRes = localStorage.getItem('noRecd');
-    ////console.log("noRecdRes", noRecdRes);
+    //////console.log("noRecdRes", noRecdRes);
     
     if(noRecdRes === "hide"){
         document.getElementById('crd-bx-cnt').style.display = "block";
@@ -2693,13 +2693,13 @@ function showAttnRecord(){
 
 
 function findHoliday(attrecord) {
-    ////console.log("Function running: findHoliday");
+    //////console.log("Function running: findHoliday");
 
     // Retrieve and parse the active ticket data from localStorage
     const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
 
     if (!activeTicket) {
-        //console.error("No active ticket found.");
+        ////console.error("No active ticket found.");
         return;
     }
 
@@ -2707,8 +2707,8 @@ function findHoliday(attrecord) {
     const tktuserToken = activeTicket.token;
     const tktuserId = activeTicket.userId;
 
-    ////console.log("Token:", tktuserToken);
-    ////console.log("UserId:", tktuserId);
+    //////console.log("Token:", tktuserToken);
+    //////console.log("UserId:", tktuserId);
 
     // Create data object to send to the backend, with action included
     const data = new URLSearchParams();
@@ -2716,7 +2716,7 @@ function findHoliday(attrecord) {
     data.append('token', tktuserToken);
     data.append('userId', tktuserId);
 
-    ////console.log('Data being sent from findHoliday:', data.toString());
+    //////console.log('Data being sent from findHoliday:', data.toString());
 
     // Fetch config.json to get script URL
     fetch('/TFC-Connect/App/config.json')
@@ -2745,14 +2745,14 @@ function findHoliday(attrecord) {
             return response.json();
         })
         .then(result => {
-            ////console.log("Server response findHoliday:", result);
+            //////console.log("Server response findHoliday:", result);
             createCalendarFromSpan(attrecord, result.holidays);
             updateHoliday( result.holidays );
             generateDates(attrecord, result.holidays);
             chkInOutRcd(attrecord);
         })
         .catch(error => {
-            //console.error("Error in findHoliday:", error);
+            ////console.error("Error in findHoliday:", error);
         });
 }
 
@@ -2800,7 +2800,7 @@ function updateHoliday(response) {
     });
 
     // Holiday details ko console me print karo
-    // console.log("📅 Holiday Details:", holidayDetails);
+    // //console.log("📅 Holiday Details:", holidayDetails);
 
     // Generate attendance table with holiday data
     findSalary(holidayDetails);
@@ -2824,7 +2824,7 @@ function updateHoliday(response) {
 function markAttnDays(response) {
 
 
-    //console.log("markAttnDays record", response);
+    ////console.log("markAttnDays record", response);
     
     let presentCount = 0;
     let lateCount = 0;
@@ -2908,7 +2908,7 @@ function markAttnDays(response) {
 
 
 function chkInOutRcd(attrecord) {
-    //console.log("Updated attrecord by chkInOutRcd", attrecord);
+    ////console.log("Updated attrecord by chkInOutRcd", attrecord);
 
     // Function to format the date from 'yyyy-mm-dd' to 'dd mmm yy'
     function formatDate(dateString) {
@@ -3096,7 +3096,7 @@ function findSalary(holidayDetails) {
             return response.json();
         })
         .then(result => {
-            console.log("Raw Server response:", result);
+            //console.log("Raw Server response:", result);
 
             
 
@@ -3219,11 +3219,11 @@ function findSalary(holidayDetails) {
 
             localStorage.setItem("userDetails", JSON.stringify(result.userDetails));
 
-            // console.log("Processed Salary Data (IST):", salaryData);
+            // //console.log("Processed Salary Data (IST):", salaryData);
             generateAttendanceTable(holidayDetails , salaryData, result.userDetails.Join_date, result.userDetails.isCaller, isJustificationData, justPercentData, paidLeaveData, incentiveData );
         })
         .catch(error => {
-            console.error("Error in findSalary:", error);
+            //console.error("Error in findSalary:", error);
         });
 }
 
@@ -3233,11 +3233,11 @@ function generateAttendanceTable(holidayDetails, salaryData, userDetails, isCall
     const currentDate = new Date().toISOString().split('T')[0]; // आज की तारीख YYYY-MM-DD
     
 
-    console.log("isJustificationDataresult", incentiveData);
+    //console.log("isJustificationDataresult", incentiveData);
 
 
 
-    // console.log("userdetailsresult", userDetails);
+    // //console.log("userdetailsresult", userDetails);
 
     const userDate = new Date(userDetails);
     const formattedUserDate = userDate.toLocaleString('en-US', { month: 'short', year: 'numeric' }).toUpperCase();
@@ -3662,7 +3662,7 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
         }))
         .filter(item => item.Days !== undefined);
 
-    console.table(tableData);
+    // console.table(tableData);
 
     // ✅ **डेटा को `updateAttendDays()` फ़ंक्शन में भेजें**
     updateAttendDays(tableData);
@@ -3671,11 +3671,11 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
 
 function updateAttendDays(data) {
     if (!data || !Array.isArray(data)) {
-        console.error("🚨 Error: updateAttendDays() received invalid data:", data);
+        //console.error("🚨 Error: updateAttendDays() received invalid data:", data);
         return; // Stop execution if data is undefined or not an array
     }
 
-    // console.log("🔄 Updating Attendance Data:", data);
+    // //console.log("🔄 Updating Attendance Data:", data);
 
     // Helper function to get `Days` value and format it as "01 Days"
     const getValue = (title, isCurrency = false, noFormat = false) => {
@@ -3714,12 +3714,12 @@ function updateAttendDays(data) {
 
 
 function updateProgressBars() {
-    console.log("udpatebarspercent runing");
+    //console.log("udpatebarspercent runing");
     document.querySelectorAll('.progress-wrapper').forEach(section => {
         let key = section.getAttribute('data-key');  // LocalStorage key से data fetch करने के लिए
         let percentage = localStorage.getItem(key) || "0%";
 
-        console.log("udpatebarspercent", percentage);
+        //console.log("udpatebarspercent", percentage);
 
         // `%` हटाकर integer में बदलना
         percentage = parseInt(percentage.replace('%', ''));
@@ -3736,3 +3736,5 @@ function updateProgressBars() {
         } 
     });
 }
+
+

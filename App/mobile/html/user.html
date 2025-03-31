@@ -18,10 +18,11 @@
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
 
 
-
     <meta name="description" content="Welcome to the user page where you can manage your account.">
 </head>
 <body>
+
+    <div class="error-message" style="display: none;" id="error-message"></div>
 
  
     <div id="cam-cnt" class="flex cmr-cnt">
@@ -180,7 +181,7 @@
                 <img class="userImage" src="/TFC-Connect/App/assets/user.png" alt="">
                 <h3 class="userName"></h3>
                 <div class="usrDtl flex-row">
-                    <p class="userId"></p>
+                    <p id="id=userId" class="userId"></p>
                     <span></span>
                     <p class="userType"></p>
                 </div>
@@ -309,47 +310,78 @@
     </div>
 
 
-    <div style="display: none;"  class="mail-verify flex-coloum">
+    <div  id="mailVerify" class="mail-verify flex-coloum">
+
+
         <h1 >Let's Update</h1>
         <p class="p-styling">Your credentials</p>
-        <p class="p-styling">Enter the email associated with your account and we’ll send a Verification OTP.</p>
-       <img src="/TFC-Connect/App/assets/Mobile login-pana.png" alt="">
+        <p id="rstPswdMsg" class="p-styling">Enter the email associated with your account and we’ll send a Verification OTP.</p>
+       <img id="rstImg1" src="/TFC-Connect/App/assets/Mobile login-pana.png" alt="">
+       <img id="rstImg2" src="/TFC-Connect/App/assets/Enter OTP-cuate.png" style="display: none;" alt="">
+       <img id="rstImg3" src="/TFC-Connect/App/assets/Mobile encryption-pana.png" style="display: none;" alt="">
 
 
-
-       <div class="eml-verfy flex-coloum">
-       <input type="email" id="findMailId" placeholder="Enter Your Mail" name="findMailId" required="">
-       <p>Send OTP</p>
+       <form  id="pass-otp-verify-form" onsubmit="submitPassOtp(event)" class="login-form otp-verify">
 
 
-       <div class="otp-box flex-row">
-        <input type="text" id="otp-pass-1" name="passOtp" maxlength="1" required="" oninput="moveToNext(this, 'otp-pass-2')" onkeydown="moveToPrevious(event, this, 'otp-pass-1')">
-        <input type="text" id="otp-pass-2" name="passOtp" maxlength="1" required="" oninput="moveToNext(this, 'otp-pass-3')" onkeydown="moveToPrevious(event, this, 'otp-pass-1')">
-        <input type="text" id="otp-pass-3" name="passOtp" maxlength="1" required="" oninput="moveToNext(this, 'otp-pass-4')" onkeydown="moveToPrevious(event, this, 'otp-pass-2')">
-        <input type="text" id="otp-pass-4" name="passOtp" maxlength="1" required="" oninput="moveToNext(this, 'otp-pass-5')" onkeydown="moveToPrevious(event, this, 'otp-pass-3')">
-        <input type="text" id="otp-pass-5" name="passOtp" maxlength="1" required="" oninput="moveToNext(this, 'otp-pass-6')" onkeydown="moveToPrevious(event, this, 'otp-pass-4')">
-        <input type="text" id="otp-pass-6" name="passOtp" maxlength="1" required="" onkeydown="moveToPrevious(event, this, 'otp-pass-5')">
-    </div>
+        <div class="input-group flex-coloum">
+            <label for="passMailId">Mail Id</label>
 
-    <button class="login-button">Next</button>
+            <input type="email" id="passMailId" name="passMailId" required="" style="border: 1.5px solid rgba(135, 115, 218, 0.557);">
+
+            <a href="#" onclick="sendPassOtp()" id="sendPassOtp">Send OTP</a>
+
+            <a id="timer-display-pass" style="display: none;"></a>
+
+        </div>
+
+        <div class="input-group otp flex-coloum">
+            <label for="password">Enter OTP</label>
+
+            <div class="otp-box flex-row">
+                <input type="text" id="otp-pass-1" name="passOtp" maxlength="1" required="" oninput="moveToNext(this, 'otp-pass-2')" onkeydown="moveToPrevious(event, this, 'otp-pass-1')" style="border: 1.5px solid rgba(135, 115, 218, 0.557);">
+                <input type="text" id="otp-pass-2" name="passOtp" maxlength="1" required="" oninput="moveToNext(this, 'otp-pass-3')" onkeydown="moveToPrevious(event, this, 'otp-pass-1')" style="border: 1.5px solid rgba(135, 115, 218, 0.557);">
+                <input type="text" id="otp-pass-3" name="passOtp" maxlength="1" required="" oninput="moveToNext(this, 'otp-pass-4')" onkeydown="moveToPrevious(event, this, 'otp-pass-2')" style="border: 1.5px solid rgba(135, 115, 218, 0.557);">
+                <input type="text" id="otp-pass-4" name="passOtp" maxlength="1" required="" oninput="moveToNext(this, 'otp-pass-5')" onkeydown="moveToPrevious(event, this, 'otp-pass-3')" style="border: 1.5px solid rgba(135, 115, 218, 0.557);">
+                <input type="text" id="otp-pass-5" name="passOtp" maxlength="1" required="" oninput="moveToNext(this, 'otp-pass-6')" onkeydown="moveToPrevious(event, this, 'otp-pass-4')" style="border: 1.5px solid rgba(135, 115, 218, 0.557);">
+                <input type="text" id="otp-pass-6" name="passOtp" maxlength="1" required="" onkeydown="moveToPrevious(event, this, 'otp-pass-5')" style="border: 1.5px solid rgba(135, 115, 218, 0.557);">
+            </div>
+        </div>
+
+        <div class="btn-cnt flex-coloum">
+
+            <button type="submit" class="login-button">Submit OTP</button> 
+        </div>
+
+        </form>
 
 
-</div>
+        <form id="upd-pass-form" style="display: none;"  class="login-form upd-pass" onsubmit="submitNewPassword(event) ">
 
+            
+            <div class="input-group flex-coloum">
+                <label for="new-password">New Password</label>
+                <input type="password" id="new-password" name="newPassword" required>
+            </div>
 
-       <div style="display: none;" class="eml-verfy flex-coloum">
-       <input type="password" id="enterPswd" placeholder="Enter Password" name="enterPswd" required="">
-       <input type="text" id="ReEnterPswd" placeholder="Re Enter Password" name="ReEnterPswd" required="">
+            <div class="input-group flex-coloum">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirmPassword" required>
+            </div>
 
+            
+            <!-- Hidden fields to store userId and email -->
+            <input type="hidden" id="user-id" name="userId">
+            <input type="hidden" id="email" name="email">
+        
+          
+            
+            <div class="btn-cnt flex-coloum">
 
-       
-
-    <button class="login-button">Submit</button>
-
-
-</div>
-
-
+                <button type="submit" class="login-button">Update Password</button> 
+            </div>
+      
+        </form>
 
 
     </div>
@@ -1195,8 +1227,9 @@ Welcome Back, <span class="firstName"></span>
     <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
     <script src="/TFC-Connect/App/mobile/js/user.js"></script>
     <script src="/TFC-Connect/App/mobile/js/atten.js"></script>
-    <script src="/TFC-Connect/App/mobile/js/qrScanner.js"></script>
+    <!-- <script src="/TFC-Connect/App/mobile/js/qrScanner.js"></script> -->
     <script src="/TFC-Connect/App/mobile/js/signal.js"></script>
+    <script src="/TFC-Connect/App/mobile/js/resetPass.js"></script>
 
     
 </body>
