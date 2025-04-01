@@ -475,7 +475,7 @@ function checkInUpdate(formattedDate, checkinTime) {
      const seconds = String(currentDate.getSeconds()).padStart(2, '0');
      
      // Generate the atn_token
-     const atnToken = `${day}${month}${year}${last3Digits}`;    
+     const atnToken = `${year}${month}${day}${last3Digits}`;   
 
      const officeTiming = JSON.parse(localStorage.getItem('officeTiming'));
 
@@ -569,16 +569,16 @@ function checkInUpdate(formattedDate, checkinTime) {
     const preEntryDeadline = subCustomTime(officeCheckinTimestamp, "01:15:00");
 
 
-    //////console.log('office Check in Timing', officeCheckIn);
-    //////console.log('office Check out Timing', officeTiming.checkoutTime);
-    //////console.log('User Reached at', userCheckIn);
+    console.log('office Check in Timing', officeCheckIn);
+    console.log('office Check out Timing', officeTiming.checkoutTime);
+    console.log('User Reached at', userCheckIn);
     
-    // Output the deadlines
-    //console.log("Checkin time:", truserCheckIn);
-    //console.log("Late Deadline:", lateDeadline);
-    //console.log("Halfday Deadline:", halfdayDeadline);
-    //console.log("Absent Deadline:", absentDeadline);
-    //console.log("Pre Entry Deadline:", preEntryDeadline);
+
+    console.log("Checkin time:", truserCheckIn);
+    console.log("Late Deadline:", lateDeadline);
+    console.log("Halfday Deadline:", halfdayDeadline);
+    console.log("Absent Deadline:", absentDeadline);
+    console.log("Pre Entry Deadline:", preEntryDeadline);
 
 
     function convertFromISTTimestamp(timestamp) {
@@ -600,11 +600,11 @@ function checkInUpdate(formattedDate, checkinTime) {
     
     // उदाहरण के लिए
 
-    //console.log("Trail time:", convertFromISTTimestamp(truserCheckIn));
-    //console.log("Late Deadline:",convertFromISTTimestamp(lateDeadline));
-    //console.log("Halfday Deadline:", convertFromISTTimestamp(halfdayDeadline));
-    //console.log("Absent Deadline:", convertFromISTTimestamp(halfdayDeadline));
-    //console.log("Pre Entry Deadline:", convertFromISTTimestamp(preEntryDeadline));
+    console.log("Trail time:", convertFromISTTimestamp(truserCheckIn));
+    console.log("Late Deadline:",convertFromISTTimestamp(lateDeadline));
+    console.log("Halfday Deadline:", convertFromISTTimestamp(halfdayDeadline));
+    console.log("Absent Deadline:", convertFromISTTimestamp(halfdayDeadline));
+    console.log("Pre Entry Deadline:", convertFromISTTimestamp(preEntryDeadline));
 
 
 
@@ -806,6 +806,8 @@ function saveToLocalStorage(checkinData, snapshotData) {
 
 
   });
+
+
 
   // bcToDash button functionality: Stop the stream and hide cam-cnt, reset UI
   document.getElementById('punchToDash').addEventListener('click', () => {
@@ -1526,9 +1528,123 @@ noRecd = "hide";
 localStorage.setItem('noRecd', noRecd);
 
 
+
+
+function showRecdfun(){
+    const noRecdRes = localStorage.getItem('noRecd');
+    //////console.log("noRecdRes", noRecdRes);
+    
+    if(noRecdRes === "show"){
+        document.getElementById('crd-bx-cnt').style.display = "none";
+        document.getElementById('noRecd').style.display = "flex";
+    }
+
+
+}
+
+
+function hideRecdfun(){
+    const noRecdRes = localStorage.getItem('noRecd');
+    //////console.log("noRecdRes", noRecdRes);
+    
+    if(noRecdRes === "hide"){
+        document.getElementById('crd-bx-cnt').style.display = "block";
+        document.getElementById('noRecd').style.display = "none";
+    }
+
+
+}
+
+
+function resetToCurrentDate(){
+    updateAttenStatus();
+    let noRecd = "hide";
+    localStorage.setItem('noRecd', noRecd);
+}
+
+
+// Reset function to clear all status fields
+function resetAttenStatus() {
+    document.getElementById("checkInTime").textContent = "--:--";
+    document.getElementById("checkOutTime").textContent = "--:--";
+    document.getElementById("checkInStatus").textContent = "------";
+    document.getElementById("checkOutStatus").textContent = "------";
+    document.getElementById("finalStatus").textContent = "------";
+    document.getElementById("finalDecision").textContent = "------";
+}
+
+function updateAttenStatus(){
+    document.getElementById("checkInTime").textContent = "loading...";
+      document.getElementById("checkOutTime").textContent = "loading...";
+      document.getElementById("checkInStatus").textContent = "loading...";
+      document.getElementById("checkOutStatus").textContent = "loading...";
+      document.getElementById("finalStatus").textContent = "loading...";
+      document.getElementById("finalDecision").textContent = "loading...";
+}
+
+
+function brkAlrt(){
+    const brkAlertBox = document.getElementById('brkAlertBox');
+    
+    if (brkAlertBox) {
+        brkAlertBox.classList.remove('visible'); // Slide out to hide
+    }
+}
+
+function showAlrt(){
+    const brkAlertBox = document.getElementById('brkAlertBox');
+    
+    if (brkAlertBox) {
+        brkAlertBox.classList.add('visible'); // Slide in to show
+    }
+}
+
+
+
+
+function showActivity(){
+    const allActivity = document.getElementById('allActivity');
+    
+    if (allActivity) {
+        allActivity.classList.add('visible'); // Slide out to hide
+    }
+}
+
+
+
+
+function hideActivity(){
+    const allActivity = document.getElementById('allActivity');
+    
+    if (allActivity) {
+        allActivity.classList.remove('visible'); // Slide in to show
+    }
+}
+
+function hideAttnRecord(){
+    const allActivity = document.getElementById('allAttnRecord');
+    
+    if (allActivity) {
+        allActivity.classList.remove('visible'); // Slide in to show
+    }
+}
+
+function showAttnRecord(){
+    const allActivity = document.getElementById('allAttnRecord');
+    
+    if (allActivity) {
+        allActivity.classList.add('visible'); // Slide out to hide
+    }
+}
+
+
+
+
+
+
 setInterval(getCheckinInfo, 1000);
 setInterval(activityDataRecord, 1000);
-setInterval(getAttenData, 5000);
+setInterval(getAttenData, 1000);
 setInterval(showRecdfun, 1000);
 setInterval(hideRecdfun, 1000);
 setInterval(findHoliday, 1000);
@@ -1540,7 +1656,9 @@ setInterval(updateProgressBars, 1000);
 
 
 
+
 async function getAttenData() {
+   
     // Retrieve the active ticket from localStorage
     const activeTicket = localStorage.getItem('receiveData');
     if (!activeTicket) {
@@ -1564,11 +1682,11 @@ async function getAttenData() {
      const seconds = String(currentDate.getSeconds()).padStart(2, '0');
      
      // Generate the atn_token
-     const atnToken = `${day}${month}${year}${last3Digits}`;
+     const atnToken = `${year}${month}${day}${last3Digits}`;
    
       // Log the active ticket object
       const ticketObject = { UserId: userId, Token: token, atnToken: atnToken};
-      //////console.log('Active Ticket:', ticketObject);
+    //   console.log('Active Ticket:', ticketObject);
 
       // Fetch the backend URL from config.json
       const response = await fetch('/TFC-Connect/App/config.json');
@@ -1596,6 +1714,7 @@ async function getAttenData() {
 // Get the date from the element with class "selected-date-text"
 let selectedDateText = document.querySelector(".selected-date-text")?.textContent.trim();
 
+
 // Convert selected date to a proper format (23 MAR 2025)
 let selectedDate = new Date(selectedDateText);
 // let currentDate = new Date();
@@ -1614,13 +1733,24 @@ if (selectedDateText === formattedCurrentDate) {
         //////console.log("Data available hai:", data);
     } else {
         //////console.log("Data undefined hai, 'noRecd' ko 'hide' set nahi kiya gaya.");
+
+        updateAttenStatus();
+        let noRecd = "hide";
+        localStorage.setItem('noRecd', noRecd);
+        checkInOutDate(result.data);
     }
-} else {
+} 
+ else {
     //////console.log("Selected date aur current date match nahi kar rahe, function execute nahi hoga.");
+  
+   
 }
 
+ 
 
-    //////console.log('data get from getAttenData:', result);
+
+
+    // console.log('data get from getAttenData:', result);
  
     
     let checkinstatusresponse;
@@ -1740,7 +1870,7 @@ if (checkinstatusresponse === "On Time") {
     markstatus = "A";  // A for Absent
 }
 
-//////console.log(markstatus);
+
 
 
     // Compare the current time and fifteen minutes before checkout directly as strings
@@ -1772,8 +1902,30 @@ if (checkinstatusresponse === "On Time") {
         }
     
     } else {
-        // If the user is not early enough, no change
-        //////console.log(`User is not early enough to trigger status change.`);
+          // Check the value of checkinstatusresponse
+          if (checkinstatusresponse === "On Time") {
+            checkOutStatus = "On Time";
+            markstatus = "P";
+            markstatusReason = `N/A`;
+
+            //////console.log("status update", checkOutStatus);
+        } else if (checkinstatusresponse === "Late") {
+            checkOutStatus = "Late";
+            markstatus = "L";
+            markstatusReason = `N/A`;
+            //////console.log("status update", checkOutStatus);
+        } 
+        else if (checkinstatusresponse === "Halfday") {
+            checkOutStatus = "Halfday";
+            markstatus = "H";
+            markstatusReason = `N/A`;
+            //////console.log("status update", checkOutStatus);
+        } else if (checkinstatusresponse === "Absent") {
+            checkOutStatus = "Absent";
+            markstatus = "A";
+            markstatusReason = `N/A`;
+            //////console.log("status update", checkOutStatus);
+        }
     }
 
     const activeTicket = localStorage.getItem('receiveData');
@@ -1798,7 +1950,7 @@ if (checkinstatusresponse === "On Time") {
     const seconds = String(currentDate.getSeconds()).padStart(2, '0');
     
     // Generate the atn_token
-    const atnToken = `${day}${month}${year}${last3Digits}`;
+    const atnToken = `${year}${month}${day}${last3Digits}`;
   
     // Log the active ticket object
     const ticketObject = { 
@@ -2165,6 +2317,12 @@ if (selectedDateText === formattedCurrentDate) {
 }
 
 
+
+
+
+
+
+
 function activityDataRecord() {
     //////console.log("Function running: activityDataRecord");
 
@@ -2231,24 +2389,23 @@ function activityDataRecord() {
         markActivity();  
 }
 
-
 function markActivity(data) {
-    // ✅ Ensure `data` is always an object, otherwise use fake data
-    // 🔹 Agar data null ya undefined hai, toh function exit kar de
+    // ✅ Ensure `data` is always an object, otherwise exit
+    if (!data || typeof data !== "object") {
+        // console.warn("⚠ Empty or invalid data provided. Exiting function.");
+        return;
+    }
 
-    //console.log("markac", data);
-  
     let activityContainer = document.getElementById("activityContainer");
     let allActCnt = document.getElementById("allActCnt");
 
     let entries = Object.values(data);
 
-    // Check karein agar sirf ek entry hai aur sabhi values empty hain
-    if (entries.length === 1 && Object.values(entries[0]).every(val => val === "")) {
+    // ✅ Check if `entries` is empty or contains only empty values
+    if (entries.length === 0 || (entries.length === 1 && Object.values(entries[0]).every(val => val === ""))) {
         // console.warn("⚠ Empty data detected, skipping UI rendering.");
         return;
     }
-    
 
     // ✅ Sorting: Newest first
     entries.sort((a, b) => new Date(b.Date) - new Date(a.Date));
@@ -2310,7 +2467,7 @@ function markActivity(data) {
                 checkOutCard.classList.add("act-card", "flex", "box-styling");
                 checkOutCard.innerHTML = `
                     <div class="act-cd-prf box-styling">
-                        <i class=" fi flex fi-rs-arrow-left-from-arc"></i>
+                        <i class="fi flex fi-rs-arrow-left-from-arc"></i>
                     </div>
                     <div class="act-txt-bx flex-row">
                         <div class="sts-cd">
@@ -2517,7 +2674,7 @@ async function updateAtnCellsByDate(formattedDate) {
         const last3Digits = userId.slice(-3); // Get last 3 digits of userId
 
         // Create the atnToken using the day, month, year, and last 3 digits of userId
-        const atnToken = `${day}${month}${year}${last3Digits}`;
+        const atnToken = `${year}${month}${day}${last3Digits}`;
         //////console.log('Generated ATN Token:', atnToken);
 
         // Fetch the backend URL from config.json
@@ -2588,109 +2745,6 @@ async function updateAtnCellsByDate(formattedDate) {
 
 
 
-function showRecdfun(){
-    const noRecdRes = localStorage.getItem('noRecd');
-    //////console.log("noRecdRes", noRecdRes);
-    
-    if(noRecdRes === "show"){
-        document.getElementById('crd-bx-cnt').style.display = "none";
-        document.getElementById('noRecd').style.display = "flex";
-    }
-
-
-}
-
-
-function hideRecdfun(){
-    const noRecdRes = localStorage.getItem('noRecd');
-    //////console.log("noRecdRes", noRecdRes);
-    
-    if(noRecdRes === "hide"){
-        document.getElementById('crd-bx-cnt').style.display = "block";
-        document.getElementById('noRecd').style.display = "none";
-    }
-
-
-}
-
-
-
-// Reset function to clear all status fields
-function resetAttenStatus() {
-    document.getElementById("checkInTime").textContent = "--:--";
-    document.getElementById("checkOutTime").textContent = "--:--";
-    document.getElementById("checkInStatus").textContent = "------";
-    document.getElementById("checkOutStatus").textContent = "------";
-    document.getElementById("finalStatus").textContent = "------";
-    document.getElementById("finalDecision").textContent = "------";
-}
-
-function updateAttenStatus(){
-    document.getElementById("checkInTime").textContent = "loading...";
-      document.getElementById("checkOutTime").textContent = "loading...";
-      document.getElementById("checkInStatus").textContent = "loading...";
-      document.getElementById("checkOutStatus").textContent = "loading...";
-      document.getElementById("finalStatus").textContent = "loading...";
-      document.getElementById("finalDecision").textContent = "loading...";
-}
-
-
-function brkAlrt(){
-    const brkAlertBox = document.getElementById('brkAlertBox');
-    
-    if (brkAlertBox) {
-        brkAlertBox.classList.remove('visible'); // Slide out to hide
-    }
-}
-
-function showAlrt(){
-    const brkAlertBox = document.getElementById('brkAlertBox');
-    
-    if (brkAlertBox) {
-        brkAlertBox.classList.add('visible'); // Slide in to show
-    }
-}
-
-
-
-
-function showActivity(){
-    const allActivity = document.getElementById('allActivity');
-    
-    if (allActivity) {
-        allActivity.classList.add('visible'); // Slide out to hide
-    }
-}
-
-
-
-
-function hideActivity(){
-    const allActivity = document.getElementById('allActivity');
-    
-    if (allActivity) {
-        allActivity.classList.remove('visible'); // Slide in to show
-    }
-}
-
-function hideAttnRecord(){
-    const allActivity = document.getElementById('allAttnRecord');
-    
-    if (allActivity) {
-        allActivity.classList.remove('visible'); // Slide in to show
-    }
-}
-
-function showAttnRecord(){
-    const allActivity = document.getElementById('allAttnRecord');
-    
-    if (allActivity) {
-        allActivity.classList.add('visible'); // Slide out to hide
-    }
-}
-
-
-
 
 function findHoliday(attrecord) {
     //////console.log("Function running: findHoliday");
@@ -2756,40 +2810,48 @@ function findHoliday(attrecord) {
         });
 }
 
-
 function updateHoliday(response) {
-    if (!response) {
+    // Ensure response is an array, prevent 'undefined' error
+    response = response || [];
+    // console.log("🚀 Processed Response:", response);
+
+    const targetMonthYearElem = document.getElementById("ttl-mnt-cnt");
+    if (!targetMonthYearElem) {
+        // console.error("❌ Error: Target Month-Year element not found!");
         return;
     }
 
-    const targetMonthYear = document.getElementById("ttl-mnt-cnt").textContent.trim().toUpperCase();
+    const targetMonthYear = targetMonthYearElem.textContent.trim().toUpperCase();
     const [targetMonth, targetYear] = targetMonthYear.split(" ");
-    
+
     const monthMapping = {
         "JAN": 0, "FEB": 1, "MAR": 2, "APR": 3, "MAY": 4, "JUN": 5, 
         "JUL": 6, "AUG": 7, "SEP": 8, "OCT": 9, "NOV": 10, "DEC": 11
     };
 
     if (!(targetMonth in monthMapping)) {
+        // console.error("❌ Error: Invalid month format!");
         return;
     }
 
     const targetMonthNum = monthMapping[targetMonth];
-
-    // Holiday details store karne ke liye array
     let holidayDetails = [];
 
-    // Filter response aur holiday details collect karo
+    // Filter response and collect holiday details
     const filteredEntries = response.filter(entry => {
-        const entryDate = new Date(entry[0]); // Date format me convert karein
-        const workingStatus = entry[2].trim().toLowerCase(); // Case normalize karein
+        if (!entry || entry.length < 3) {
+            // console.warn("⚠ Warning: Skipping invalid entry", entry);
+            return false;
+        }
         
+        const entryDate = new Date(entry[0]);
+        const workingStatus = entry[2]?.trim().toLowerCase() || "";
+
         if (
             entryDate.getMonth() === targetMonthNum &&
             entryDate.getFullYear().toString() === targetYear &&
-            workingStatus !== 'yes' // Holiday entries ko filter karna
+            workingStatus !== 'yes' // Exclude working days
         ) {
-            // Holiday details add karna
             holidayDetails.push({
                 date: entryDate.toISOString().split("T")[0], // YYYY-MM-DD format
                 status: "Holiday"
@@ -2799,26 +2861,33 @@ function updateHoliday(response) {
         return false;
     });
 
-    // Holiday details ko console me print karo
-    // //console.log("📅 Holiday Details:", holidayDetails);
+    // Debugging output
+    // console.log("📅 Holiday Details:", holidayDetails);
 
     // Generate attendance table with holiday data
     findSalary(holidayDetails);
 
-    // Holiday count ko format karo
-    const formattedCount = filteredEntries.length.toString().padStart(2, '0');
-    document.getElementById("holiday-count").textContent = `${formattedCount} Days`;
+    // Update holiday count display
+    const holidayCountElem = document.getElementById("holiday-count");
+    if (holidayCountElem) {
+        const formattedCount = filteredEntries.length.toString().padStart(2, '0');
+        holidayCountElem.textContent = `${formattedCount} Days`;
+    } else {
+        // console.error("❌ Error: Element 'holiday-count' not found!");
+    }
 
-    const totalDays = parseInt(document.getElementById("ttl-mnth-day").textContent.trim(), 10);
-    const holidayCount = parseInt(formattedCount, 10);
-
-    const workingDays = totalDays - holidayCount;
-    const formattedWorkingDays = workingDays.toString().padStart(2, '0');
-
-    document.getElementById("Working-count").textContent = `${formattedWorkingDays} Days`;
+    // Update working days count
+    const totalDaysElem = document.getElementById("ttl-mnth-day");
+    const workingCountElem = document.getElementById("Working-count");
+    if (totalDaysElem && workingCountElem) {
+        const totalDays = parseInt(totalDaysElem.textContent.trim(), 10) || 0;
+        const holidayCount = filteredEntries.length;
+        const workingDays = Math.max(0, totalDays - holidayCount);
+        workingCountElem.textContent = `${workingDays.toString().padStart(2, '0')} Days`;
+    } else {
+        // console.error("❌ Error: Element 'ttl-mnth-day' or 'Working-count' not found!");
+    }
 }
-
-
 
 
 function markAttnDays(response) {

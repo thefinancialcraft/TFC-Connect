@@ -22,12 +22,12 @@ window.onload = function() {
     const sentData = JSON.parse(localStorage.getItem('sentData'));
     
     ////console.log("Data sent to backend:", sentData);
-    ////console.log("Receive from backend:", JSON.parse(localStorage.getItem('receiveData')));
+    // console.log("Receive from backend:", JSON.parse(localStorage.getItem('receiveData')));
 
 
   // Retrieve token details from localStorage
     const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
-    ////console.log("active Ticket", activeTicket);
+    //console.log("active Ticket", activeTicket);
 
     if (activeTicket) {
 

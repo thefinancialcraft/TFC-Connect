@@ -568,6 +568,7 @@ function submitIdLoginForm(event) {
             });
         })
         .then(response => {
+            
             if (!response.ok) {
                 throw new Error(`Server error: ${response.status} ${response.statusText}`);
             }
@@ -577,15 +578,25 @@ function submitIdLoginForm(event) {
             return response.json();
         })
         .then(result => {
-            if (!result.server) {
-                throw new Error(" Network issue, Server connection error");
+            if (result.status === "error"){
+                throw new Error(result.message);
+            } else {
+                console.log("logdetails", result);
+                console.log('Type of sheetPassword:', typeof String(result.sheetPassword)); // Should be 'string'
+               console.log('Type of loginUserIdPassword:', typeof String(result.loginUserIdPassword)); // Should be 'string'
+               
+                  if (!result.server) {
+                      throw new Error(" Server connection error");
+                     
+                  }
+                  server = true; // Set flag to true if server is reachable
+                  handleResponse(result);
             }
-            server = true; // Set flag to true if server is reachable
-            handleResponse(result);
+           
         })
         .catch(error => {
             console.error('Error:', error);
-            showErrorMessage(document.getElementById('error-message'), " Network issue, Server connection error");
+            showErrorMessage(document.getElementById('error-message'), error);
             highlightInputFields();
         })
         .finally(() => {

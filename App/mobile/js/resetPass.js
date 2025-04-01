@@ -231,82 +231,99 @@ async function sendPassOtp() {
 }
 
 
-async function submitPassOtp(event) {
-    event.preventDefault(); // Prevent the default form submission behavior
-    console.log("Form submission prevented.");
+    async function submitPassOtp(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+        console.log("Form submission prevented.");
 
-    // Collecting OTP values
-    const otpInputs = document.querySelectorAll('input[name="passOtp"]');
-    const otp = Array.from(otpInputs).map(input => input.value).join('');
-    console.log("Collected OTP:", otp);
+        // Collecting OTP values
+        const otpInputs = document.querySelectorAll('input[name="passOtp"]');
+        const otp = Array.from(otpInputs).map(input => input.value).join('');
+        console.log("Collected OTP:", otp);
 
-    const messageElement = document.getElementById('error-message'); // Single message element
+        const messageElement = document.getElementById('error-message'); // Single message element
 
-    // Clear previous messages
-    resetMessageDisplay(messageElement);
-    console.log("Previous messages cleared.");
+        // Clear previous messages
+        resetMessageDisplay(messageElement);
+        console.log("Previous messages cleared.");
 
-    // Check if the OTP is complete
-    if (otp.length < 6) {
-        console.log("Incomplete OTP, length:", otp.length);
-        showMessage(messageElement, 'Please enter a complete OTP.', 'error');
-        return;
-    }
-    console.log("OTP is complete.");
-
-    // Prepare payload for the server
-    const payload = {
-        action: 'verifyidotp',
-        email: storedEmail, // Use stored email
-        token: storedToken, // Use stored token
-        otp: otp
-    };
-    console.log("Payload prepared:", payload);
-
-    try {
-        console.log("Fetching config.json...");
-        // Fetch the script URL from config.json
-        const configResponse = await fetch('/TFC-Connect/App/config.json');
-        const config = await configResponse.json();
-        const scriptUrl = config.scriptUrl;
-        console.log("Config loaded, script URL:", scriptUrl);
-
-        // Send the OTP verification request to the server
-        console.log("Sending OTP verification request...");
-        const response = await fetch(scriptUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams(payload)
-        });
-
-        console.log("Response received:", response);
-        const data = await response.json();
-        console.log("Response data:", data);
-
-        // Handle response from the server
-        if (data.status === 'success') {
-            console.log("OTP verified successfully.");
-            showMessage(messageElement, 'OTP verified successfully!', 'success');
-            
-
-            document.getElementById('user-id').value = data.userId; // Set userId
-            document.getElementById('email').value = data.email; // Set email
-            handleSuccessfulPassVerification();
-            clearInterval(timerInterval); // Stop the timer
-            
-            
-
-        } else {
-            console.log("Verification failed:", data.message);
-            showMessage(messageElement, data.message || 'Verification failed. Please try again.', 'error');
+        // Check if the OTP is complete
+        if (otp.length < 6) {
+            console.log("Incomplete OTP, length:", otp.length);
+            showMessage(messageElement, 'Please enter a complete OTP.', 'error');
+            return;
         }
-    } catch (error) {
-        console.error("Error during verification:", error);
-        showMessage(messageElement, 'An error occurred during verification. Please try again.', 'error');
+        console.log("OTP is complete.");
+
+        // Prepare payload for the server
+        const payload = {
+            action: 'verifyidotp',
+            email: storedEmail, // Use stored email
+            token: storedToken, // Use stored token
+            otp: otp
+        };
+        console.log("Payload prepared:", payload);
+
+        try {
+            console.log("Fetching config.json...");
+            // Fetch the script URL from config.json
+            const configResponse = await fetch('/TFC-Connect/App/config.json');
+            const config = await configResponse.json();
+            const scriptUrl = config.scriptUrl;
+            console.log("Config loaded, script URL:", scriptUrl);
+
+            // Send the OTP verification request to the server
+            console.log("Sending OTP verification request...");
+            const response = await fetch(scriptUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams(payload)
+            });
+
+            console.log("Response received:", response);
+            const data = await response.json();
+            console.log("Response data:", data);
+
+            // Handle response from the server
+            if (data.status === 'success') {
+                console.log("OTP verified successfully.");
+
+                const enteredUserId = document.getElementById('userId').textContent; // Input field se user ID le rahe hain
+
+               
+
+                if (data.userId !== enteredUserId) {
+                    console.log("User ID Mismatched");
+                    showMessage(messageElement, 'User ID Mismatched', 'error');
+                    console.log("userId a",enteredUserId);
+                    console.log("userId b", data.userId);
+    
+
+                    
+                    return; // Function yahin stop ho jayega
+                }
+
+
+                showMessage(messageElement, 'OTP verified successfully!', 'success');
+                
+
+                document.getElementById('user-id').value = data.userId; // Set userId
+                document.getElementById('email').value = data.email; // Set email
+                handleSuccessfulPassVerification();
+                clearInterval(timerInterval); // Stop the timer
+                
+                
+
+            } else {
+                console.log("Verification failed:", data.message);
+                showMessage(messageElement, data.message || 'Verification failed. Please try again.', 'error');
+            }
+        } catch (error) {
+            console.error("Error during verification:", error);
+            showMessage(messageElement, 'An error occurred during verification. Please try again.', 'error');
+        }
     }
-}
 
 
 function moveToNext(current, nextFieldId) {
