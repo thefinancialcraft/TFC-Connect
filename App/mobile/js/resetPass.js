@@ -16,94 +16,8 @@ function showMessage(element, message, type) {
     }
 }
 
-async function sendPassOtp() {
-    var email = document.getElementById('passMailId').value;
-    const errorMessageElement = document.getElementById('error-message');
 
-    // Clear previous error message
-    errorMessageElement.textContent = '';
-    errorMessageElement.style.display = 'none';
-    errorMessageElement.style.backgroundColor = '';
-    errorMessageElement.style.boxShadow = '';
 
-    console.log('Attempting to send OTP for email:', email);
-
-    if (!email) {
-        console.log('Error: No email provided.');
-        showErrorMessage(errorMessageElement, "Please enter a valid email address.");
-        highlightInputFields();
-        return;
-    }
-
-    // Generate a token
-    const token = Math.random().toString(36).substr(2, 9); // Random token generation
-
-    console.log('Generated token:', token);
-
-    var payload = {
-        action: 'verifyidemail',
-        email: email,
-        token: token // Add the token to the payload
-    };
-    console.log('Payload to send:', payload);
-
-    // Disable the link while processing
-    const sendIdOtp = document.getElementById('sendPassOtp');
-    sendIdOtp.textContent = 'Sending...';
-    sendIdOtp.style.pointerEvents = 'none'; // Disable clicks
-
-    try {
-        // Load the config.json file to get the script URL
-        const configResponse = await fetch('config.json');
-        const config = await configResponse.json();
-        const scriptUrl = config.scriptUrl; // Get the script URL from config
-        console.log('Script URL loaded:', scriptUrl);
-
-        // Make the POST request to the App Script endpoint
-        const response = await fetch(scriptUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded' // Use the appropriate header for form data
-            },
-            body: new URLSearchParams(payload) // Send form data
-        });
-
-        const data = await response.json();
-        console.log('Response received from server:', data);
-
-        if (data.status === 'success') {
-            showSuccessMessage(errorMessageElement, 'OTP sent successfully!'); // Show success message
-            
-            // Store email and token for later use
-            storedEmail = email;
-            storedToken = token;
-            console.log('Stored email and token:', storedEmail, storedToken);
-
-            document.getElementById('passMailId').setAttribute('readonly', true); // Set input field to readonly
-            sendIdOtp.style.display = 'none'; // Hide Send OTP button
-            document.getElementById('timer-display-pass').style.display = 'block'; // Show the timer display
-            startPassTimer(60); // Start the 59 seconds timer
-            console.log('Timer started for 59 seconds.');
-        } else {
-            console.log('Error from server:', data.message);
-            // Reset email and token on error
-            resetFields(); // Call function to reset fields and remove readonly attribute
-            showErrorMessage(errorMessageElement, data.message);
-            highlightInputFields(); // Highlight input fields on error
-        }
-    } catch (error) {
-        console.error('Error occurred during the fetch operation:', error);
-        
-        // Reset email and token on catch
-        resetFields(); // Call function to reset fields and remove readonly attribute
-        showErrorMessage(errorMessageElement, 'An error occurred while sending the OTP. Please try again.');
-        highlightInputFields(); // Highlight input fields on error
-    } finally {
-        // Re-enable the link
-        sendIdOtp.textContent = 'Send OTP';
-        sendIdOtp.style.pointerEvents = 'auto'; // Enable clicks
-    }
-}
 
 
 function startPassTimer(duration) {
@@ -173,6 +87,11 @@ async function sendPassOtp() {
     console.log('Payload to send:', payload);
 
     // Disable the link while processing
+
+    document.getElementById('oploder').style.display = "flex";
+    document.getElementById('oploder').style.marginTop = "30px";
+    document.getElementById('subBtn').style.display = "none";
+
     const sendIdOtp = document.getElementById('sendPassOtp');
     sendIdOtp.textContent = 'Sending...';
     sendIdOtp.style.pointerEvents = 'none'; // Disable clicks
@@ -195,6 +114,10 @@ async function sendPassOtp() {
 
         const data = await response.json();
         console.log('Response received from server:', data);
+        document.getElementById('oploder').style.display = "none";
+        document.getElementById('oploder').style.marginTop = "0px";
+        document.getElementById('subBtn').style.display = "block";
+    
 
         if (data.status === 'success') {
             showSuccessMessage(errorMessageElement, 'OTP sent successfully!'); // Show success message
@@ -227,6 +150,10 @@ async function sendPassOtp() {
         // Re-enable the link
         sendIdOtp.textContent = 'Send OTP';
         sendIdOtp.style.pointerEvents = 'auto'; // Enable clicks
+        document.getElementById('oploder').style.display = "none";
+        document.getElementById('oploder').style.marginTop = "0px";
+        document.getElementById('subBtn').style.display = "block";
+    
     }
 }
 
@@ -234,6 +161,10 @@ async function sendPassOtp() {
     async function submitPassOtp(event) {
         event.preventDefault(); // Prevent the default form submission behavior
         console.log("Form submission prevented.");
+
+        document.getElementById('oploder').style.display = "flex";
+        document.getElementById('oploder').style.marginTop = "30px";
+        document.getElementById('subBtn').style.display = "none";
 
         // Collecting OTP values
         const otpInputs = document.querySelectorAll('input[name="passOtp"]');
@@ -284,6 +215,9 @@ async function sendPassOtp() {
             console.log("Response received:", response);
             const data = await response.json();
             console.log("Response data:", data);
+            document.getElementById('oploder').style.display = "none";
+            document.getElementById('oploder').style.marginTop = "0px";
+            document.getElementById('subBtn').style.display = "block";
 
             // Handle response from the server
             if (data.status === 'success') {
@@ -373,6 +307,10 @@ function resetMessageDisplay(element) {
 
 async function submitNewPassword(event) {
 
+    document.getElementById('pasloder').style.display = "flex";
+        document.getElementById('pasloder').style.marginTop = "30px";
+        document.getElementById('pasBtn').style.display = "none";
+
     event.preventDefault(); // Prevent the default form submission behavior
     console.log("Form submission prevented.");
 
@@ -431,6 +369,9 @@ async function submitNewPassword(event) {
         });
 
         console.log("Response received:", response);
+        document.getElementById('pasloder').style.display = "none";
+        document.getElementById('pasloder').style.marginTop = "0px";
+        document.getElementById('pasBtn').style.display = "block";
         if (!response.ok) {
             throw new Error("Failed to update password, status: " + response.status);
         }
@@ -453,9 +394,21 @@ async function submitNewPassword(event) {
             console.log("Input fields reset.");
 
          
-            
-            const countdownMessage = document.getElementById('error-message'); // Assuming it's the same element for messages
-            countdownMessage.innerHTML = `Password Updated`;
+       // Start countdown and reset page after 10 seconds
+       let countdown = 10;
+       const countdownMessage = document.getElementById('error-message'); // Assuming it's the same element for messages
+       countdownMessage.innerHTML = `Password Updated, Redirecting in ${countdown} seconds...`;
+       
+       const interval = setInterval(() => {
+           countdown--;
+           countdownMessage.innerHTML = `Redirecting in ${countdown} seconds...`;
+           if (countdown <= 0) {
+               clearInterval(interval);
+               // Reset the page or redirect to a specific URL
+               window.location.href = '/TFC-Connect/App/login.html'; // Reload the current page
+           }
+       }, 1000);
+
             document.getElementById("rstImg2").style.display = "none";
             document.getElementById("upd-pass-form").style.display = "none";
             document.getElementById("rstImg3").style.display = "flex";
@@ -482,7 +435,7 @@ async function submitNewPassword(event) {
           // Clear the active ticket as well
           localStorage.removeItem('reciveData');
 
-          window.location.href = '/TFC-Connect/App/login.html';
+         
             
         } else {
             console.log("Password update failed:", data.message);
@@ -491,6 +444,9 @@ async function submitNewPassword(event) {
     } catch (error) {
         console.error("Error during password update:", error);
         showMessage(document.getElementById('error-message'), 'An error occurred during password update. Please try again.', 'error');
+        document.getElementById('pasloder').style.display = "none";
+        document.getElementById('pasloder').style.marginTop = "0px";
+        document.getElementById('pasBtn').style.display = "block";
     }
 }
 

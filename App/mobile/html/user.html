@@ -349,8 +349,8 @@
         </div>
 
         <div class="btn-cnt flex-coloum">
-
-            <button type="submit" class="login-button">Submit OTP</button> 
+            <div id="oploder" style="display: none;" class="spinner"></div>
+            <button type="submit" id="subBtn" class="login-button">Submit OTP</button> 
         </div>
 
         </form>
@@ -364,7 +364,7 @@
                 <input type="password" id="new-password" name="newPassword" required>
             </div>
 
-            <div class="input-group flex-coloum">
+            <div style="margin-top: 20px;" class="input-group flex-coloum">
                 <label for="confirm-password">Confirm Password</label>
                 <input type="password" id="confirm-password" name="confirmPassword" required>
             </div>
@@ -377,8 +377,8 @@
           
             
             <div class="btn-cnt flex-coloum">
-
-                <button type="submit" class="login-button">Update Password</button> 
+                <div id="pasloder" style="display: none;" class="spinner"></div>
+                <button type="submit" id="pasBtn" class="login-button">Update Password</button> 
             </div>
       
         </form>
