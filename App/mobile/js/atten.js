@@ -569,7 +569,7 @@ function checkInUpdate(formattedDate, checkinTime) {
 
 
     // Create deadlines
-    const truserCheckIn = addCustomTime(userCheckIn, "01:00:00");
+    const truserCheckIn = addCustomTime(userCheckIn, "00:00:00");
     const lateDeadline = addCustomTime(officeCheckinTimestamp, "00:16:00");
     const halfdayDeadline = addCustomTime(officeCheckinTimestamp, "00:46:00");
     const absentDeadline = addCustomTime(officeCheckinTimestamp, "06:16:00");
