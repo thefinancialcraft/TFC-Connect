@@ -237,6 +237,8 @@ function generateDates(attrecord, holidays = []) {
  // Fetch and update location
  function updateLocation() {
    const locationElement = document.getElementById('location');
+   const pnchBtn = document.getElementById('cam-stp');
+   pnchBtn.style.display = "none";
  
    if (navigator.geolocation) {
        navigator.geolocation.getCurrentPosition(
@@ -249,20 +251,25 @@ function generateDates(attrecord, holidays = []) {
                
                // Update the location element with address
                locationElement.textContent = `${areaName}`;
+              
            },
            (error) => {
                ////console.error("Error fetching location: ", error);
                locationElement.textContent = "Unable to fetch location.";
+              
            },
            {
                enableHighAccuracy: true,
                timeout: 10000,
                maximumAge: 0
+               
            }
+           
        );
    } else {
        ////console.error("Geolocation is not supported in this browser.");
        locationElement.textContent = "Geolocation is not supported by your browser.";
+       pnchBtn.style.display = "none";
    }
  }
 
