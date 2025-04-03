@@ -3161,6 +3161,70 @@ form{
 }
 
 
+.loc-info{
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    z-index: 99999;
+    backdrop-filter: blur(10px); /* Blur effect */
+    
+
+    .loc-alrt-dsp{
+       
+        width: 280px;
+        height: 380px;
+        background-color: #fff;   
+        position: relative;
+        border: 2px solid  #fafafa;
+
+
+        
+            img{
+                width: 100%;
+                /* height: 100%; */
+                scale: 3;
+                position: absolute;
+                /* margin-top: 100%; */
+                z-index: 1;
+                transform: translateY(50%);
+                
+            }
+
+
+        h4{
+            margin-top: 24px;
+            font-size: 22px;
+            color: #1E3653;
+            font-weight: 700;
+            z-index: 1;
+
+        }
+        p{
+            z-index: 1;
+            font-size: 14.5px;
+            color: red;
+            margin-top: 3px;
+        }
+
+        .loc-btn{
+            z-index: 1;
+            width: 80%;
+        height: 40px;
+        border-radius: 20px;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        background-color: rgb(255, 255, 255) ;
+        color: rgb(55, 182, 250);
+        box-shadow: 5px 5px 5px rgba(36, 36, 36, 0.144);
+        transform: translateY(550%);
+        }
+        
+    }
+}
+
+
+
 
 .brk-alrt{
     /* display: none; */

@@ -185,93 +185,79 @@ function generateDates(attrecord, holidays = []) {
   let startX = 0;
   let sliderLeft = 0;
 
+  updateLocation();
 
- // OpenCageData API key
- const apiKey = 'ce06c4af81284473b967280cd317765f';
+ 
+// Fetch and update location
+async function updateLocation() {
+    const locationElement = document.getElementById('location');
+    const pnchBtn = document.getElementById('cam-stp');
+    pnchBtn.style.display = "none";
 
- // Function to fetch area name from coordinates
- // Function to fetch a detailed address with specified components
- async function getAreaName(lat, lng) {
-     const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${apiKey}`;
-     
-     try {
-         const response = await fetch(url);
-         const data = await response.json();
- 
-         if (data.results && data.results.length > 0) {
-             const addressComponents = data.results[0].components;
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const lat = position.coords.latitude.toFixed(6);
+                const lng = position.coords.longitude.toFixed(6);
 
-             //console.log("addGeo",  addressComponents);
-             //console.log("addGeo",  lat);
-             //console.log("addGeo",  lng);
- 
+                // Ticket Object
+            const activeTicket = localStorage.getItem('receiveData');
+    if (!activeTicket) {
+        ////console.error('No active ticket found in localStorage.');
+        return;
+    }
 
-             // Extract the specified components, leave blank if not available
-             
-             const road = addressComponents.road || "";
-             const suburb = addressComponents.suburb || "";
-             const industrial = addressComponents.industrial || "";
-             const city = addressComponents.city || "";
-             const county = addressComponents.county || "";
-             const postcode = addressComponents.postcode || "";
-             const state_district = addressComponents.state_district|| "";
-             const state = addressComponents.state || "";
-             const country = addressComponents.country || "";
- 
-             // Construct the detailed address in the required format
-             const detailedAddress = `${industrial} ${suburb} ${city}  ${county} ${state} ${country} ${postcode}  `;
+                const ticketData = JSON.parse(activeTicket);
+                const token = ticketData.token || 'N/A';
+  
 
-            
-             
-             // Remove any unnecessary commas if parts are missing
-             return detailedAddress.replace(/,\s*,/g, ',').replace(/,\s*$/, '');
-         } else {
-             throw new Error("No results found.");
-         }
-     } catch (error) {
-         ////console.error("Error fetching area name:", error);
-         return "Unable to fetch area name.";
-     }
- }
- 
- // Fetch and update location
- function updateLocation() {
-   const locationElement = document.getElementById('location');
-   const pnchBtn = document.getElementById('cam-stp');
-   pnchBtn.style.display = "none";
- 
-   if (navigator.geolocation) {
-       navigator.geolocation.getCurrentPosition(
-           async (position) => {
-               const latitude = position.coords.latitude.toFixed(6);
-               const longitude = position.coords.longitude.toFixed(6);
-               
-               // Call getAreaName to fetch the address
-               const areaName = await getAreaName(latitude, longitude);
-               
-               // Update the location element with address
-               locationElement.textContent = `${areaName}`;
-              
-           },
-           (error) => {
-               ////console.error("Error fetching location: ", error);
-               locationElement.textContent = "Unable to fetch location.";
-              
-           },
-           {
-               enableHighAccuracy: true,
-               timeout: 10000,
-               maximumAge: 0
-               
-           }
-           
-       );
-   } else {
-       ////console.error("Geolocation is not supported in this browser.");
-       locationElement.textContent = "Geolocation is not supported by your browser.";
-       pnchBtn.style.display = "none";
-   }
- }
+                try {
+                    // Fetch the backend URL from config.json
+                    const response = await fetch('/TFC-Connect/App/config.json');
+                    const config = await response.json();
+                    const scriptUrl = config.scriptUrl;
+
+                    // Prepare the data to send
+                    const data = new URLSearchParams();
+                    data.append('action', 'getLocation');
+                    data.append('token', token);
+                    data.append('lat', lat); // Sending latitude
+                    data.append('lng', lng); // Sending longitude
+
+                    // Send request to backend
+                    const backendResponse = await fetch(scriptUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: data
+                    });
+
+                    const result = await backendResponse.json();
+                    console.log("Backend Response:", result);
+                    locationElement.textContent = result;
+
+                } catch (error) {
+                    console.error("Error fetching backend data:", error);
+                }
+
+            },
+            (error) => {
+                locationElement.textContent = "Unable to fetch location.";
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    } else {
+        locationElement.textContent = "Geolocation is not supported by your browser.";
+        pnchBtn.style.display = "none";
+    }
+}
+
+
 
  function restartTime() {
     timeInterval = setInterval(updateTime, 1000); // Stop the time update
@@ -1838,7 +1824,7 @@ async function checkoutFuntion() {
     // Get office timing from localStorage
     const officeTiming = JSON.parse(localStorage.getItem('officeTiming'));
     if (!officeTiming || !officeTiming.checkoutTime) {
-        //////console.log('Checkout time not found in localStorage.');
+        // console.log('Checkout time not found in localStorage.');
         return;
     }
     
@@ -1851,31 +1837,22 @@ async function checkoutFuntion() {
         timeZone: 'Asia/Kolkata', // Indian Standard Time
     });
 
-    //////console.log(`Checkout time: ${userCheckOut}, Current time: ${currentTime}`);
+    console.log(`Checkout time: ${userCheckOut}, Current time: ${currentTime}`);
 
     // Calculate the time difference between currentTime and userCheckOut
     const latediffrence = calculateTimeDifference(currentTime, userCheckOut);
 
-    //////console.log(`Time difference: ${latediffrence}`);
+    console.log(`Time difference: ${latediffrence}`);
 
     // Check if the current time is earlier than the checkout time - 15 minutes
     const fifteenMinutesBeforeCheckout = subtractTime(userCheckOut, "00:15:00");  // Subtract 15 minutes
 
-    //////console.log(`Fifteen minutes before checkout: ${fifteenMinutesBeforeCheckout}`);
+    console.log(`Fifteen minutes before checkout: ${fifteenMinutesBeforeCheckout}`);
 
-    let checkOutStatus = "On Time";  // This can be "On Time", "Halfday", "Late", or "Absent"
+let checkOutStatus = "On Time";  // This can be "On Time", "Halfday", "Late", or "Absent"
 let markstatus = "P";
 let markstatusReason = "N/A";
 
-if (checkinstatusresponse === "On Time") {
-    markstatus = "P";  // P for Present
-} else if (checkinstatusresponse === "Halfday") {
-    markstatus = "H";  // H for Halfday
-} else if (checkinstatusresponse === "Late") {
-    markstatus = "L";  // L for Late
-} else if (checkinstatusresponse === "Absent") {
-    markstatus = "A";  // A for Absent
-}
 
 
 
