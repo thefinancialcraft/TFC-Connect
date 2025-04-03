@@ -235,7 +235,7 @@ async function updateLocation() {
 
                     const result = await backendResponse.json();
                     console.log("Backend Response:", result);
-                    locationElement.textContent = result;
+                    locationElement.textContent = result.address;
 
                 } catch (error) {
                     console.error("Error fetching backend data:", error);
