@@ -234,7 +234,7 @@ async function updateLocation() {
                     });
 
                     const result = await backendResponse.json();
-                    console.log("Backend Response:", result);
+                    console.log("Backend Response:", result.address);
                     locationElement.textContent = result.address;
 
                 } catch (error) {
@@ -282,7 +282,7 @@ function startCamera() {
   document.querySelector('.loader').style.width = '48%';
   document.getElementById('location').textContent = "Fetching...";
 
-  
+
   restartTime();
 
   // Try to access the camera
