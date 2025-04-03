@@ -281,8 +281,8 @@ function startCamera() {
   document.querySelector('.loader').style.display = 'flex';
   document.querySelector('.loader').style.width = '48%';
   document.getElementById('location').textContent = "Fetching...";
-
-
+  // Update location
+  updateLocation();
   restartTime();
 
   // Try to access the camera
@@ -1738,10 +1738,6 @@ if (selectedDateText === formattedCurrentDate) {
   
    
 }
-
- 
-
-
 
     // console.log('data get from getAttenData:', result);
  
