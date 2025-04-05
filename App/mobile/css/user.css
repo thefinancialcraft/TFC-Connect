@@ -3284,9 +3284,10 @@ form{
         margin-bottom: -4px;
     }
     p{
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 600;
     }
+   
 } 
 
 @keyframes pulsePing {

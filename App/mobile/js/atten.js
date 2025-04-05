@@ -397,7 +397,6 @@ function generateDates(attrecord, holidays = []) {
 
                 locationElement.textContent = result.address;
                 updateLocationtag = false;
-                stopupdateLocation();
 
 
             } catch (error) {
@@ -436,26 +435,6 @@ function generateDates(attrecord, holidays = []) {
     );
 }
 
-let locInterval;
-
-
-
-function startupdateLocation() {
-    if (!locInterval) {  // Agar interval pehle se chalu nahi hai toh hi start karo
-        locInterval = setInterval(updateLocation, 3000);
-        //console.log("Interval started.");
-    }
-}
-
-
-// Function to Stop the Interval
-function stopupdateLocation() {punchInInterval
-    if (locInterval) {  // Agar interval chalu hai toh hi stop karo
-        clearInterval();
-        locInterval = null; // Reset the variable
-        //console.log("Interval stopped.");
-    }
-}
 
 
 
@@ -1571,7 +1550,6 @@ async function getCheckinInfo() {
     // If punchInData exists and conditions match, update UI accordingly
     if (updateLocationtag === true ) {
         document.getElementById("locUpdCnt").style.display = "flex";
-        startupdateLocation();
         return; // Function exits here if condition matches
     }
     // If punchInData exists and conditions match, update UI accordingly
