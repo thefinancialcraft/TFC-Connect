@@ -12,12 +12,15 @@ function updateAttendanceTimes() {
     }
 }
 
+let updateLocationtag;
+
 updateAttendanceTimes();
 
 // Function to generate dates
 let timeInterval; // To store the time interval for updating the clock
 let lastTime; // To store the last displayed time
 let punchInInterval; // Global variable for interval
+let punchOutInterval; // Global variable for interval
 
 
 updateTime();
@@ -181,6 +184,7 @@ function startTimeupdate() {
 
 
 
+
 // Function to stop the clock update and freeze the current time
 function stopTimeUpdate() {
   clearInterval(timeInterval); // Stop the time update
@@ -332,73 +336,124 @@ function generateDates(attrecord, holidays = []) {
 
   updateLocation();
 
- 
-// Fetch and update location
-async function updateLocation() {
+  async function updateLocation() {
     const locationElement = document.getElementById('location');
     const pnchBtn = document.getElementById('cam-stp');
     pnchBtn.style.display = "none";
 
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                const lat = position.coords.latitude.toFixed(6);
-                const lng = position.coords.longitude.toFixed(6);
-
-                // Ticket Object
-            const activeTicket = localStorage.getItem('receiveData');
-    if (!activeTicket) {
-        ////console.error('No active ticket found in localStorage.');
+    if (!navigator.geolocation) {
+        locationElement.textContent = "Location Off, turn on location";
+        console.log("Location Off, turn on location");
         return;
     }
 
-                const ticketData = JSON.parse(activeTicket);
-                const token = ticketData.token || 'N/A';
-  
+    navigator.geolocation.getCurrentPosition(
+        async (position) => {
+            const lat = position.coords.latitude.toFixed(6);
+            const lng = position.coords.longitude.toFixed(6);
 
-                try {
-                    // Fetch the backend URL from config.json
-                    const response = await fetch('/TFC-Connect/App/config.json');
-                    const config = await response.json();
-                    const scriptUrl = config.scriptUrl;
+            console.log("latitude", lat);
+            console.log("longitude", lng);
 
-                    // Prepare the data to send
-                    const data = new URLSearchParams();
-                    data.append('action', 'getLocation');
-                    data.append('token', token);
-                    data.append('lat', lat); // Sending latitude
-                    data.append('lng', lng); // Sending longitude
+            const activeTicket = localStorage.getItem('receiveData');
+            if (!activeTicket) return;
 
-                    // Send request to backend
-                    const backendResponse = await fetch(scriptUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: data
-                    });
+            const ticketData = JSON.parse(activeTicket);
+            const token = ticketData.token || 'N/A';
 
-                    const result = await backendResponse.json();
-                    console.log("Backend Response:", result.address);
-                    locationElement.textContent = result.address;
+            try {
+                const response = await fetch('/TFC-Connect/App/config.json');
+                const config = await response.json();
+                const scriptUrl = config.scriptUrl;
 
-                } catch (error) {
-                    console.error("Error fetching backend data:", error);
+                const data = new URLSearchParams();
+                data.append('action', 'getLocation');
+                data.append('token', token);
+                data.append('lat', lat);
+                data.append('lng', lng);
+
+                const backendResponse = await fetch(scriptUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: data
+                });
+
+                const result = await backendResponse.json();
+                console.log("Location:", result.address);
+
+                if (result.status === 'misLoc') {
+                    console.log("Location Off, fetch Unavailable");
+                    locationElement.textContent = "Location fetch unavailable";
+                    return;
                 }
 
-            },
-            (error) => {
-                locationElement.textContent = "Unable to fetch location.";
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
+                if (result.status === 'error') {
+                    console.log("Unable to fetch location");
+                    locationElement.textContent = "Unable to fetch location";
+                    return;
+                }
+
+                locationElement.textContent = result.address;
+                updateLocationtag = false;
+                stopupdateLocation();
+
+
+            } catch (error) {
+                console.error("Error fetching backend data:", error);
+                locationElement.textContent = "Error fetching location";
             }
-        );
-    } else {
-        locationElement.textContent = "Geolocation is not supported by your browser.";
-        pnchBtn.style.display = "none";
+        },
+        (error) => {
+            let message = "";
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    message = "Location permission denied.";
+
+                    updateLocationtag = true;
+
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = "Location position unavailable.";
+                    break;
+                case error.TIMEOUT:
+                    message = "Location request timed out.";
+                    break;
+                default:
+                    message = "Unknown location error.";
+                    break;
+            }
+
+            locationElement.textContent = "Location Off, turn on location";
+            console.log("Location Error:", message);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+}
+
+let locInterval;
+
+
+
+function startupdateLocation() {
+    if (!locInterval) {  // Agar interval pehle se chalu nahi hai toh hi start karo
+        locInterval = setInterval(updateLocation, 3000);
+        //console.log("Interval started.");
+    }
+}
+
+
+// Function to Stop the Interval
+function stopupdateLocation() {punchInInterval
+    if (locInterval) {  // Agar interval chalu hai toh hi stop karo
+        clearInterval();
+        locInterval = null; // Reset the variable
+        //console.log("Interval stopped.");
     }
 }
 
@@ -908,8 +963,6 @@ function saveToLocalStorage(checkinData, snapshotData) {
 
     startPunchInCheck();
 
-
-   
 }
 
 
@@ -974,13 +1027,14 @@ function startPunchInCheck() {
 }
 
 // Function to Stop the Interval
-function stopPunchInCheck() {
+function stopPunchInCheck() {punchInInterval
     if (punchInInterval) {  // Agar interval chalu hai toh hi stop karo
-        clearInterval(punchInInterval);
+        clearInterval();
         punchInInterval = null; // Reset the variable
         //console.log("Interval stopped.");
     }
 }
+
 
 
 async function checkPunchInStatus() {
@@ -1512,12 +1566,16 @@ function observeDateChange() {
 async function getCheckinInfo() {
     // Retrieve punchInData from localStorage
     const punchInData = JSON.parse(localStorage.getItem('punchInData'));
-
-    // Get today's date in DD/MM/YYYY format
-    const today = new Date().toLocaleDateString('en-GB'); // DD/MM/YYYY
+    const punchOutData = JSON.parse(localStorage.getItem('punchOutData'));
 
     // If punchInData exists and conditions match, update UI accordingly
-    if (punchInData && punchInData.isAtnMarked === false && punchInData.timestamp === today) {
+    if (updateLocationtag === true ) {
+        document.getElementById("locUpdCnt").style.display = "flex";
+        startupdateLocation();
+        return; // Function exits here if condition matches
+    }
+    // If punchInData exists and conditions match, update UI accordingly
+    if (punchInData && punchInData.isAtnMarked === false ) {
         document.getElementById('atn-switch').style.display = 'flex';
         document.getElementById('resetCont').style.display = 'flex';
         document.getElementById('actBtn').style.display = 'none';
@@ -1526,6 +1584,18 @@ async function getCheckinInfo() {
         startPunchInCheck();
         return; // Function exits here if condition matches
     }
+
+      // If punchInData exists and conditions match, update UI accordingly
+      if (punchOutData && punchOutData.isAtnMarked === false ) {
+
+        document.getElementById('resetCont').style.display = 'flex';
+        document.getElementById('actBtn').style.display = 'none';
+        document.getElementById('chknBtn').style.display = 'none';
+        document.getElementById('checkDotCont').style.display = 'none';
+        startPunchOutCheck();
+        return; // Function exits here if condition matches
+    }
+
 
     // Retrieve the active ticket from localStorage
     const activeTicket = localStorage.getItem('receiveData');
@@ -1589,12 +1659,20 @@ async function getCheckinInfo() {
 
         if (result.message === 'hideAll') {
             document.getElementById('atn-switch').style.display = 'none';
+
+
         } else if (result.message === 'showCheckOut') {
+
             document.getElementById('atn-switch').style.display = 'flex';
             document.getElementById('actBtn').style.display = 'flex';
             document.getElementById('chknBtn').style.display = 'none';
             document.getElementById('resetCont').style.display = 'none';
+
+
+
         } else if (result.message === 'showCheckIn') {
+            
+
             document.getElementById('atn-switch').style.display = 'flex';
             document.getElementById('actBtn').style.display = 'none';
             document.getElementById('chknBtn').style.display = 'flex';
@@ -1605,6 +1683,8 @@ async function getCheckinInfo() {
             slider.style.left = '0px';
             sliderText.classList.remove('wait-animate');
             sliderText.textContent = 'Check In';
+
+
         } else if (result.message === 'moveForward') {
             checkWhatsAppDate();
         }
@@ -1795,6 +1875,7 @@ setInterval(updateProgressBars, 1000);
 
 
 
+
 async function getAttenData() {
    
     // Retrieve the active ticket from localStorage
@@ -1946,185 +2027,246 @@ function hideSpinner() {
 }
 
 
-
-
-
-// Example checkoutTime input
-async function checkoutFuntion() {
+async function generateCheckoutDataAndSend() {
     showSpinner();
+
     const checkinstatusresponse = localStorage.getItem('Check_in_status');
-    //////console.log(`Data of getAttenData:`, checkinstatusresponse);
+    if (!checkinstatusresponse) return;
 
-    // Ensure the checkinstatusresponse is valid
-    if (!checkinstatusresponse) {
-        //////console.log('checkinstatusresponse is not defined or is null.');
-        return;
-    }
-    //////console.log('checkinstatusresponse:', checkinstatusresponse);
-
-    // Get office timing from localStorage
     const officeTiming = JSON.parse(localStorage.getItem('officeTiming'));
-    if (!officeTiming || !officeTiming.checkoutTime) {
-        // console.log('Checkout time not found in localStorage.');
-        return;
-    }
-    
-    const userCheckOut = officeTiming.checkoutTime;
+    if (!officeTiming || !officeTiming.checkoutTime) return;
 
-    // Get the current time in IST
+    const userCheckOut = officeTiming.checkoutTime;
     const currentDate = new Date();
     const currentTime = currentDate.toLocaleTimeString('en-US', {
         hour12: false,
-        timeZone: 'Asia/Kolkata', // Indian Standard Time
+        timeZone: 'Asia/Kolkata',
     });
 
-    console.log(`Checkout time: ${userCheckOut}, Current time: ${currentTime}`);
-
-    // Calculate the time difference between currentTime and userCheckOut
     const latediffrence = calculateTimeDifference(currentTime, userCheckOut);
+    const fifteenMinutesBeforeCheckout = subtractTime(userCheckOut, "00:15:00");
 
-    console.log(`Time difference: ${latediffrence}`);
+    let checkOutStatus = "On Time";
+    let markstatus = "P";
+    let markstatusReason = "N/A";
 
-    // Check if the current time is earlier than the checkout time - 15 minutes
-    const fifteenMinutesBeforeCheckout = subtractTime(userCheckOut, "00:15:00");  // Subtract 15 minutes
-
-    console.log(`Fifteen minutes before checkout: ${fifteenMinutesBeforeCheckout}`);
-
-let checkOutStatus = "On Time";  // This can be "On Time", "Halfday", "Late", or "Absent"
-let markstatus = "P";
-let markstatusReason = "N/A";
-
-
-
-
-
-    // Compare the current time and fifteen minutes before checkout directly as strings
     if (currentTime < fifteenMinutesBeforeCheckout) {
-        //////console.log(`User is early by ${currentTime} compared to ${fifteenMinutesBeforeCheckout}.`);
-    
-        // Check the value of checkinstatusresponse
-        if (checkinstatusresponse === "On Time") {
+        if (checkinstatusresponse === "On Time" || checkinstatusresponse === "Late") {
             checkOutStatus = "Halfday";
             markstatus = "H";
             markstatusReason = `Due to the early exit by ${latediffrence}`;
-
-            //////console.log("status update", checkOutStatus);
-        } else if (checkinstatusresponse === "Late") {
-            checkOutStatus = "Halfday";
-            markstatus = "H";
-            markstatusReason = `Due to the early exit by ${latediffrence}`;
-            //////console.log("status update", checkOutStatus);
-        } 
-        else if (checkinstatusresponse === "Halfday") {
+        } else if (checkinstatusresponse === "Halfday" || checkinstatusresponse === "Absent") {
             checkOutStatus = "Absent";
             markstatus = "A";
             markstatusReason = `Due to the early exit by ${latediffrence}`;
-            //////console.log("status update", checkOutStatus);
-        } else if (checkinstatusresponse === "Absent") {
-            checkOutStatus = "Absent";
-            markstatus = "A";
-            //////console.log("status update", checkOutStatus);
         }
-    
     } else {
-          // Check the value of checkinstatusresponse
-          if (checkinstatusresponse === "On Time") {
-            checkOutStatus = "On Time";
-            markstatus = "P";
-            markstatusReason = `N/A`;
-
-            //////console.log("status update", checkOutStatus);
-        } else if (checkinstatusresponse === "Late") {
+        if (checkinstatusresponse === "Late") {
             checkOutStatus = "Late";
             markstatus = "L";
-            markstatusReason = `N/A`;
-            //////console.log("status update", checkOutStatus);
-        } 
-        else if (checkinstatusresponse === "Halfday") {
+        } else if (checkinstatusresponse === "Halfday") {
             checkOutStatus = "Halfday";
             markstatus = "H";
-            markstatusReason = `N/A`;
-            //////console.log("status update", checkOutStatus);
         } else if (checkinstatusresponse === "Absent") {
             checkOutStatus = "Absent";
             markstatus = "A";
-            markstatusReason = `N/A`;
-            //////console.log("status update", checkOutStatus);
         }
     }
 
     const activeTicket = localStorage.getItem('receiveData');
-    if (!activeTicket) {
-        ////console.error('No active ticket found in localStorage.');
-        
-        return;
-
-    }
+    if (!activeTicket) return;
 
     const ticketData = JSON.parse(activeTicket);
     const userId = ticketData.userId || 'N/A';
     const token = ticketData.token || 'N/A';
-    const last3Digits = userId.slice(-3); // Get last 3 digits of userId
-    
-    // Get the current date and time components
+    const last3Digits = userId.slice(-3);
+
     const day = String(currentDate.getDate()).padStart(2, '0');
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-    const year = String(currentDate.getFullYear()).slice(-2); // Last two digits of the year
-    const hours = String(currentDate.getHours()).padStart(2, '0');
-    const minutes = String(currentDate.getMinutes()).padStart(2, '0');
-    const seconds = String(currentDate.getSeconds()).padStart(2, '0');
-    
-    // Generate the atn_token
+    const year = String(currentDate.getFullYear()).slice(-2);
+
     const atnToken = `${year}${month}${day}${last3Digits}`;
-  
-    // Log the active ticket object
-    const ticketObject = { 
+
+    // 🎯 Yahin se direct pass ho raha hai
+    await sendCheckoutData({
         action: "checkoutFuntion",
         userId: userId,
-        token: token, 
+        token: token,
         atnToken: atnToken,
         checkoutTime: currentTime,
         checkinstatusresponse: checkOutStatus,
         markstatus: markstatus,
         decision: "By Attendance",
         markstatusReason: markstatusReason
-    };
-    //////console.log('checkout reponse sending data:', ticketObject);
+    });
+}
 
+
+
+async function sendCheckoutData(ticketObject) {
     const data = new URLSearchParams(ticketObject);
 
-    // Fetch config
-    const response = await fetch('/TFC-Connect/App/config.json');
-    const config = await response.json();
-    const scriptUrl = config.scriptUrl;
-    
-    // Send the data in the request body to the backend
-    const backendResponse = await fetch(scriptUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: data
-    });
-    
-    // Handle the response if needed
-    const result = await backendResponse.json();
-    //////console.log('Backend from checkout:', result);
-    const checkOutBtn = document.getElementById('checkOutBtn');
+    try {
+        // Step 0: Check if user is online
+        if (!navigator.onLine) {
+            throw new Error("🔌 You are offline. Please check your internet connection.");
+        }
 
-    // Clear the button's current content
-    checkOutBtn.textContent = "";
+        // Step 1: Load config.json
+        const configResponse = await fetch('/TFC-Connect/App/config.json');
+        const config = await configResponse.json();
+        const scriptUrl = config.scriptUrl;
 
-    // Create the <i> element for the icon
-    const iconElement = document.createElement('i');
-    iconElement.className = "fi fi-rs-arrow-left-from-arc"; // Add classes for the icon
+        // Step 2: Create a timeout promise (10 seconds)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 sec
 
-    // Add the icon and "Check Out" text back to the button
-    checkOutBtn.appendChild(iconElement);
-    checkOutBtn.appendChild(document.createTextNode("Check Out"));
+        // Step 3: Send data to backend with timeout handling
+        const backendResponse = await fetch(scriptUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: data,
+            signal: controller.signal
+        });
 
+        clearTimeout(timeoutId); // Clear timeout if response received
 
+        // Step 4: Check if response is not OK
+        if (!backendResponse.ok) {
+            throw new Error(`Server responded with status: ${backendResponse.status}`);
+        }
+
+        const result = await backendResponse.json();
+
+        // Step 5: Update the Check Out button UI
+        const checkOutBtn = document.getElementById('checkOutBtn');
+        checkOutBtn.textContent = "";
+
+        const iconElement = document.createElement('i');
+        iconElement.className = "fi fi-rs-arrow-left-from-arc";
+        checkOutBtn.appendChild(iconElement);
+        checkOutBtn.appendChild(document.createTextNode("Check Out"));
+        document.getElementById('atn-switch').style.display = 'none';
+        document.getElementById('resetCont').style.display = 'none';
+        stopPunchOutCheck();
+        localStorage.removeItem('punchOutData');
+        
+
+        return result;
+
+    } catch (error) {
+        // Log the error
+        if (error.name === 'AbortError') {
+            console.error("⏱️ Request timed out after 10 seconds.");
+        } else {
+            console.error("❌ Error:", error.message || error);
+        }
+
+        // Save to local storage in case of any error
+        SaveOutdataTolocal(ticketObject);
+    }
 }
+
+
+function SaveOutdataTolocal(ticketObject) {
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString('en-GB'); // DD/MM/YYYY
+
+    // Update ticketObject with extra fields
+    const updatedTicket = {
+        ticketObject: ticketObject,
+        isAtnMarked: false,
+        snapshotData: "",
+        timestamp: formattedDate
+    };
+
+    // Save to localStorage
+    localStorage.setItem("punchOutData", JSON.stringify(updatedTicket));
+
+    // UI update
+    const resetCont = document.getElementById("resetCont");
+    const actBtn = document.getElementById("actBtn");
+
+    if (resetCont) resetCont.style.display = "flex";
+    if (actBtn) actBtn.style.display = "none";
+
+
+    startPunchOutCheck();
+}
+
+
+
+
+
+// Function to Start the Interval
+function startPunchOutCheck() {
+    if (!punchOutInterval) {  // Agar interval pehle se chalu nahi hai toh hi start karo
+        punchOutInterval = setInterval(checkPunchOutStatus, 30000);
+        //console.log("Interval started.");
+    }
+}
+
+// Function to Stop the Interval
+function stopPunchOutCheck() {
+    if (punchOutInterval) {  // Agar interval chalu hai toh hi stop karo
+        clearInterval(punchOutInterval);
+        punchOutInterval = null; // Reset the variable
+        //console.log("Interval stopped.");
+    }
+}
+
+
+
+async function checkPunchOutStatus() {
+    //console.log("am runung checkPunchStatus");
+    try {
+        const punchOutData = JSON.parse(localStorage.getItem('punchOutData'));
+        const today = new Date().toLocaleDateString('en-GB'); // DD/MM/YYYY
+
+        if (punchOutData && punchOutData.timestamp !== today) {
+            //console.log("Old data found, removing from local storage...");
+            localStorage.removeItem('punchOutData');
+            return;
+        }
+
+        if (punchOutData && punchOutData.isAtnMarked === false) {
+            
+            const resetCont = document.getElementById("resetCont");
+            const actBtn = document.getElementById("actBtn");
+        
+            if (resetCont) resetCont.style.display = "flex";
+            if (actBtn) actBtn.style.display = "none";
+
+
+            
+            const { ticketObject } = punchOutData;
+
+            if (ticketObject) {
+
+                const uploadSuccess = await sendCheckoutData(ticketObject);
+
+                if (uploadSuccess) {
+                    stopPunchOutCheck();
+                    //console.log("checkPunchStatus uploading Done");
+                }
+            } else {
+                //console.error("Invalid checkinData or snapshotData");
+            }
+        } else {
+            //console.log("No valid punch-in data found");
+        }
+    } catch (error) {
+        //console.error("Error:", error.message);
+        //console.log("Trying again...");
+    }
+}
+
+
+
+
+
 
 // Function to calculate time difference in HH:MM format
 function calculateTimeDifference(currentTime, checkOutTime) {

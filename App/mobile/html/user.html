@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-    <title>Admin Page</title>
+    <title>TFC Connect</title>
 
     <link rel="icon" href="path/to/favicon.ico" type="image/x-icon">
     
@@ -16,6 +16,7 @@
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-thin-rounded/css/uicons-thin-rounded.css'>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-straight/css/uicons-bold-straight.css'>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
 
 
     <meta name="description" content="Welcome to the user page where you can manage your account.">
@@ -33,20 +34,23 @@
                 <i class="fi flex fi-rs-arrow-left-from-arc"></i>
                 <p class="flex" id="entry-time"></p>
             </div>
+             <div style="display: none;" class="log-updt flex">
+            
+        </div>
             <div class="exit-time flex-row show-time">
                 <i class="fi flex fi-rs-arrow-left-from-arc"></i>
                 <p class="flex" id="exit-time"></p>
             </div>
 
         </div>
-       
+
         <video id="videoElement" autoplay></video>
     
        
         <img id="snapshotImage" style="display: none; width: 100%;" alt="Snapshot">
     
       
-        <div class="cm-info-bx box-styling flex-coloum">
+        <div  class="cm-info-bx box-styling flex-coloum">
             <div class="inf-bx">
                 
 
@@ -106,6 +110,10 @@
             
           
         </div>
+
+        
+
+
     </div>
     
     <div id="qrScanner" style="display: none;" class="scaner-cont flex-coloum">
@@ -388,14 +396,13 @@
 
 
 
-    <div class="loc-info flex", style="display: none;">
-
-     
-
+    <div  style="display: none;"  class="loc-info flex">
         <div class="loc-alrt-dsp flex-coloum box-styling">           
             <img src="/TFC-Connect/App/assets/d7ae0170d3d5ffcbaa7f02fdda387a3b.gif" alt="">
             <h4 class="h-styling">Location Mismatch !</h4>
-            <p>Check Out Unavilable</p>
+            <p id="lastLoc"></p>
+            <p id="currentLoc"></p>
+            <p>Check Out Failed</p>
             <p id="latitude"></p>
             <p id="longitude"></p>
             <button class="loc-btn">Go Back</button>
@@ -403,6 +410,15 @@
         </div>
 
     </div>
+
+
+    <div style="display: none;" class="age-cal-cont">
+       
+
+    </div>
+
+
+    
 
 
     <div id="allActivity" class="allActivity block " >
@@ -689,10 +705,18 @@ Welcome Back, <span class="firstName"></span>
                 <div id="atn-switch" class="atn-switch  box-styling">
                     
                     <div style="display: none;" id="resetCont" class="chkn-switch-slider resetCont flex-row">
-                        <p>Data not Fetch, Try Again </p>
+                        <p>Attendance Marked, Update Soon...</p>
                         <span class="flex"><i class="fi flex fi-rr-file-recycle"></i></span>
                     </div>
 
+
+                    <div style="display: none;" class=" chkn-switch-slider loc-update flex-row" id="locUpdCnt">
+                        <i class="fi flex fi-rr-location-arrow"></i>
+                        <p>Location Off, Turn on it first !</p>
+                        
+                      </div>
+
+                    
                     <div id="checkDotCont" class="dots-container flex">
                         <div class="dot"></div>
                         <div class="dot"></div>
@@ -705,20 +729,22 @@ Welcome Back, <span class="firstName"></span>
         
                         </div>
                     </div>
+                    
                     <div style="display: none;" id="actBtn" class="chkn-switch-slider btn-cnt flex-row">
                         <button onclick="showAlrt()" id="brkBtn" style="background-color: #ffcd06;" class="btn1 flex">
                             <i class="fi fi-rs-stopwatch"></i>Take Break</button>
-                        <button id="checkOutBtn" onclick="checkoutFuntion()" class="btn1 flex"><i class="fi fi-rs-arrow-left-from-arc"></i> Check Out</button>
+                        <button id="checkOutBtn" onclick="generateCheckoutDataAndSend()" class="btn1 flex"><i class="fi fi-rs-arrow-left-from-arc"></i> Check Out</button>
                         
         
                     </div>
+
+
                 </div>
                 
               
                 
         
             </div>
-
             
 
             <div class="daily-atn block">
@@ -818,6 +844,28 @@ Welcome Back, <span class="firstName"></span>
               
         
         
+            </div>
+
+
+            <div class="block quick-link-bx">
+
+                <div class="title flex-row">
+                    <h3 class="h-styling h-sm-sty" >Quick Links</h3>
+                   </div>
+
+                <div class="quick-links flex-row">
+                    <div class="qk-clk age-cal flex-coloum">
+                        <div class="qk-img-bx flex box-styling">
+                            <i class="fi qk-ic flex fi-rr-calculator"></i>
+                        </div>
+                        <p class="qk-img-p">
+                            Age Calculator
+                        </p>
+                    </div>
+                   
+                </div>
+
+
             </div>
 
             <div class="daily-atn atn-summary block">
