@@ -20,27 +20,172 @@ let lastTime; // To store the last displayed time
 let punchInInterval; // Global variable for interval
 
 
+updateTime();
+
+async function updateTime() {
+    // Start time to calculate response duration
+    const startTime = Date.now();
+
+    // Ticket Object
+    const activeTicket = localStorage.getItem('receiveData');
+    if (!activeTicket) {
+        console.warn('No active ticket found in localStorage.');
+        return;
+    }
+
+    const ticketData = JSON.parse(activeTicket);
+    const token = ticketData.token || 'N/A';
+
+    try {
+        // Fetch backend URL from config
+        const response = await fetch('/TFC-Connect/App/config.json');
+        const config = await response.json();
+        const scriptUrl = config.scriptUrl;
+
+        // Prepare data
+        const data = new URLSearchParams();
+        data.append('action', 'getCurrentTime');
+        data.append('token', token);
+
+        // Send request to backend
+        const backendResponse = await fetch(scriptUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: data
+        });
+
+        const result = await backendResponse.json();
+
+        if (!result.time) {
+            console.error("No time returned from backend.");
+            return;
+        }
+
+        // Measure how much time the API took (in seconds)
+        const endTime = Date.now();
+        const elapsedMs = endTime - startTime;
+        const elapsedSeconds = Math.round(elapsedMs / 1000); // e.g., 2 seconds
+
+        // Extract hours, minutes, seconds from API time
+        const timeParts = result.time.split(':');
+        let hours = parseInt(timeParts[0]);
+        let minutes = parseInt(timeParts[1]);
+        let seconds = parseInt(timeParts[2]);
+
+        // Add elapsed time
+        seconds += elapsedSeconds;
+
+        // Handle overflow of seconds and minutes
+        if (seconds >= 60) {
+            minutes += Math.floor(seconds / 60);
+            seconds = seconds % 60;
+        }
+        if (minutes >= 60) {
+            hours += Math.floor(minutes / 60);
+            minutes = minutes % 60;
+        }
+        if (hours >= 24) {
+            hours = hours % 24;
+        }
+
+        // Convert to 12-hour format with AM/PM
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        let displayHour = hours % 12;
+        displayHour = displayHour ? displayHour : 12; // 0 should be 12
+
+        const formattedTime = `${displayHour.toString().padStart(2, '0')}:${minutes
+            .toString()
+            .padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${ampm}`;
+
+        // Show final adjusted time
+        const timeElement = document.getElementById("currentTime");
+
+        if (timeElement) {
+            timeElement.textContent = formattedTime;
+        }
+
+        
+        punchWatch = formattedTime;
+        initPunchWatch();
 
 
-function updateTime() {
-  const now = new Date();
-  let hours = now.getHours();
-  const minutes = now.getMinutes().toString().padStart(2, '0');
-  const seconds = now.getSeconds().toString().padStart(2, '0');
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
-  const time = `${hours}:${minutes}:${seconds} ${ampm}`;
   
-  document.getElementById("currentTime").textContent = time;
-  
-  lastTime = time; // Store the current time for later use
+
+    } catch (error) {
+        console.error("Error fetching backend data:", error);
+    }
 }
+
+
+// 🌍 Global variable to hold initial punchWatch time as Date object
+let punchWatchTime = null;
+
+// ⏱️ Helper function to initialize punchWatchTime from DOM
+function initPunchWatch() {
+    const punchText = document.getElementById("currentTime").innerText.trim();
+
+    // Match time string (e.g. "11:00:00 PM")
+    const timeParts = punchText.match(/(\d+):(\d+):(\d+)\s*(AM|PM)/i);
+    if (!timeParts) {
+        console.error("Invalid time format in punchWatch");
+        return;
+    }
+
+    let hours = parseInt(timeParts[1], 10);
+    const minutes = parseInt(timeParts[2], 10);
+    const seconds = parseInt(timeParts[3], 10);
+    const period = timeParts[4].toUpperCase();
+
+    // Convert to 24-hour format
+    if (period === "PM" && hours !== 12) hours += 12;
+    if (period === "AM" && hours === 12) hours = 0;
+
+    // Create Date object with today's date and parsed time
+    const now = new Date();
+    now.setHours(hours, minutes, seconds, 0);
+
+    // Store globally
+    punchWatchTime = new Date(now);
+}
+
+
+// 🕒 Function to start the timer and update currentTime element every second
+function startTimeupdate() {
+    if (!punchWatchTime) {
+        console.error("Punch watch time not initialized. Call initPunchWatch() first.");
+        return;
+    }
+
+    const currentTimeElement = document.getElementById("currentTime");
+
+    // Add 1 second
+    punchWatchTime.setSeconds(punchWatchTime.getSeconds() + 1);
+
+    // Format time as 12-hour with AM/PM
+    let hr = punchWatchTime.getHours();
+    const min = punchWatchTime.getMinutes();
+    const sec = punchWatchTime.getSeconds();
+    const ampm = hr >= 12 ? 'PM' : 'AM';
+    hr = hr % 12 || 12; // Convert 0 to 12 for 12-hour format
+
+    const formattedTime = `${hr.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')} ${ampm}`;
+
+    // Update the DOM
+    currentTimeElement.innerText = formattedTime;
+
+    lastTime = formattedTime;
+
+}
+
+
 
 // Function to stop the clock update and freeze the current time
 function stopTimeUpdate() {
   clearInterval(timeInterval); // Stop the time update
   document.getElementById("currentTime").textContent = lastTime; // Display the frozen time
+  console.log("last time", lastTime);
 }
 
 function updateDateAndWeek() {
@@ -260,7 +405,7 @@ async function updateLocation() {
 
 
  function restartTime() {
-    timeInterval = setInterval(updateTime, 1000); // Stop the time update
+    timeInterval = setInterval(startTimeupdate, 1000); // Stop the time update
    
   }
 
@@ -443,6 +588,8 @@ document.getElementById('cam-stp').addEventListener('click', () => {
         alert("No active camera stream found.");
     }
 });
+
+
 
 // Define the checkInUpdate function
 function checkInUpdate(formattedDate, checkinTime) {
