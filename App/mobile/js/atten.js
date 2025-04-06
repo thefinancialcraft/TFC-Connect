@@ -1547,11 +1547,21 @@ async function getCheckinInfo() {
     const punchInData = JSON.parse(localStorage.getItem('punchInData'));
     const punchOutData = JSON.parse(localStorage.getItem('punchOutData'));
 
+   
     // If punchInData exists and conditions match, update UI accordingly
     if (updateLocationtag === true ) {
-        document.getElementById("locUpdCnt").style.display = "flex";
-        return; // Function exits here if condition matches
-    }
+
+        const userDetails = JSON.parse(localStorage.getItem("userDetails")) ; 
+        const islocation = userDetails.isLocation; 
+        console.log("islocation", islocation);
+
+        if(!islocation){
+            document.getElementById("locUpdCnt").style.display = "flex";
+        } else{
+            document.getElementById("locUpdCnt").style.display = "none";
+        }
+        
+     }
     // If punchInData exists and conditions match, update UI accordingly
     if (punchInData && punchInData.isAtnMarked === false ) {
         document.getElementById('atn-switch').style.display = 'flex';
