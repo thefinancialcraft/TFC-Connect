@@ -1548,10 +1548,10 @@ async function getCheckinInfo() {
     const punchOutData = JSON.parse(localStorage.getItem('punchOutData'));
 
     // If punchInData exists and conditions match, update UI accordingly
-    // if (updateLocationtag === true ) {
-    //     document.getElementById("locUpdCnt").style.display = "flex";
-    //     return; // Function exits here if condition matches
-    // }
+    if (updateLocationtag === true ) {
+        document.getElementById("locUpdCnt").style.display = "flex";
+        return; // Function exits here if condition matches
+    }
     // If punchInData exists and conditions match, update UI accordingly
     if (punchInData && punchInData.isAtnMarked === false ) {
         document.getElementById('atn-switch').style.display = 'flex';
