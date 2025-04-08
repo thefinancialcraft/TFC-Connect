@@ -280,67 +280,67 @@ function logout() {
 }
 
 
-setInterval(monitorToken(), 1000);
+// setInterval(monitorToken(), 1000);
 
 
  
-function monitorToken() {
-    // Retrieve active ticket from localStorage
-    const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
-    if (!activeTicket) {
-        console.error("No active ticket found.");
-        return;
-    }
+// function monitorToken() {
+//     // Retrieve active ticket from localStorage
+//     const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
+//     if (!activeTicket) {
+//         console.error("No active ticket found.");
+//         return;
+//     }
 
-    const tktuserToken = activeTicket.token;
+//     const tktuserToken = activeTicket.token;
 
-    // Set interval to check token validity every second
-    const intervalId = setInterval(() => {
-        // Create data object to send to the backend for token validity check
-        const data = new URLSearchParams();
-        data.append('action', 'checkToken');
-        data.append('token', tktuserToken);
+//     // Set interval to check token validity every second
+//     const intervalId = setInterval(() => {
+//         // Create data object to send to the backend for token validity check
+//         const data = new URLSearchParams();
+//         data.append('action', 'checkToken');
+//         data.append('token', tktuserToken);
 
-        // Fetch the backend URL from config.json
-        fetch('/TFC-Connect/App/config.json')
-            .then(response => response.json())
-            .then(config => {
-                const scriptUrl = config.scriptUrl;
+//         // Fetch the backend URL from config.json
+//         fetch('/TFC-Connect/App/config.json')
+//             .then(response => response.json())
+//             .then(config => {
+//                 const scriptUrl = config.scriptUrl;
 
-                // Make a POST request to check token validity
-                return fetch(scriptUrl, {
-                    method: 'POST',
-                    body: data
-                });
-            })
-            .then(response => response.json())
-            .then(data => {
-                // If server is false, break the function
-                // //console.log("Token monitor server status", data.server );
-                if (!data.server) {
-                    console.warn("Server is unavailable, breaking function.");
-                    clearInterval(intervalId); // Stop further monitoring
-                    return; // Break the function
-                }
+//                 // Make a POST request to check token validity
+//                 return fetch(scriptUrl, {
+//                     method: 'POST',
+//                     body: data
+//                 });
+//             })
+//             .then(response => response.json())
+//             .then(data => {
+//                 // If server is false, break the function
+//                 // //console.log("Token monitor server status", data.server );
+//                 if (!data.server) {
+//                     console.warn("Server is unavailable, breaking function.");
+//                     clearInterval(intervalId); // Stop further monitoring
+//                     return; // Break the function
+//                 }
 
-                // If server is true but token is invalid, execute the logic
-                if (data.server && !data.isValid) {
-                    console.warn("Token no longer valid");
+//                 // If server is true but token is invalid, execute the logic
+//                 if (data.server && !data.isValid) {
+//                     console.warn("Token no longer valid");
                    
 
-                    // Clear the token details in localStorage and stop monitoring
-                    removeInvalidTicket(tktuserToken);
-                    clearInterval(intervalId); // Stop further monitoring
+//                     // Clear the token details in localStorage and stop monitoring
+//                     removeInvalidTicket(tktuserToken);
+//                     clearInterval(intervalId); // Stop further monitoring
 
-                    // Redirect to login page
-                    window.location.href = '/TFC-Connect/App/login.html';
-                }
-            })
-            .catch(error => {
-                console.error("Error checking token validity:", error);
-            });
-    }, 1000); // Check every second
-}
+//                     // Redirect to login page
+//                     window.location.href = '/TFC-Connect/App/login.html';
+//                 }
+//             })
+//             .catch(error => {
+//                 console.error("Error checking token validity:", error);
+//             });
+//     }, 1000); // Check every second
+// }
 
 
 
