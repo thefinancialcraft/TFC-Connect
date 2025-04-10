@@ -3587,6 +3587,7 @@ function generateAttendanceTable(holidayDetails, salaryData, userDetails, isCall
         return holidayDate < currentDateObj;
     }).length;
     
+    
     console.log("Adjusted Holidays Count:", holidayDetails);
 
     // `ttl-mnt-cnt` se month aur year extract karo
