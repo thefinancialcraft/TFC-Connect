@@ -3059,56 +3059,62 @@ function findHoliday(attrecord) {
             updateHoliday( result.holidays );
             generateDates(attrecord, result.holidays);
             chkInOutRcd(attrecord);
+
+
+            // console.log("Server response findHoliday:", result.holidays );
         })
         .catch(error => {
             ////console.error("Error in findHoliday:", error);
         });
 }
 
+
 function updateHoliday(response) {
     // Ensure response is an array, prevent 'undefined' error
     response = response || [];
-    // console.log("🚀 Processed Response:", response);
 
     const targetMonthYearElem = document.getElementById("ttl-mnt-cnt");
-    if (!targetMonthYearElem) {
-        // console.error("❌ Error: Target Month-Year element not found!");
-        return;
-    }
+    if (!targetMonthYearElem) return;
 
     const targetMonthYear = targetMonthYearElem.textContent.trim().toUpperCase();
     const [targetMonth, targetYear] = targetMonthYear.split(" ");
 
     const monthMapping = {
-        "JAN": 0, "FEB": 1, "MAR": 2, "APR": 3, "MAY": 4, "JUN": 5, 
+        "JAN": 0, "FEB": 1, "MAR": 2, "APR": 3, "MAY": 4, "JUN": 5,
         "JUL": 6, "AUG": 7, "SEP": 8, "OCT": 9, "NOV": 10, "DEC": 11
     };
 
-    if (!(targetMonth in monthMapping)) {
-        // console.error("❌ Error: Invalid month format!");
-        return;
-    }
+    if (!(targetMonth in monthMapping)) return;
 
     const targetMonthNum = monthMapping[targetMonth];
     let holidayDetails = [];
 
     // Filter response and collect holiday details
     const filteredEntries = response.filter(entry => {
-        if (!entry || entry.length < 3) {
-            // console.warn("⚠ Warning: Skipping invalid entry", entry);
-            return false;
-        }
-        
+        if (!entry || entry.length < 3) return false;
+
         const entryDate = new Date(entry[0]);
         const workingStatus = entry[2]?.trim().toLowerCase() || "";
 
+        // Convert to IST
+        const istOffset = 5.5 * 60 * 60 * 1000; // 5 hours 30 mins in milliseconds
+        const istDate = new Date(entryDate.getTime() + istOffset);
+
+        const entryMonth = istDate.getMonth();
+        const entryYear = istDate.getFullYear();
+
         if (
-            entryDate.getMonth() === targetMonthNum &&
-            entryDate.getFullYear().toString() === targetYear &&
-            workingStatus !== 'yes' // Exclude working days
+            entryMonth === targetMonthNum &&
+            entryYear.toString() === targetYear &&
+            workingStatus !== 'yes'
         ) {
+            const dd = String(istDate.getDate()).padStart(2, '0');
+            const mm = String(istDate.getMonth() + 1).padStart(2, '0');
+            const yyyy = istDate.getFullYear();
+            const formattedDate = `${dd}-${mm}-${yyyy}`; // Indian Format
+
             holidayDetails.push({
-                date: entryDate.toISOString().split("T")[0], // YYYY-MM-DD format
+                date: formattedDate,
                 status: "Holiday"
             });
             return true;
@@ -3117,7 +3123,7 @@ function updateHoliday(response) {
     });
 
     // Debugging output
-    // console.log("📅 Holiday Details:", holidayDetails);
+    // console.log("📅 Holiday Details (IST):", holidayDetails);
 
     // Generate attendance table with holiday data
     findSalary(holidayDetails);
@@ -3127,8 +3133,6 @@ function updateHoliday(response) {
     if (holidayCountElem) {
         const formattedCount = filteredEntries.length.toString().padStart(2, '0');
         holidayCountElem.textContent = `${formattedCount} Days`;
-    } else {
-        // console.error("❌ Error: Element 'holiday-count' not found!");
     }
 
     // Update working days count
@@ -3139,10 +3143,9 @@ function updateHoliday(response) {
         const holidayCount = filteredEntries.length;
         const workingDays = Math.max(0, totalDays - holidayCount);
         workingCountElem.textContent = `${workingDays.toString().padStart(2, '0')} Days`;
-    } else {
-        // console.error("❌ Error: Element 'ttl-mnth-day' or 'Working-count' not found!");
     }
 }
+
 
 
 function markAttnDays(response) {
@@ -3572,7 +3575,19 @@ function generateAttendanceTable(holidayDetails, salaryData, userDetails, isCall
 
 
     // **आने वाली छुट्टियों की गिनती निकालें**
-    const adjustedHolidaysCount = holidayDetails.filter(h => h.date < currentDate).length;
+    const adjustedHolidaysCount = holidayDetails.filter(h => {
+        // Holiday date: "DD-MM-YYYY" → Date object
+        const [dd, mm, yyyy] = h.date.split("-");
+        const holidayDate = new Date(`${yyyy}-${mm}-${dd}T00:00:00`);
+    
+        // Current date: already in "YYYY-MM-DD"
+        const currentDateObj = new Date(currentDate + "T00:00:00");
+    
+        // Compare
+        return holidayDate < currentDateObj;
+    }).length;
+    
+    console.log("Adjusted Holidays Count:", holidayDetails);
 
     // `ttl-mnt-cnt` se month aur year extract karo
     const monthYearText = document.getElementById("ttl-mnt-cnt")?.textContent.trim() || "";
@@ -3634,20 +3649,23 @@ const isJustify = isJustificationData.find(({ date }) => {
 // Calculate the difference in days (if same month and year)
 let daysBeforeSelectedDate = 0;
 let holidaysBeforeJoin = 0;
-
 if (formattedUserDate === `${monthText} ${yearText}`) {
     const selectedDay = parseInt(formattedUserDateDDMMYYYY.split('-')[0], 10);
     daysBeforeSelectedDate = selectedDay - 1; // Pehle ke din count karne ke liye
 
     // **Check holidays before joining**
     holidaysBeforeJoin = holidayDetails.filter(h => {
-        const holidayDate = new Date(h.date);
+        // DD-MM-YYYY format ko YYYY-MM-DD mein convert karna
+        const [dd, mm, yyyy] = h.date.split("-");
+        const holidayDate = new Date(`${yyyy}-${mm}-${dd}T00:00:00`);
+
         return (
             holidayDate.toLocaleString('en-US', { month: 'short', year: 'numeric' }).toUpperCase() === formattedUserDate &&
             holidayDate.getDate() < selectedDay
         );
     }).length;
 }
+
 
     const isCurrentMonth = formattedUserDate === `${monthText} ${yearText}`;
 
@@ -3986,7 +4004,7 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
         }))
         .filter(item => item.Days !== undefined);
 
-    // console.table(tableData);
+    console.table(tableData);
 
     // ✅ **डेटा को `updateAttendDays()` फ़ंक्शन में भेजें**
     updateAttendDays(tableData);

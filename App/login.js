@@ -94,9 +94,8 @@
 
 
 
-    // hero button slider
-    
-    const sliderContainer = document.querySelector('.slider-container');
+// hero button slider
+const sliderContainer = document.querySelector('.slider-container');
 let isSwiped = false;
 let startX;
 let currentTranslateX = 0;
@@ -138,6 +137,9 @@ sliderContainer.addEventListener('touchend', () => {
         isSwiped = false;
     }
 });
+
+
+
 
 
 function moveToNext(current, nextFieldId) {
@@ -1723,7 +1725,7 @@ async function sendTokenToBackend(token, tokenGenTime, deviceType, deviceModel, 
         }
     } catch (error) {
         console.error('Error:', error); // Log any error that occurs
-        showErrorMessage(document.getElementById('error-message'), " Network issue, Server connection error");
+        showErrorMessage(document.getElementById('error-message'), error);
         hideSpinner();
         
     }

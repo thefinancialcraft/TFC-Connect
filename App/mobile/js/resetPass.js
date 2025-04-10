@@ -460,6 +460,15 @@ function rstPswdDp(){
 }
 
 
+function hdPswdDp(){
+    const rstPswdDp = document.getElementById('mailVerify');
+    
+    if (rstPswdDp) {
+        rstPswdDp.classList.remove('visible'); // Slide out to hide
+    }
+}
+
+
 // Function to highlight input fields
 function highlightInputFields() {
     const inputs = document.querySelectorAll('.login-form input');

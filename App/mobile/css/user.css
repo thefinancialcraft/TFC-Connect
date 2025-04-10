@@ -3221,10 +3221,34 @@ form{
      z-index: 99;
      background-color: #fff;
      transform: translateY(-100%);
-
      /* justify-content: space-evey; */
-  
      transition: transform 0.7s ease-out;
+
+
+     .skip-mail{
+        width: 100px;
+        height: 30px;
+        border-radius: 20px;
+        background-color: #4931e7;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 500;
+        border: none;
+        position: absolute;
+        z-index: 111;
+        top: 20px;
+        right: 20px;
+        /* box-shadow: 5px 5px 5px rgba(36, 36, 36, 0.144); */
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+
+        &:active{
+            background-color: #fff;
+            color: #4931e7;
+            border: 1px solid #4931e7;
+        }
+       
+     }
 
      img{
         width: 80%;
