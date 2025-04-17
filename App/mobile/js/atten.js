@@ -1,3 +1,15 @@
+// run on load funtions
+
+
+
+getAttenData();
+activityDataRecord();
+setInterval(updateProgressBars, 1000);
+setInterval(findHoliday, 10000);
+
+
+
+
 function updateAttendanceTimes() {
     const userDetails = JSON.parse(localStorage.getItem('userDetails'));
 
@@ -1269,6 +1281,8 @@ function updateProgress(targetProgress) {
     progressCircle.style.strokeDashoffset = offset;
     progressText.innerHTML = `${Math.floor(progress)}% <p>Attendance</p>`;
   }
+
+  
 }
 
 
@@ -1540,6 +1554,8 @@ function observeDateChange() {
     observer.observe(targetNode, { characterData: true, childList: true, subtree: true });
 }
 
+
+getCheckinInfo();
 
 
 async function getCheckinInfo() {
@@ -1848,17 +1864,6 @@ function showAttnRecord(){
 
 
 
-setInterval(getCheckinInfo, 1000);
-setInterval(activityDataRecord, 1000);
-setInterval(getAttenData, 1000);
-setInterval(showRecdfun, 1000);
-setInterval(hideRecdfun, 1000);
-setInterval(findHoliday, 1000);
-setInterval(findSalary, 1000);
-// हर 1 सेकंड में progress bars update होंगी
-setInterval(updateProgressBars, 1000);
-
-
 
 
 
@@ -1945,6 +1950,7 @@ if (selectedDateText === formattedCurrentDate) {
         let noRecd = "hide";
         localStorage.setItem('noRecd', noRecd);
         checkInOutDate(result.data);
+        
     }
 } 
  else {
@@ -2573,11 +2579,6 @@ if (selectedDateText === formattedCurrentDate) {
 
 
 
-
-
-
-
-
 function activityDataRecord() {
     //////console.log("Function running: activityDataRecord");
 
@@ -2632,8 +2633,10 @@ function activityDataRecord() {
         })
         .then(result => {
             markActivity(result.data);
-            markAttnDays(result.data);
-            findHoliday(result.data)
+            // markAttnDays(result.data);
+            localStorage.setItem('markAttnDays', JSON.stringify(result.data));
+            // findHoliday(result.data)
+            
             //console.log("Server response activityDataRecord:", result);
 
         })
@@ -2894,8 +2897,6 @@ function updateAtnCells(data) {
     }
 }
 
-setInterval (updateAtnCellsByDate, 1000);
-
 async function updateAtnCellsByDate(formattedDate) {
     if (!formattedDate) {
         ////console.error("formattedDate is not defined or invalid");
@@ -2953,6 +2954,7 @@ async function updateAtnCellsByDate(formattedDate) {
             body: data
         });
 
+        getAttenData();
       
         // Log the backend response before further processing
         //////console.log("Backend Response:", backendResponse);
@@ -3001,7 +3003,9 @@ async function updateAtnCellsByDate(formattedDate) {
 
 
 
-function findHoliday(attrecord) {
+function findHoliday() {
+
+    let attrecord = JSON.parse(localStorage.getItem('markAttnDays'));
     //////console.log("Function running: findHoliday");
 
     // Retrieve and parse the active ticket data from localStorage
@@ -3148,8 +3152,9 @@ function updateHoliday(response) {
 
 
 
-function markAttnDays(response) {
+function markAttnDays() {
 
+    let response = JSON.parse(localStorage.getItem('markAttnDays'));
 
     ////console.log("markAttnDays record", response);
     
@@ -3195,6 +3200,8 @@ function markAttnDays(response) {
     // Calculate total attendance days (P + L + H)
     let totalAttendanceDays = presentCount + lateCount + holidayCount;
     let attendancePercent = totalWorkingDays > 0 ? Math.min((totalAttendanceDays / totalWorkingDays) * 100, 100) : 0;
+    
+    
     
     updateProgress(Math.round(attendancePercent));
     
@@ -3586,7 +3593,6 @@ function generateAttendanceTable(holidayDetails, salaryData, userDetails, isCall
         // Compare
         return holidayDate < currentDateObj;
     }).length;
-    
     
     console.log("Adjusted Holidays Count:", holidayDetails);
 
@@ -4009,6 +4015,9 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
 
     // ✅ **डेटा को `updateAttendDays()` फ़ंक्शन में भेजें**
     updateAttendDays(tableData);
+
+
+    markAttnDays();
 }
 
 
