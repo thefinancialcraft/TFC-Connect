@@ -909,9 +909,6 @@ async function uploadCheckinData(checkinData, snapshotData) {
 
         const data = await fetchResponse.json();
 
-        // ✅ Data upload hone ke baad local storage se hata do
-        localStorage.removeItem('punchInData');
-
         //console.log("Attendance Data uploaded successfully:", data);
 
         document.getElementById('cam-stp').style.display = 'none';
@@ -921,8 +918,13 @@ async function uploadCheckinData(checkinData, snapshotData) {
         document.querySelector('.loader').style.display = 'none';
 
         localStorage.setItem('whatsAppData', JSON.stringify(data.uploadedData));
+        
+        // ✅ Data upload hone ke baad local storage se hata do
+        localStorage.removeItem('punchInData');
+
 
         return true; // ✅ Return success
+        
     } catch (error) {
         //console.error("Error uploading data:", error.message);
         saveToLocalStorage(checkinData, snapshotData);
@@ -942,6 +944,7 @@ function saveToLocalStorage(checkinData, snapshotData) {
         isAtnMarked: false // Add flag to track attendance marking status
     };
     
+
     localStorage.setItem('punchInData', JSON.stringify(punchInData));
     //console.log("Data saved to local storage as 'punchInData' due to an error.");
       
@@ -1003,6 +1006,7 @@ function saveToLocalStorage(checkinData, snapshotData) {
     document.getElementById('resetCont').style.display = 'flex';
     document.getElementById('actBtn').style.display = 'none';
     document.getElementById('chknBtn').style.display = 'none';
+       
 });
 
 
@@ -1094,7 +1098,8 @@ async function checkPunchInStatus() {
   
       // Reset UI elements
       checkinCont.style.display = "none";
-      actionCont.style.display = "flex";   
+      actionCont.style.display = "flex"; 
+      window.location.reload();  
     //   document.getElementById('stsBx').style.display = 'none';
   });
   
@@ -2146,6 +2151,7 @@ async function sendCheckoutData(ticketObject) {
         document.getElementById('resetCont').style.display = 'none';
         stopPunchOutCheck();
         localStorage.removeItem('punchOutData');
+        window.location.reload();
         
 
         return result;
