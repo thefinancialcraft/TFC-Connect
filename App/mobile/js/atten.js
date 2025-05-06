@@ -742,8 +742,10 @@ function checkInUpdate(formattedDate, checkinTime) {
     
         // सेकंड्स को जोड़ने के लिए पास करें
         return subTimeToTimestamp(officeCheckInTimestamp, totalMinutesToAdd, seconds);
+
     }
 
+    
 
     // Create deadlines
     const truserCheckIn = addCustomTime(userCheckIn, "00:00:00");
@@ -1030,6 +1032,8 @@ function stopPunchInCheck() {punchInInterval
     }
 }
 
+
+setInterval(checkPunchInStatus, 10000); // Check every 30 seconds
 
 
 async function checkPunchInStatus() {
@@ -1439,8 +1443,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 function createCalendarFromSpan(attrecord, response = []) {
-    //////console.log("attrecord Data:", attrecord);
-    //////console.log("Holidays Data:", response);
+    console.log("attrecord Data:", attrecord);
+    console.log("Holidays Data:", response);
 
     const calendar = document.getElementById('calendar');
     const dateSpan = document.getElementById('crt-atn-clndr');
@@ -1561,6 +1565,7 @@ function observeDateChange() {
 
 
 getCheckinInfo();
+setInterval(getCheckinInfo, 1000); // Check every 30 seconds
 
 
 async function getCheckinInfo() {
@@ -1870,6 +1875,7 @@ function showAttnRecord(){
 
 
 
+setInterval(getAttenData, 10000); // Check every 10 seconds 
 
 
 
@@ -2584,6 +2590,9 @@ if (selectedDateText === formattedCurrentDate) {
 }
 
 
+setInterval(activityDataRecord, 1000); // Check every 10 seconds
+
+
 
 function activityDataRecord() {
     //////console.log("Function running: activityDataRecord");
@@ -2903,6 +2912,8 @@ function updateAtnCells(data) {
     }
 }
 
+
+
 async function updateAtnCellsByDate(formattedDate) {
     if (!formattedDate) {
         ////console.error("formattedDate is not defined or invalid");
@@ -3007,6 +3018,8 @@ async function updateAtnCellsByDate(formattedDate) {
 }
 
 
+setinterval(findHoliday, 1000);
+
 
 
 function findHoliday() {
@@ -3064,7 +3077,7 @@ function findHoliday() {
             return response.json();
         })
         .then(result => {
-            //////console.log("Server response findHoliday:", result);
+            console.log("Server response findHoliday:", result);
             createCalendarFromSpan(attrecord, result.holidays);
             updateHoliday( result.holidays );
             generateDates(attrecord, result.holidays);
@@ -3155,6 +3168,9 @@ function updateHoliday(response) {
         workingCountElem.textContent = `${workingDays.toString().padStart(2, '0')} Days`;
     }
 }
+
+
+setInterval(markAttnDays, 1000);
 
 
 
