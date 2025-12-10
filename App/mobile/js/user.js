@@ -155,6 +155,9 @@ menuItems.forEach((item) => {
             case 'wallet-widget':
                 headerTitle.textContent = 'Wallet';
                 break;
+            case 'salary-widget':
+                headerTitle.textContent = 'Salary';
+                break;
             default:
                 headerTitle.textContent = 'Dashboard';
         }
@@ -1047,4 +1050,138 @@ function updateToggles() {
     loadFlags();
     updateToggles();
     
+
+// ==================== SALARY DISPLAY FUNCTION ====================
+
+setInterval(displaySalaryData, 30000); // Refresh every 30 seconds
+displaySalaryData();
+
+function displaySalaryData() {
+    // Retrieve active ticket from localStorage
+    const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
+    if (!activeTicket) {
+        console.error("No active ticket found.");
+        return;
+    }
+
+    const tktuserToken = activeTicket.token;
+
+    // Create data object to send to the backend
+    const data = new URLSearchParams();
+    data.append('action', 'getAllUsersSalary');
+    data.append('token', tktuserToken);
+
+    // Fetch config.json to get the script URL
+    fetch('/TFC-Connect/App/config.json')
+        .then(response => response.json())
+        .then(config => {
+            const scriptUrl = config.scriptUrl;
+
+            // Send POST request to the Apps Script endpoint
+            return fetch(scriptUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: data
+            });
+        })
+        .then(response => {
+            if (response.headers.get('content-type')?.includes('application/json')) {
+                return response.json();
+            } else {
+                throw new Error("Invalid JSON response");
+            }
+        })
+        .then(result => {
+            console.log("Salary Data Response:", result);
+            
+            if (result.status && result.salaryData) {
+                const salaryList = document.getElementById('salaryList');
+                if (!salaryList) {
+                    console.warn("Salary list container not found.");
+                    return;
+                }
+
+                // Clear previous contents
+                salaryList.innerHTML = '';
+
+                // Loop through all salary records
+                result.salaryData.forEach((salary, index) => {
+                    // Create salary card container
+                    const salaryCard = document.createElement('div');
+                    salaryCard.className = 'salary-card box-styling flex-row';
+
+                    // User Info Column
+                    const userInfoDiv = document.createElement('div');
+                    userInfoDiv.className = 'salary-user-info flex-coloum';
+
+                    const userName = document.createElement('h4');
+                    userName.className = 'salary-name';
+                    userName.textContent = salary.userName || 'N/A';
+
+                    const userId = document.createElement('p');
+                    userId.className = 'salary-id';
+                    userId.textContent = `ID: ${salary.userId || 'N/A'}`;
+
+                    userInfoDiv.appendChild(userName);
+                    userInfoDiv.appendChild(userId);
+
+                    // Salary Amount Column
+                    const salaryAmountDiv = document.createElement('div');
+                    salaryAmountDiv.className = 'salary-amount flex-coloum';
+
+                    const salaryLabel = document.createElement('p');
+                    salaryLabel.className = 'salary-label';
+                    salaryLabel.textContent = 'Monthly Salary';
+
+                    const salaryValue = document.createElement('h3');
+                    salaryValue.className = 'salary-value';
+                    salaryValue.textContent = `₹ ${salary.salary ? parseInt(salary.salary).toLocaleString() : '0'}`;
+
+                    salaryAmountDiv.appendChild(salaryLabel);
+                    salaryAmountDiv.appendChild(salaryValue);
+
+                    // Department/Status Column (optional)
+                    const deptDiv = document.createElement('div');
+                    deptDiv.className = 'salary-dept flex-coloum';
+
+                    const deptLabel = document.createElement('p');
+                    deptLabel.className = 'salary-label';
+                    deptLabel.textContent = 'Department';
+
+                    const deptValue = document.createElement('p');
+                    deptValue.className = 'salary-dept-value';
+                    deptValue.textContent = salary.department || salary.userType || 'N/A';
+
+                    deptDiv.appendChild(deptLabel);
+                    deptDiv.appendChild(deptValue);
+
+                    // Append all columns to salary card
+                    salaryCard.appendChild(userInfoDiv);
+                    salaryCard.appendChild(salaryAmountDiv);
+                    salaryCard.appendChild(deptDiv);
+
+                    // Append salary card to list
+                    salaryList.appendChild(salaryCard);
+                });
+
+                console.log(`Loaded ${result.salaryData.length} salary records.`);
+            } else {
+                console.warn("No salary data received from backend.");
+                const salaryList = document.getElementById('salaryList');
+                if (salaryList) {
+                    salaryList.innerHTML = '<p style="text-align:center; color:#999;">No salary data available</p>';
+                }
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching salary data:", error);
+            const salaryList = document.getElementById('salaryList');
+            if (salaryList) {
+                salaryList.innerHTML = '<p style="text-align:center; color:#d32f2f;">Error loading salary data</p>';
+            }
+        });
+}
+
     
