@@ -13,8 +13,8 @@ window.onload = function() {
         // Check if the password update status exists in localStorage
         var isPswdUpdt = localStorage.getItem('isPswdUpdt');
 
-        // If the value is not 'true', run function 'a'
-        if (isPswdUpdt !== 'true') {
+        // If the value is not 'true', run function 'a' (only if it exists)
+        if (isPswdUpdt !== 'true' && typeof rstPswdDp === 'function') {
             rstPswdDp(); // Run function 'a' if the value is not 'true'
         }
         // If value is 'true', do nothing
@@ -822,12 +822,12 @@ function updateDaysInMonth() {
     let daysOutput = document.getElementById("ttl-mnth-day");
 
     if (!monthYearSpan || !daysOutput) {
-        console.error("❌ Required elements not found!");
+        console.warn("⚠️ Required elements not found! (ttl-mnt-cnt or ttl-mnth-day) - This feature requires these elements in the HTML.");
         return;
     }
 
     // Get the value from span (expected format: MMM YYYY)
-    let value = monthYearSpan.innerText.trim().toUpperCase();
+    let value = monthYearSpan.innerText?.trim().toUpperCase() || "";
     ////console.log("📌 Read from span:", value);
 
     if (value) {
@@ -847,15 +847,15 @@ function updateDaysInMonth() {
             if (month > 0 && !isNaN(year)) {
                 let daysInMonth = new Date(year, month, 0).getDate();
                 ////console.log("✅ Days in Month:", daysInMonth);
-                daysOutput.innerText = daysInMonth; // Update the span with number of days
+                if (daysOutput) {
+                    daysOutput.innerText = daysInMonth; // Update the span with number of days
+                }
             } else {
-                console.error("❌ Invalid month or year!");
+                console.warn("⚠️ Invalid month or year!");
             }
         } else {
-            console.error("❌ Invalid format! Expected MMM YYYY (e.g., AUG 2025)");
+            console.warn("⚠️ Invalid format! Expected MMM YYYY (e.g., AUG 2025)");
         }
-    } else {
-        console.error("❌ Empty span content!");
     }
 }
 
@@ -864,7 +864,7 @@ function observeSpanChanges() {
     let targetNode = document.getElementById("ttl-mnt-cnt");
 
     if (!targetNode) {
-        console.error("❌ Target span not found!");
+        console.warn("⚠️ Target span not found! (ttl-mnt-cnt) - This feature requires this element in the HTML.");
         return;
     }
 
@@ -889,6 +889,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 const monthDisplay = document.getElementById("month-display");
+
+// Only initialize month display if element exists
+if (monthDisplay) {
     let currentDate = new Date(); // Default current date
     let selectedMonth = currentDate.getMonth(); // 0-based index
     let selectedYear = currentDate.getFullYear();
@@ -899,7 +902,9 @@ const monthDisplay = document.getElementById("month-display");
     ];
 
     function updateMonthDisplay() {
-        monthDisplay.innerText = `${monthNames[selectedMonth]} ${selectedYear}`;
+        if (monthDisplay) {
+            monthDisplay.innerText = `${monthNames[selectedMonth]} ${selectedYear}`;
+        }
     }
 
     function changeMonth(direction) {
@@ -916,6 +921,9 @@ const monthDisplay = document.getElementById("month-display");
 
     // Initialize with the current month
     updateMonthDisplay();
+} else {
+    console.warn("⚠️ Month display element not found in DOM. This feature requires 'month-display' element.");
+}
 
     
 
