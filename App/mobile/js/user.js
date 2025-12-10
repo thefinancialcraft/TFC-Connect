@@ -13,8 +13,8 @@ window.onload = function() {
         // Check if the password update status exists in localStorage
         var isPswdUpdt = localStorage.getItem('isPswdUpdt');
 
-        // If the value is not 'true', run function 'a' (only if it exists)
-        if (isPswdUpdt !== 'true' && typeof rstPswdDp === 'function') {
+        // If the value is not 'true', run function 'a'
+        if (isPswdUpdt !== 'true') {
             rstPswdDp(); // Run function 'a' if the value is not 'true'
         }
         // If value is 'true', do nothing
@@ -154,9 +154,6 @@ menuItems.forEach((item) => {
                 break;
             case 'wallet-widget':
                 headerTitle.textContent = 'Wallet';
-                break;
-            case 'salary-widget':
-                headerTitle.textContent = 'Salary';
                 break;
             default:
                 headerTitle.textContent = 'Dashboard';
@@ -822,12 +819,12 @@ function updateDaysInMonth() {
     let daysOutput = document.getElementById("ttl-mnth-day");
 
     if (!monthYearSpan || !daysOutput) {
-        console.warn("⚠️ Required elements not found! (ttl-mnt-cnt or ttl-mnth-day) - This feature requires these elements in the HTML.");
+        console.error("❌ Required elements not found!");
         return;
     }
 
     // Get the value from span (expected format: MMM YYYY)
-    let value = monthYearSpan.innerText?.trim().toUpperCase() || "";
+    let value = monthYearSpan.innerText.trim().toUpperCase();
     ////console.log("📌 Read from span:", value);
 
     if (value) {
@@ -847,15 +844,15 @@ function updateDaysInMonth() {
             if (month > 0 && !isNaN(year)) {
                 let daysInMonth = new Date(year, month, 0).getDate();
                 ////console.log("✅ Days in Month:", daysInMonth);
-                if (daysOutput) {
-                    daysOutput.innerText = daysInMonth; // Update the span with number of days
-                }
+                daysOutput.innerText = daysInMonth; // Update the span with number of days
             } else {
-                console.warn("⚠️ Invalid month or year!");
+                console.error("❌ Invalid month or year!");
             }
         } else {
-            console.warn("⚠️ Invalid format! Expected MMM YYYY (e.g., AUG 2025)");
+            console.error("❌ Invalid format! Expected MMM YYYY (e.g., AUG 2025)");
         }
+    } else {
+        console.error("❌ Empty span content!");
     }
 }
 
@@ -864,7 +861,7 @@ function observeSpanChanges() {
     let targetNode = document.getElementById("ttl-mnt-cnt");
 
     if (!targetNode) {
-        console.warn("⚠️ Target span not found! (ttl-mnt-cnt) - This feature requires this element in the HTML.");
+        console.error("❌ Target span not found!");
         return;
     }
 
@@ -889,9 +886,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 const monthDisplay = document.getElementById("month-display");
-
-// Only initialize month display if element exists
-if (monthDisplay) {
     let currentDate = new Date(); // Default current date
     let selectedMonth = currentDate.getMonth(); // 0-based index
     let selectedYear = currentDate.getFullYear();
@@ -902,9 +896,7 @@ if (monthDisplay) {
     ];
 
     function updateMonthDisplay() {
-        if (monthDisplay) {
-            monthDisplay.innerText = `${monthNames[selectedMonth]} ${selectedYear}`;
-        }
+        monthDisplay.innerText = `${monthNames[selectedMonth]} ${selectedYear}`;
     }
 
     function changeMonth(direction) {
@@ -921,9 +913,6 @@ if (monthDisplay) {
 
     // Initialize with the current month
     updateMonthDisplay();
-} else {
-    console.warn("⚠️ Month display element not found in DOM. This feature requires 'month-display' element.");
-}
 
     
 
@@ -1058,221 +1047,4 @@ function updateToggles() {
     loadFlags();
     updateToggles();
     
-
-// ==================== SALARY DISPLAY FUNCTION ====================
-
-setInterval(displaySalaryData, 30000); // Refresh every 30 seconds
-displaySalaryData();
-
-function displaySalaryData() {
-    // Retrieve active ticket from localStorage
-    const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
-    if (!activeTicket) {
-        console.error("No active ticket found.");
-        return;
-    }
-
-    const tktuserToken = activeTicket.token;
-
-    // Create data object to send to the backend
-    const data = new URLSearchParams();
-    data.append('action', 'getAllUsersSalary');
-    data.append('token', tktuserToken);
-
-    // Fetch config.json to get the script URL
-    fetch('/TFC-Connect/App/config.json')
-        .then(response => response.json())
-        .then(config => {
-            const scriptUrl = config.scriptUrl;
-            // Send POST request to the Apps Script endpoint
-            return fetch(scriptUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: data
-            });
-        })
-        .then(response => {
-            if (response.headers.get('content-type')?.includes('application/json')) {
-                return response.json();
-            } else {
-                throw new Error("Invalid JSON response");
-            }
-        })
-        .then(result => {
-            console.log("Salary Data Response:", result);
-            // Use result.salary and result.userDetails arrays
-            // Also use incentive, paidLeave, justification, justificationPercent if available
-            if (result.status === "success" && Array.isArray(result.salary) && Array.isArray(result.userDetails)) {
-                const salaryList = document.getElementById('salaryList');
-                if (!salaryList) {
-                    console.warn("Salary list container not found.");
-                    return;
-                }
-                salaryList.innerHTML = '';
-
-                // Map userId to userDetails for quick lookup
-                const userMap = {};
-                result.userDetails.forEach(user => {
-                    userMap[user.userId] = user;
-                });
-
-                // Helper: get incentive, paidLeave, etc. for a user
-                function getUserData(arr, userId) {
-                    if (!Array.isArray(arr)) return null;
-                    return arr.find(item => item.userId === userId) || null;
-                }
-
-                // Loop through all salary records
-                result.salary.forEach((salaryObj, index) => {
-                    const userId = salaryObj.userId;
-                    const user = userMap[userId] || {};
-                    const baseSalary = parseFloat(salaryObj.salary) || 0;
-
-                    // Find incentive, paidLeave, justification, etc.
-                    const incentiveObj = getUserData(result.incentive, userId);
-                    const paidLeaveObj = getUserData(result.paidLeave, userId);
-                    const justificationObj = getUserData(result.justification, userId);
-                    const justPercentObj = getUserData(result.justificationPercent, userId);
-
-                    // Calculate values
-                    const incentive = incentiveObj && incentiveObj.amount ? parseFloat(incentiveObj.amount) : 0;
-                    const paidLeave = paidLeaveObj && paidLeaveObj.days ? parseInt(paidLeaveObj.days) : 0;
-                    const justification = justificationObj && justificationObj.days ? parseInt(justificationObj.days) : 0;
-                    const justPercent = justPercentObj && justPercentObj.percent ? parseFloat(justPercentObj.percent) : 0;
-
-                    // Example deduction logic (customize as per atten.js):
-                    // Deductions for absent, late, halfday, etc. can be added here
-                    // For now, let's assume:
-                    // Net Salary = baseSalary + incentive - deductions
-                    // Deductions can be based on absent days, late days, etc. (add logic as needed)
-                    let deductions = 0;
-                    // Example: if justification percent < 80, deduct 10% salary
-                    if (justPercent && justPercent < 80) {
-                        deductions += baseSalary * 0.10;
-                    }
-                    // Example: paid leave more than 2 days, deduct 5% salary
-                    if (paidLeave > 2) {
-                        deductions += baseSalary * 0.05;
-                    }
-                    // Add more deduction logic as per your rules
-
-                    const netSalary = Math.round(baseSalary + incentive - deductions);
-
-                    // Create salary card container
-                    const salaryCard = document.createElement('div');
-                    salaryCard.className = 'salary-card box-styling flex-row';
-
-                    // User Info Column
-                    const userInfoDiv = document.createElement('div');
-                    userInfoDiv.className = 'salary-user-info flex-coloum';
-
-                    const userName = document.createElement('h4');
-                    userName.className = 'salary-name';
-                    userName.textContent = user.userName || salaryObj.userName || 'N/A';
-
-                    const userIdDiv = document.createElement('p');
-                    userIdDiv.className = 'salary-id';
-                    userIdDiv.textContent = `ID: ${userId || 'N/A'}`;
-
-                    userInfoDiv.appendChild(userName);
-                    userInfoDiv.appendChild(userIdDiv);
-
-                    // Salary Details Column
-                    const salaryDetailsDiv = document.createElement('div');
-                    salaryDetailsDiv.className = 'salary-details flex-coloum';
-
-                    // Base Salary
-                    const baseSalaryLabel = document.createElement('p');
-                    baseSalaryLabel.className = 'salary-label';
-                    baseSalaryLabel.textContent = 'Base Salary';
-                    const baseSalaryValue = document.createElement('h3');
-                    baseSalaryValue.className = 'salary-value';
-                    baseSalaryValue.textContent = `₹ ${baseSalary.toLocaleString()}`;
-                    salaryDetailsDiv.appendChild(baseSalaryLabel);
-                    salaryDetailsDiv.appendChild(baseSalaryValue);
-
-                    // Incentive
-                    const incentiveLabel = document.createElement('p');
-                    incentiveLabel.className = 'salary-label';
-                    incentiveLabel.textContent = 'Incentive';
-                    const incentiveValue = document.createElement('h3');
-                    incentiveValue.className = 'salary-value';
-                    incentiveValue.textContent = `₹ ${incentive.toLocaleString()}`;
-                    salaryDetailsDiv.appendChild(incentiveLabel);
-                    salaryDetailsDiv.appendChild(incentiveValue);
-
-                    // Paid Leave
-                    const paidLeaveLabel = document.createElement('p');
-                    paidLeaveLabel.className = 'salary-label';
-                    paidLeaveLabel.textContent = 'Paid Leave';
-                    const paidLeaveValue = document.createElement('h3');
-                    paidLeaveValue.className = 'salary-value';
-                    paidLeaveValue.textContent = `${paidLeave} days`;
-                    salaryDetailsDiv.appendChild(paidLeaveLabel);
-                    salaryDetailsDiv.appendChild(paidLeaveValue);
-
-                    // Deductions
-                    const deductionLabel = document.createElement('p');
-                    deductionLabel.className = 'salary-label';
-                    deductionLabel.textContent = 'Deductions';
-                    const deductionValue = document.createElement('h3');
-                    deductionValue.className = 'salary-value';
-                    deductionValue.textContent = `₹ ${Math.round(deductions).toLocaleString()}`;
-                    salaryDetailsDiv.appendChild(deductionLabel);
-                    salaryDetailsDiv.appendChild(deductionValue);
-
-                    // Net Salary
-                    const netSalaryLabel = document.createElement('p');
-                    netSalaryLabel.className = 'salary-label';
-                    netSalaryLabel.textContent = 'Net Salary';
-                    const netSalaryValue = document.createElement('h3');
-                    netSalaryValue.className = 'salary-value';
-                    netSalaryValue.textContent = `₹ ${netSalary.toLocaleString()}`;
-                    salaryDetailsDiv.appendChild(netSalaryLabel);
-                    salaryDetailsDiv.appendChild(netSalaryValue);
-
-                    // Department/Status Column (optional)
-                    const deptDiv = document.createElement('div');
-                    deptDiv.className = 'salary-dept flex-coloum';
-
-                    const deptLabel = document.createElement('p');
-                    deptLabel.className = 'salary-label';
-                    deptLabel.textContent = 'Department';
-
-                    const deptValue = document.createElement('p');
-                    deptValue.className = 'salary-dept-value';
-                    deptValue.textContent = user.department || user.userType || salaryObj.department || salaryObj.userType || 'N/A';
-
-                    deptDiv.appendChild(deptLabel);
-                    deptDiv.appendChild(deptValue);
-
-                    // Append all columns to salary card
-                    salaryCard.appendChild(userInfoDiv);
-                    salaryCard.appendChild(salaryDetailsDiv);
-                    salaryCard.appendChild(deptDiv);
-
-                    // Append salary card to list
-                    salaryList.appendChild(salaryCard);
-                });
-
-                console.log(`Loaded ${result.salary.length} salary records.`);
-            } else {
-                console.warn("No salary data received from backend.");
-                const salaryList = document.getElementById('salaryList');
-                if (salaryList) {
-                    salaryList.innerHTML = '<p style="text-align:center; color:#999;">No salary data available</p>';
-                }
-            }
-        })
-        .catch(error => {
-            console.error("Error fetching salary data:", error);
-            const salaryList = document.getElementById('salaryList');
-            if (salaryList) {
-                salaryList.innerHTML = '<p style="text-align:center; color:#d32f2f;">Error loading salary data</p>';
-            }
-        });
-}
-
     
