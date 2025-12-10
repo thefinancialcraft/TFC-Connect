@@ -1078,15 +1078,12 @@ function displaySalaryData() {
     const data = new URLSearchParams();
     data.append('action', 'getAllUsersSalary');
     data.append('token', tktuserToken);
-     data.append('userId', activeTicket.userId);
-
 
     // Fetch config.json to get the script URL
     fetch('/TFC-Connect/App/config.json')
         .then(response => response.json())
         .then(config => {
             const scriptUrl = config.scriptUrl;
-
             // Send POST request to the Apps Script endpoint
             return fetch(scriptUrl, {
                 method: 'POST',
@@ -1105,19 +1102,64 @@ function displaySalaryData() {
         })
         .then(result => {
             console.log("Salary Data Response:", result);
-            
-            if (result.status && result.salaryData) {
+            // Use result.salary and result.userDetails arrays
+            // Also use incentive, paidLeave, justification, justificationPercent if available
+            if (result.status === "success" && Array.isArray(result.salary) && Array.isArray(result.userDetails)) {
                 const salaryList = document.getElementById('salaryList');
                 if (!salaryList) {
                     console.warn("Salary list container not found.");
                     return;
                 }
-
-                // Clear previous contents
                 salaryList.innerHTML = '';
 
+                // Map userId to userDetails for quick lookup
+                const userMap = {};
+                result.userDetails.forEach(user => {
+                    userMap[user.userId] = user;
+                });
+
+                // Helper: get incentive, paidLeave, etc. for a user
+                function getUserData(arr, userId) {
+                    if (!Array.isArray(arr)) return null;
+                    return arr.find(item => item.userId === userId) || null;
+                }
+
                 // Loop through all salary records
-                result.salaryData.forEach((salary, index) => {
+                result.salary.forEach((salaryObj, index) => {
+                    const userId = salaryObj.userId;
+                    const user = userMap[userId] || {};
+                    const baseSalary = parseFloat(salaryObj.salary) || 0;
+
+                    // Find incentive, paidLeave, justification, etc.
+                    const incentiveObj = getUserData(result.incentive, userId);
+                    const paidLeaveObj = getUserData(result.paidLeave, userId);
+                    const justificationObj = getUserData(result.justification, userId);
+                    const justPercentObj = getUserData(result.justificationPercent, userId);
+
+                    // Calculate values
+                    const incentive = incentiveObj && incentiveObj.amount ? parseFloat(incentiveObj.amount) : 0;
+                    const paidLeave = paidLeaveObj && paidLeaveObj.days ? parseInt(paidLeaveObj.days) : 0;
+                    const justification = justificationObj && justificationObj.days ? parseInt(justificationObj.days) : 0;
+                    const justPercent = justPercentObj && justPercentObj.percent ? parseFloat(justPercentObj.percent) : 0;
+
+                    // Example deduction logic (customize as per atten.js):
+                    // Deductions for absent, late, halfday, etc. can be added here
+                    // For now, let's assume:
+                    // Net Salary = baseSalary + incentive - deductions
+                    // Deductions can be based on absent days, late days, etc. (add logic as needed)
+                    let deductions = 0;
+                    // Example: if justification percent < 80, deduct 10% salary
+                    if (justPercent && justPercent < 80) {
+                        deductions += baseSalary * 0.10;
+                    }
+                    // Example: paid leave more than 2 days, deduct 5% salary
+                    if (paidLeave > 2) {
+                        deductions += baseSalary * 0.05;
+                    }
+                    // Add more deduction logic as per your rules
+
+                    const netSalary = Math.round(baseSalary + incentive - deductions);
+
                     // Create salary card container
                     const salaryCard = document.createElement('div');
                     salaryCard.className = 'salary-card box-styling flex-row';
@@ -1128,29 +1170,68 @@ function displaySalaryData() {
 
                     const userName = document.createElement('h4');
                     userName.className = 'salary-name';
-                    userName.textContent = salary.userName || 'N/A';
+                    userName.textContent = user.userName || salaryObj.userName || 'N/A';
 
-                    const userId = document.createElement('p');
-                    userId.className = 'salary-id';
-                    userId.textContent = `ID: ${salary.userId || 'N/A'}`;
+                    const userIdDiv = document.createElement('p');
+                    userIdDiv.className = 'salary-id';
+                    userIdDiv.textContent = `ID: ${userId || 'N/A'}`;
 
                     userInfoDiv.appendChild(userName);
-                    userInfoDiv.appendChild(userId);
+                    userInfoDiv.appendChild(userIdDiv);
 
-                    // Salary Amount Column
-                    const salaryAmountDiv = document.createElement('div');
-                    salaryAmountDiv.className = 'salary-amount flex-coloum';
+                    // Salary Details Column
+                    const salaryDetailsDiv = document.createElement('div');
+                    salaryDetailsDiv.className = 'salary-details flex-coloum';
 
-                    const salaryLabel = document.createElement('p');
-                    salaryLabel.className = 'salary-label';
-                    salaryLabel.textContent = 'Monthly Salary';
+                    // Base Salary
+                    const baseSalaryLabel = document.createElement('p');
+                    baseSalaryLabel.className = 'salary-label';
+                    baseSalaryLabel.textContent = 'Base Salary';
+                    const baseSalaryValue = document.createElement('h3');
+                    baseSalaryValue.className = 'salary-value';
+                    baseSalaryValue.textContent = `₹ ${baseSalary.toLocaleString()}`;
+                    salaryDetailsDiv.appendChild(baseSalaryLabel);
+                    salaryDetailsDiv.appendChild(baseSalaryValue);
 
-                    const salaryValue = document.createElement('h3');
-                    salaryValue.className = 'salary-value';
-                    salaryValue.textContent = `₹ ${salary.salary ? parseInt(salary.salary).toLocaleString() : '0'}`;
+                    // Incentive
+                    const incentiveLabel = document.createElement('p');
+                    incentiveLabel.className = 'salary-label';
+                    incentiveLabel.textContent = 'Incentive';
+                    const incentiveValue = document.createElement('h3');
+                    incentiveValue.className = 'salary-value';
+                    incentiveValue.textContent = `₹ ${incentive.toLocaleString()}`;
+                    salaryDetailsDiv.appendChild(incentiveLabel);
+                    salaryDetailsDiv.appendChild(incentiveValue);
 
-                    salaryAmountDiv.appendChild(salaryLabel);
-                    salaryAmountDiv.appendChild(salaryValue);
+                    // Paid Leave
+                    const paidLeaveLabel = document.createElement('p');
+                    paidLeaveLabel.className = 'salary-label';
+                    paidLeaveLabel.textContent = 'Paid Leave';
+                    const paidLeaveValue = document.createElement('h3');
+                    paidLeaveValue.className = 'salary-value';
+                    paidLeaveValue.textContent = `${paidLeave} days`;
+                    salaryDetailsDiv.appendChild(paidLeaveLabel);
+                    salaryDetailsDiv.appendChild(paidLeaveValue);
+
+                    // Deductions
+                    const deductionLabel = document.createElement('p');
+                    deductionLabel.className = 'salary-label';
+                    deductionLabel.textContent = 'Deductions';
+                    const deductionValue = document.createElement('h3');
+                    deductionValue.className = 'salary-value';
+                    deductionValue.textContent = `₹ ${Math.round(deductions).toLocaleString()}`;
+                    salaryDetailsDiv.appendChild(deductionLabel);
+                    salaryDetailsDiv.appendChild(deductionValue);
+
+                    // Net Salary
+                    const netSalaryLabel = document.createElement('p');
+                    netSalaryLabel.className = 'salary-label';
+                    netSalaryLabel.textContent = 'Net Salary';
+                    const netSalaryValue = document.createElement('h3');
+                    netSalaryValue.className = 'salary-value';
+                    netSalaryValue.textContent = `₹ ${netSalary.toLocaleString()}`;
+                    salaryDetailsDiv.appendChild(netSalaryLabel);
+                    salaryDetailsDiv.appendChild(netSalaryValue);
 
                     // Department/Status Column (optional)
                     const deptDiv = document.createElement('div');
@@ -1162,21 +1243,21 @@ function displaySalaryData() {
 
                     const deptValue = document.createElement('p');
                     deptValue.className = 'salary-dept-value';
-                    deptValue.textContent = salary.department || salary.userType || 'N/A';
+                    deptValue.textContent = user.department || user.userType || salaryObj.department || salaryObj.userType || 'N/A';
 
                     deptDiv.appendChild(deptLabel);
                     deptDiv.appendChild(deptValue);
 
                     // Append all columns to salary card
                     salaryCard.appendChild(userInfoDiv);
-                    salaryCard.appendChild(salaryAmountDiv);
+                    salaryCard.appendChild(salaryDetailsDiv);
                     salaryCard.appendChild(deptDiv);
 
                     // Append salary card to list
                     salaryList.appendChild(salaryCard);
                 });
 
-                console.log(`Loaded ${result.salaryData.length} salary records.`);
+                console.log(`Loaded ${result.salary.length} salary records.`);
             } else {
                 console.warn("No salary data received from backend.");
                 const salaryList = document.getElementById('salaryList');
