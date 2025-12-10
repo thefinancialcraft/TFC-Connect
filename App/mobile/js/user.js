@@ -1078,6 +1078,8 @@ function displaySalaryData() {
     const data = new URLSearchParams();
     data.append('action', 'getAllUsersSalary');
     data.append('token', tktuserToken);
+     data.append('userId', activeTicket.userId);
+
 
     // Fetch config.json to get the script URL
     fetch('/TFC-Connect/App/config.json')
