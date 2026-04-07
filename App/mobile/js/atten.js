@@ -4067,6 +4067,105 @@ function updateAttendDays(data) {
                     : getValue(title); // Default formatting for other values
         }
     });
+
+    // ✅ **Console Log for Agent Salary & Attendance Details**
+    try {
+        const monthYear = document.getElementById("ttl-mnt-cnt")?.innerText || "N/A";
+        const userData = JSON.parse(localStorage.getItem('receiveData')) || {};
+        const agentName = userData.userName || "N/A";
+        
+        const salaryValue = getValue("40. Final Payout", false, true);
+        const onTime = document.getElementById("ttl_prsnt")?.innerText || "00 Days";
+        const lates = document.getElementById("ttl_late")?.innerText || "00 Days";
+        const halfDays = document.getElementById("ttl_hday")?.innerText || "00 Days";
+        const absent = document.getElementById("ttl_absnt")?.innerText || "00 Days";
+
+        // Fetching additional final values
+        const finalAbsent = getValue("22. Final Absent Value");
+        const finalHalfday = getValue("21. Final Halfday Value");
+        const finalPresent = getValue("20. Final Present Value");
+        const totalAttend = getValue("24. Total Attend Days");
+
+        const monthlySalary = getValue("25. Monthly Salary", true);
+        const currentSalary = getValue("27. Current Salary", true);
+        const leaveAdjust = getValue("39. Leave Adjust");
+
+        console.log(`%c--- Salary & Attendance Summary ---`, "color: #FF1493; font-weight: bold; font-size: 12px;");
+        console.log(`Month - ${monthYear}`);
+        console.log(`Name - ${agentName}`);
+        console.log(`Monthly Salary - ${monthlySalary}`);
+        console.log(`Total OnTime - ${onTime}`);
+        console.log(`Total Lates - ${lates}`);
+        console.log(`Total Halfdays - ${halfDays}`);
+        console.log(`Total Absent - ${absent}`);
+        console.log(`Final Absent - ${finalAbsent}`);
+        console.log(`Final Halfday - ${finalHalfday}`);
+        console.log(`Final Present - ${finalPresent}`);
+        console.log(`Total Attend Days - ${totalAttend}`);
+        console.log(`Leave Adjust - ${leaveAdjust}`);
+        console.log(`Current Salary - ${currentSalary}`);
+        console.log(`Final Salary - ${salaryValue}`);
+        console.log(`%c-----------------------------------`, "color: #FF1493; font-weight: bold;");
+
+        // ✅ **Get User ID and Generate Entry ID**
+        const userIdRaw = document.getElementById("userId")?.innerText || "N/A";
+        const monthMap = { "JAN": "01", "FEB": "02", "MAR": "03", "APR": "04", "MAY": "05", "JUN": "06", "JUL": "07", "AUG": "08", "SEP": "09", "OCT": "10", "NOV": "11", "DEC": "12" };
+        const [mPart, yPart] = monthYear.split(" ");
+        const monthNum = monthMap[mPart.toUpperCase()] || "00";
+        const entryId = userIdRaw.replace(/-/g, "") + monthNum + yPart;
+
+        // ✅ **Send values to Google Sheet**
+        updateSalaryToSheet({
+            entryId: entryId,
+            userId: userIdRaw,
+            month: monthYear,
+            name: agentName,
+            monthlySalary: monthlySalary,
+            onTime: onTime,
+            lates: lates,
+            halfDays: halfDays,
+            absent: absent,
+            finalAbsent: finalAbsent,
+            finalHalfday: finalHalfday,
+            finalPresent: finalPresent,
+            totalAttend: totalAttend,
+            leaveAdjust: leaveAdjust,
+            currentSalary: currentSalary,
+            finalSalary: salaryValue
+        });
+
+    } catch (e) {
+        console.error("Error logging salary summary:", e);
+    }
+}
+
+async function updateSalaryToSheet(details) {
+    const payload = new URLSearchParams();
+    payload.append('action', 'updateSalaryToSheet');
+    
+    // Append all details to payload
+    for (const key in details) {
+        payload.append(key, details[key]);
+    }
+
+    try {
+        const configResponse = await fetch('/TFC-Connect/App/config.json');
+        if (!configResponse.ok) throw new Error("Failed to load config.json");
+        const config = await configResponse.json();
+        const scriptUrl = config.scriptUrl;
+
+        const response = await fetch(scriptUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: payload
+        });
+
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+        const result = await response.json();
+        console.log("✅ Salary Sync Success:", result);
+    } catch (error) {
+        console.error("❌ Error updating salary to sheet:", error);
+    }
 }
 
 
