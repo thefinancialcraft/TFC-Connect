@@ -414,7 +414,7 @@ body::-webkit-scrollbar{
     height: 30px;
     background-color: #fff;
     border-radius: 40px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
 
 
     .mnyr-rst{
@@ -1567,9 +1567,9 @@ header{
     display: block;
 }
 
-.mainBody .attendance-widget{
+/* .mainBody .attendance-widget{
     background-color: #06acff;
-}
+} */
 
 .bx-anm{
     background: linear-gradient(45deg, #2811bc, #8a78ff, #ce22de);

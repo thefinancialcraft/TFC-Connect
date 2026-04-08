@@ -15,7 +15,11 @@ window.onload = function() {
 
         // If the value is not 'true', run function 'a'
         if (isPswdUpdt !== 'true') {
-            rstPswdDp(); // Run function 'a' if the value is not 'true'
+            if (typeof rstPswdDp === 'function') {
+                rstPswdDp(); // Run function 'a' if the value is not 'true'
+            } else {
+                console.warn("rstPswdDp function is not defined. Make sure resetPass.js is loaded.");
+            }
         }
         // If value is 'true', do nothing
 
@@ -787,16 +791,24 @@ document.addEventListener("DOMContentLoaded", function () {
         function updateMonthYear() {
             const selectedMonth = monthDropdown.value;
             const selectedYear = yearDropdown.value;
-            mnthYearSpan.textContent = `${selectedMonth} ${selectedYear}`;
-            resetButton.style.display = "flex"; // Jab bhi change ho, show kare
+            if (mnthYearSpan) {
+                mnthYearSpan.textContent = `${selectedMonth} ${selectedYear}`;
+            }
+            if (resetButton) {
+                resetButton.style.display = "flex"; // Show reset when changed
+            }
         }
 
         // Function to reset to current month and year
         function resetToCurrentMonthYear() {
             monthDropdown.value = monthNames[currentMonthIndex];
             yearDropdown.value = currentFullYear;
-            mnthYearSpan.textContent = `${monthNames[currentMonthIndex]} ${currentFullYear}`;
-            resetButton.style.display = "none"; // Reset hone ke baad hide ho jaye
+            if (mnthYearSpan) {
+                mnthYearSpan.textContent = `${monthNames[currentMonthIndex]} ${currentFullYear}`;
+            }
+            if (resetButton) {
+                resetButton.style.display = "none"; // Hide reset after reset
+            }
         }
 
         // Initial Call
@@ -819,7 +831,7 @@ function updateDaysInMonth() {
     let daysOutput = document.getElementById("ttl-mnth-day");
 
     if (!monthYearSpan || !daysOutput) {
-        console.error("❌ Required elements not found!");
+        // console.warn("❌ Required elements (ttl-mnt-cnt or ttl-mnth-day) not found! This script may be running on a page without attendance components.");
         return;
     }
 
@@ -861,7 +873,7 @@ function observeSpanChanges() {
     let targetNode = document.getElementById("ttl-mnt-cnt");
 
     if (!targetNode) {
-        console.error("❌ Target span not found!");
+        // console.warn("❌ Target span (ttl-mnt-cnt) not found! Skipping observation.");
         return;
     }
 
@@ -896,7 +908,9 @@ const monthDisplay = document.getElementById("month-display");
     ];
 
     function updateMonthDisplay() {
-        monthDisplay.innerText = `${monthNames[selectedMonth]} ${selectedYear}`;
+        if (monthDisplay) {
+            monthDisplay.innerText = `${monthNames[selectedMonth]} ${selectedYear}`;
+        }
     }
 
     function changeMonth(direction) {
@@ -912,38 +926,36 @@ const monthDisplay = document.getElementById("month-display");
     }
 
     // Initialize with the current month
-    updateMonthDisplay();
+    if (monthDisplay) {
+        updateMonthDisplay();
+    }
 
     
 
     document.addEventListener("DOMContentLoaded", function () {
+        if (typeof generateAttendanceTable === 'function') {
+            // पहली बार टेबल जनरेट करें
+            generateAttendanceTable();
         
-        // पहली बार टेबल जनरेट करें
-        generateAttendanceTable();
-    
-        // MutationObserver से बदलाव डिटेक्ट करें
-        const observer = new MutationObserver(generateAttendanceTable);
-        const config = { childList: true, subtree: true, characterData: true };
-    
-        // सभी IDs के लिए MutationObserver लगाएं
-        const observeElements = () => {
-            const dataMapIds = [
-                "ttl_prsnt",
-                "ttl_late",
-                "ttl_hday",
-                "ttl_absnt",
-                "holiday-count",
-                "Working-count",
-                "ttl-mnth-day"
-            ];
-    
-            dataMapIds.forEach(id => {
-                let element = document.getElementById(id);
-                if (element) observer.observe(element, config);
-            });
-        };
-    
-        observeElements();
+            // MutationObserver से बदलाव डिटेक्ट करें
+            const observer = new MutationObserver(generateAttendanceTable);
+            const config = { childList: true, subtree: true, characterData: true };
+        
+            // सभी IDs के लिए MutationObserver लगाएं
+            const observeElements = () => {
+                const dataMapIds = [
+                    "ttl_prsnt", "ttl_late", "ttl_hday", "ttl_absnt",
+                    "holiday-count", "Working-count", "ttl-mnth-day"
+                ];
+        
+                dataMapIds.forEach(id => {
+                    let element = document.getElementById(id);
+                    if (element) observer.observe(element, config);
+                });
+            };
+        
+            observeElements();
+        }
     });
 
 

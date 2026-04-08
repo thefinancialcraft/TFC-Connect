@@ -15,6 +15,10 @@
 
 
     <meta name="description" content="Welcome to the user page where you can manage your account.">
+    <style>
+        #searchResultsDropdown::-webkit-scrollbar { display: none; }
+        #searchResultsDropdown { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
 <body>
 
@@ -178,17 +182,17 @@
     </div>
 
               <!-- navbar -->
-   <div id="navBar" class="menu-card navbar box-styling ">
+   <div id="navBar" class="menu-card navbar box-styling " style="display: none;">
          
                 <div class="menu-opn flex menu-card">
                     <ul id="menu-opn">
-                        <li value="dashbord-widget" class="active">
-                            <span class="active"></span>
+                        <li value="dashbord-widget">
+                            <span></span>
                             <i class="fi fi-rr-home"></i>
                           
                             </li>
-                        <li value="attendance-widget">
-                            <span></span>
+                        <li value="attendance-widget" class="active">
+                            <span class="active"></span>
                             <i class="fi fi-rr-fingerprint"></i>
                             </li>
                         <li value="payment-grid-widget">
@@ -226,19 +230,304 @@
             Welcome Back, <span class="firstName"></span>
         </p>
         <div class="dashboard-title-container flex-row">
-        <h2 class="h-styling" id="dashbord">Dashboard</h2>
-
-        
-       
-       </div>
+            <h2 class="h-styling" id="dashbord">Attendance</h2>
+        </div>
          </div>
 
-        <div class="dashbord-widget widget">
+        <div class="dashbord-widget widget" style="display: none;">
             
         </div>
 
-        <div class="attendance-widget widget">
-        
+        <div class="attendance-widget widget" style="display: block;">
+            <!-- Global Loader during initialization -->
+            <div id="admin-global-loader" class="flex-coloum" style="display: none; height: 120px; justify-content: center; align-items: center; gap: 10px;">
+                <div class="dots-container flex" style="justify-content: center; gap: 8px;">
+                    <div class="dot" style="width: 12px; height: 12px; background-color: #0051d4; border-radius: 50%; animation: bounce 1s infinite ease-in-out;"></div>
+                    <div class="dot" style="width: 12px; height: 12px; background-color: #0051d4; border-radius: 50%; animation: bounce 1s infinite ease-in-out; animation-delay: 0.2s;"></div>
+                    <div class="dot" style="width: 12px; height: 12px; background-color: #0051d4; border-radius: 50%; animation: bounce 1s infinite ease-in-out; animation-delay: 0.4s;"></div>
+                </div>
+                <p style="font-size: 12px; color: #0051d4; font-weight: 500;">Processing User Data...</p>
+            </div>
+
+            <!-- Unified Search & Filter Section -->
+            <div class="search-container box-styling" style=" padding: 15px; background: white; border-radius: 15px; border: 1px solid #eee; overflow: visible !important;">
+                <div class="flex-coloum" style="gap: 12px; overflow: visible !important;">
+                    <!-- Row 1: Search Bar -->
+                    <div class="flex-row" style="width: 100%; align-items: center; gap: 10px; background: #f9f9f9; padding: 0 15px; border-radius: 10px; border: 1px solid #ddd; min-height: 46px; position: relative; overflow: visible !important;">
+                        <i class="fi fi-rr-search" style="color: #0051d4;"></i>
+                        <input type="text" id="employeeSearchInput" placeholder="Enter Name or ID..." style="border: none; background: transparent; outline: none; flex: 1; font-size: 14px; color: #333;">
+                        
+                        <!-- Dynamic Search Results Dropdown -->
+                        <div id="searchResultsDropdown" style="display: none; position: absolute; top: 48px; left: 0; width: 100%; background: white; border: none; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 2147483647; max-height: 250px; overflow-y: auto;"></div>
+                    </div>
+
+                    <!-- Row 2: Month/Year and Refresh Button -->
+                    <div class="flex-row" style="width: 100%; justify-content: space-between; align-items: center; gap: 10px; background-color: #fff;">
+                        <!-- Month/Year Picker -->
+                        <div class="flex-row custom-mnth-year-picker" style="flex: 1; padding: 0 15px; border-radius: 10px; border: 1px solid #ddd; gap: 8px; align-items: center; min-height: 46px; background: #ffffff;">
+                            <select class="custom-date-mnth custom-month-dropdown" style="border: none; background: transparent; outline: none; font-size: 14px; font-weight: bold; color: #0051d4; cursor: pointer;">
+                                <option value="JAN">JANUARY</option><option value="FEB">FEBRUARY</option><option value="MAR">MARCH</option><option value="APR">APRIL</option><option value="MAY">MAY</option><option value="JUN">JUNE</option><option value="JUL">JULY</option><option value="AUG">AUGUST</option><option value="SEP">SEPTEMBER</option><option value="OCT">OCTOBER</option><option value="NOV">NOVEMBER</option><option value="DEC">DECEMBER</option>
+                            </select>
+                            <div style="width: 1px; height: 15px; background: #ccc;"></div>
+                            <select class="custom-year-dropdown" style="border: none; background:  #ccc; outline: none; font-size: 14px; font-weight: bold; color: #333; cursor: pointer;">
+                                <option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option>
+                            </select>
+                        </div>
+
+                        <!-- Spinner for Month Change -->
+                        <div id="month-change-spinner" style="display: none; width: 46px; height: 46px; justify-content: center; align-items: center;">
+                            <div class="spinner" style="width: 20px; height: 20px; border: 2px solid #ccc; border-top: 2px solid #0051d4; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex-row" style="gap: 8px;">
+                            <button id="findEmployeeRecordBtn" style="background: #0051d4; color: white; border: none; padding: 0 15px; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; min-height: 46px; white-space: nowrap;">
+                                <i class="fi fi-rr-paper-plane flex"></i> Search
+                            </button>
+                            <button id="adminExportBtn" style="background: #f0f4ff; color: #0051d4; border: 1px solid #0051d4; padding: 0 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; min-height: 46px;">
+                                <i class="fi fi-rr-file-download flex" style="font-size: 18px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <span id="ttl-mnt-cnt" class="custom-mnth-year act-mnth-slt" style="display: none;">MAR 2026</span>
+                </div>
+            </div>
+
+            <!-- Attendance Summary -->
+            <div class="daily-atn atn-summary block">
+                <div class="title flex-row">
+                    <h3 class="h-styling h-sm-sty">Attendance Summary</h3>
+                </div>
+
+                <div class="atn-rcrd-card flex-coloum box-styling">
+                    <div class="atn-ovr-vw flex-row">
+                        <div class="ovr-vw-bar flex">
+                            <div class="progress-container flex">
+                                <svg class="progress-svg" width="160" height="160">
+                                    <circle class="bg-circle" style="stroke: #e0e0e05a;" cx="80" cy="80"></circle>
+                                    <circle class="progress-circle" cx="80" cy="80"></circle>
+                                </svg>
+                                
+                                <div class="progress-text" id="progress-text">0% <p>Attendance</p></div>
+
+                                <div class="chld-bar flex">
+                                    <svg width="120" height="120" viewBox="0 0 200 200">
+                                        <circle class="circle-background" cx="100" cy="100" r="80"></circle>
+                                        <circle class="circle-foreground segment1" cx="100" cy="100" r="80"></circle>
+                                        <circle class="circle-foreground segment2" cx="100" cy="100" r="80"></circle>
+                                        <circle class="circle-foreground segment3" cx="100" cy="100" r="80"></circle>
+                                        <circle class="circle-foreground segment4" cx="100" cy="100" r="80"></circle>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ovr-vw-dta flex">
+                            <div class="flex-coloum mnth-cout">
+                                <h3 id="ttl-mnth-day">00</h3>
+                                <p>Days</p>
+                            </div>
+                            <div class="ln"></div>
+                            <div class="col-dta">
+                                <p id="Working-count" class="col-val">00 Days</p>
+                                <p class="col-titl">Working Days</p>
+                                <p id="holiday-count" class="col-val">00 Days</p>
+                                <p class="col-titl">Holidays</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="atn-brk-dwn flex-coloum">
+                        <div class="cvr-dv">
+                            <img src="/TFC-Connect/App/assets/Untitled design (2).png" alt="">
+                        </div>
+
+                        <div class="atn-prm-cnt flex-row">
+                            <div class="atn-sc-cnt on-time flex">
+                                <div class="sng-ov-box flex">
+                                    <div class="progress-ring">
+                                        <span class="progress-value" id="val_prsnt">0%</span>
+                                        <svg><circle class="bg" cx="30" cy="30" r="25"></circle><circle class="progress" id="circ_prsnt" cx="30" cy="30" r="25"></circle></svg>
+                                    </div>
+                                </div>
+                                <div class="data-ov-box flex-coloum">
+                                   <h4 id="ttl_prsnt" style="color: #31e774;">00 Days</h4>
+                                   <p>On Time</p>
+                                </div>
+                            </div>
+                            <div class="atn-sc-cnt late flex">
+                                <div class="sng-ov-box flex">
+                                    <div class="progress-ring">
+                                        <span class="progress-value" id="val_late">0%</span>
+                                        <svg><circle class="bg" cx="30" cy="30" r="25"></circle><circle class="progress" id="circ_late" cx="30" cy="30" r="25"></circle></svg>
+                                    </div>
+                                </div>
+                                <div class="data-ov-box flex-coloum">
+                                   <h4 id="ttl_late" style="color: #ffcd06;">00 Days</h4>
+                                   <p>Late</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="atn-prm-cnt flex-row">
+                            <div class="atn-sc-cnt half-day flex">
+                                <div class="sng-ov-box flex">
+                                    <div class="progress-ring">
+                                        <span class="progress-value" id="val_hday">0%</span>
+                                        <svg><circle class="bg" cx="30" cy="30" r="25"></circle><circle class="progress" id="circ_hday" cx="30" cy="30" r="25"></circle></svg>
+                                    </div>
+                                </div>
+                                <div class="data-ov-box flex-coloum">
+                                   <h4 id="ttl_hday" style="color:#ffa033 ;">00 Days</h4>
+                                   <p>Half Days</p>
+                                </div>
+                            </div>
+                            <div class="atn-sc-cnt absent flex">
+                                <div class="sng-ov-box flex">
+                                    <div class="progress-ring">
+                                        <span class="progress-value" id="val_absnt">0%</span>
+                                        <svg><circle class="bg" cx="30" cy="30" r="25"></circle><circle class="progress" id="circ_absnt" cx="30" cy="30" r="25"></circle></svg>
+                                    </div>
+                                </div>
+                                <div class="data-ov-box flex-coloum">
+                                   <h4 id="ttl_absnt" style="color: #ff4000;">00 Days</h4>
+                                   <p>Absent</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Salary Display Carousel -->
+            <div class="sal-disp" style="display: flex !important;">
+                <div class="dp-cnt box-styling" style="height: 280px; padding: 0; overflow: hidden; position: relative;">
+                    <div class="carousel" id="adminSalaryCarousel">
+                        <div class="slide" style="min-width: 100%; scroll-snap-align: start; flex-shrink: 0;">
+                            <div class="atn-dp-sld1 flex" style="width: 100%;">
+                                <img src="/TFC-Connect/App/assets/4e0ca92d3326e2648c2f6538ff56ba24.gif" alt="" style="width: 100%; border-radius: 15px;">
+                                <div class="sld-cvr flex-coloum">
+                                    <h5 style="margin-top: 20px;">Conversion</h5>
+                                    <div class="sld-cvr-dt flex-row" style="width: 100%; justify-content: space-around;">
+                                        <div class="cnv-bx flex-coloum"><h6 id="ttl_prsnt_days">00 Days</h6><p>Present</p></div>
+                                        <div class="cnv-bx flex-coloum"><h6 id="ttl_half_days">00 Days</h6><p>Halfday</p></div>
+                                        <div class="cnv-bx flex-coloum"><h6 id="ttl_abst_days">00 Days</h6><p>Absent</p></div>
+                                    </div>
+                                    <div class="sld-atn-slry flex" style="margin-top: 15px; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; width: 90%;">
+                                        <div class="sld-atn-bx flex-coloum">
+                                            <p style="font-size: 11px; opacity: 0.8; margin-bottom: 2px;">Current Salary (Accrued)</p>
+                                            <h4 id="ttl_curr_sal" style="font-size: 18px; margin: 0; color: white;">₹ 00.00</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slide" style="min-width: 100%; scroll-snap-align: start; flex-shrink: 0;">
+                            <div class="atn-dp-sld1 flex" style="width: 100%;">
+                                <img src="/TFC-Connect/App/assets/anm1.gif" alt="" style="width: 100%; border-radius: 15px;">
+                                <div class="sld-cvr sld-cvr2 flex-coloum"><h5>Salary Payout</h5><h4 id="ttl_sal_pay">₹ 00.00</h4></div>
+                            </div>
+                        </div>
+                        <div class="slide" style="min-width: 100%; scroll-snap-align: start; flex-shrink: 0;">
+                            <div class="atn-dp-sld1 flex" style="width: 100%;">
+                                <img src="/TFC-Connect/App/assets/d6e5b96c5f902d38deb49905785d30e1.jpg" alt="" style="width: 100%; border-radius: 15px;">
+                                <div class="sld-cvr sld-cvr2 sld-cvr3 flex-coloum"><h5>Incentive Payout</h5><h4 id="ttl_Inc_pay">₹ 00.00</h4></div>
+                            </div>
+                        </div>
+                        <div class="slide" style="min-width: 100%; scroll-snap-align: start; flex-shrink: 0;">
+                            <div class="atn-dp-sld1 flex" style="width: 100%;">
+                                <img src="/TFC-Connect/App/assets/c0e29421325ca3618e5131e38c6d1adc (1).jpg" alt="" style="width: 100%; border-radius: 15px;">
+                                <div class="sld-cvr cvr-clr sld-cvr2 flex-coloum"><h5>Total Countable days</h5><h4 id="ttl_attn_days">00 Days</h4></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar -->
+            <div class="block flex-coloum cal-cont">
+                <div class="title flex-row">
+                    <h3 class="h-styling h-sm-sty">Calendar</h3>
+                </div>
+                <div class="calendar-widget box-styling" style="width: 100%; padding: 15px; background: white; border-radius: 12px;">
+                    <div class="calendar-header flex-row" style="justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 class="h-styling" id="admin-calendar-title" style="font-size: 15px; margin: 0;">Attendance Calendar</h3>
+                        <div class="calendar-legend flex-row" style="gap: 8px; font-size: 10px; flex-wrap: wrap;">
+                            <span style="display: flex; align-items: center; gap: 3px;"><i style="width: 7px; height: 7px; border-radius: 50%; background: #e8f5e9; border: 1px solid #4caf50;"></i> P</span>
+                            <span style="display: flex; align-items: center; gap: 3px;"><i style="width: 7px; height: 7px; border-radius: 50%; background: #ffebee; border: 1px solid #f44336;"></i> A</span>
+                            <span style="display: flex; align-items: center; gap: 3px;"><i style="width: 7px; height: 7px; border-radius: 50%; background: #fffde7; border: 1px solid #fbc02d;"></i> L</span>
+                            <span style="display: flex; align-items: center; gap: 3px;"><i style="width: 7px; height: 7px; border-radius: 50%; background: #fff3e0; border: 1px solid #ef6c00;"></i> H</span>
+                            <span style="display: flex; align-items: center; gap: 3px;"><i style="width: 7px; height: 7px; border-radius: 50%; background: #f3e5f5; border: 1px solid #7b1fa2;"></i> S/H</span>
+                        </div>
+                    </div>
+                    <div class="calendar-days flex-row" style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: bold; font-size: 11px; margin-bottom: 10px; color: #888; width: 100%;">
+                        <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+                    </div>
+                    <div id="adminAttendanceCalendarGrid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: 100%;">
+                        <!-- Calendar Days will be injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full Salary Report Table (Doc View) -->
+            <div id="adminSalaryReportView" class="block" style="display: none; margin-top: 20px;">
+                <div class="title flex-row" style="justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 class="h-styling h-sm-sty">Monthly Salary Report</h3>
+                    <div class="flex-row" style="gap: 10px;">
+                        <button id="downloadExcelBtn" style="background: #e8f5e9; color: #2e7d32; border: 1px solid #2e7d32; padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: bold;">
+                            <i class="fi flex fi-rr-file-excel" style="font-size: 16px;"></i>
+                        </button>
+                        <button id="closeSalaryReportBtn" style="background: #f5f5f5; color: #333; border: 1px solid #ddd; padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center;">
+                            <i class="fi flex fi-rr-arrow-left" style="font-size: 18px;"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="salary-report-wrapper box-styling" style="background: white; border-radius: 15px; overflow-x: auto;">
+                    <table id="salaryReportTable" style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; min-width: 1000px;">
+                        <thead style="background: #f0f4ff; color: #0051d4;">
+                            <tr>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #0051d4; position: sticky; left: 0; background: #f0f4ff; z-index: 10; min-width: 120px; width: 120px;">Name</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #0051d4; position: sticky; left: 120px; font-weight: bold; background: #0051d4; color: white; z-index: 10; min-width: 90px; width: 90px; box-shadow: 4px 0 8px rgba(0,0,0,0.1);">Final Sal.</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #0051d4;">Base Sal.</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #0051d4;">OnTime</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #0051d4;">Lates</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #0051d4;">H-Day</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #0051d4;">Absnt</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #0051d4;">F. Abs</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #0051d4;">F. H-Day</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #0051d4;">F. Prsnt</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #0051d4;">Attnd Days</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #0051d4;">Leave Adj</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #0051d4;">Curr Sal.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salaryReportBody">
+                            <!-- Data rows will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- All Records -->
+            <div class="block mnth-rcrd">
+                <div class="title flex-row">
+                    <h3 class="h-styling h-sm-sty">Attendance Records</h3>
+                </div>
+                <div class="rcrd-brd flex-coloum box-styling" style="margin-bottom: 50px; height: 400px;">
+                    <div class="tabel-container" style="height: 400px; ">
+                        <table class="td-ex-pol-table" style="height: 400px;">
+                            <div class="t-head td-ex-pol-thd-cont flex-row">
+                                <p class="p-styling td-ex-tbl-hd-frt ex-td-nam-frm">Date</p>
+                                <p class="p-styling td-ex-tbl-hd-frt ex-td-cnt-frm">Check In</p>
+                                <p class="p-styling ex-td-prm-frm td-ex-tbl-hd-frt">Check Out</p>
+                                <p class="p-styling td-ex-tbl-hd-frt ex-td-sts-frm flex">Status</p>
+                                <p class="p-styling td-ex-tbl-hd-frt p-icn-wdth"><i class="fi fi-rr-copy-image flex"></i></p>
+                            </div>
+                            <div id="tbl-bdy-cnt" class="tbl-bdy-cnt" style="height: 320px;"></div>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="payment-grid-widget widget">
@@ -289,6 +578,21 @@
     <!-- <script src="/TFC-Connect/TFC-Connect/App/js/user.js"></script> -->
     <script src="https://kit.fontawesome.com/ff989e0e08.js" crossorigin="anonymous"></script>
     <script src="/TFC-Connect/App/mobile/js/user.js"></script>
+    <script src="/TFC-Connect/App/mobile/js/adminAtten.js"></script>
+    <script src="/TFC-Connect/App/mobile/js/admin.js"></script>
     
+    <script>
+        // Specific navigation for salary-widget if not handled in user.js
+        document.addEventListener('DOMContentLoaded', () => {
+            const salaryTab = document.querySelector('li[value="salary-widget"]');
+            if (salaryTab) {
+                salaryTab.addEventListener('click', () => {
+                   if (typeof loadAllUsersSalary === 'function') {
+                       loadAllUsersSalary();
+                   }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

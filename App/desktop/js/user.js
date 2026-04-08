@@ -84,6 +84,32 @@ menuItems.forEach((item) => {
         // Add active class to clicked <li> and its child <span>
         item.classList.add('active');
         item.querySelector('span').classList.add('active');
+
+        // --- Widget Switching Logic ---
+        const menuLabel = item.innerText.trim(); // e.g. "Dashboard", "Attendance"
+        const widgets = document.querySelectorAll('.widget');
+        
+        widgets.forEach((widget) => {
+            widget.style.display = 'none'; // Hide all widgets
+            widget.classList.remove('active');
+        });
+
+        if (menuLabel === "Dashboard") {
+            const dashboard = document.getElementById('dashbord-widget');
+            if (dashboard) { dashboard.style.display = 'block'; dashboard.classList.add('active'); }
+        } else if (menuLabel === "Attendance") {
+            const attendance = document.getElementById('attendance-widget');
+            if (attendance) { attendance.style.display = 'block'; attendance.classList.add('active'); }
+        } else if (menuLabel === "Payment Grid") {
+            const payment = document.getElementById('payment-grid-widget');
+            if (payment) { payment.style.display = 'block'; payment.classList.add('active'); }
+        } else if (menuLabel === "Report") {
+            const report = document.getElementById('report-widget');
+            if (report) { report.style.display = 'block'; report.classList.add('active'); }
+        } else if (menuLabel === "Wallet") {
+            const wallet = document.getElementById('wallet-widget');
+            if (wallet) { wallet.style.display = 'block'; wallet.classList.add('active'); }
+        }
     });
 });
 
