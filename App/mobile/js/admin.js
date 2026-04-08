@@ -56,21 +56,6 @@ async function loadAllUsersSalary() {
         processAllUsers();
         initSearch(); // Initialize search after data loads
 
-        // Auto-load logged-in user data by default
-        const activeSess = JSON.parse(localStorage.getItem('receiveData'));
-        const currentUserId = activeSess ? activeSess.userId : null;
-
-        if (currentUserId && allStoredUsers && allStoredUsers.length > 0) {
-            const currentUser = allStoredUsers.find(u => u.userId.trim().toLowerCase() === currentUserId.trim().toLowerCase());
-            if (currentUser) {
-                console.log(`[Init] Auto-loading data for logged-in user: ${currentUser.userName}`);
-                updateDetailedAttendanceUI(currentUser);
-                
-                // Set the search bar text
-                const searchInput = document.getElementById('employeeSearchInput');
-                if (searchInput) searchInput.value = `${currentUser.userId} - ${currentUser.userName}`;
-            }
-        }
 
     } catch (error) {
         console.error("[Admin] Critical Load Error:", error);
@@ -139,7 +124,16 @@ function processAllUsers() {
     const selectedMonth = monthDrop ? monthDrop.value : (rawServerResponse.selectedMonth || "APR");
     const selectedYear = yearDrop ? yearDrop.value : (rawServerResponse.selectedYear || "2026");
 
+    // Show Spinner in Search Button
+    const searchBtnText = document.getElementById('adminSearchBtnText');
+    const searchBtnSpinner = document.getElementById('adminSearchBtnSpinner');
+    if (searchBtnText) searchBtnText.style.display = 'none';
+    if (searchBtnSpinner) searchBtnSpinner.style.display = 'inline-block';
+
     console.log(`[Admin] Step: Processing ${rawData.userDetails.length} user records for ${selectedMonth} ${selectedYear}.`);
+
+    // Use setTimeout to allow DOM to render the spinner before heavy calculation
+    setTimeout(() => {
 
     allStoredUsers = rawData.userDetails.map(user => {
         const uid = String(getValueByKey(user, ['User id', 'User ID', 'userId', 'UserId']) || "").trim();
@@ -177,11 +171,36 @@ function processAllUsers() {
 
     renderSalaryList(allStoredUsers);
 
+    // [New] Auto-load logged-in user data by default
+    const activeSess = JSON.parse(localStorage.getItem('receiveData'));
+    const currentUserId = activeSess ? activeSess.userId : null;
+
+    if (currentUserId && allStoredUsers && allStoredUsers.length > 0) {
+        const currentUser = allStoredUsers.find(u => u.userId.trim().toLowerCase() === currentUserId.trim().toLowerCase());
+        if (currentUser) {
+            console.log(`[Init] Auto-loading data for logged-in user: ${currentUser.userName}`);
+            updateDetailedAttendanceUI(currentUser);
+            
+            // Set the search bar text
+            const searchInput = document.getElementById('employeeSearchInput');
+            if (searchInput) searchInput.value = `${currentUser.userId} - ${currentUser.userName}`;
+        }
+    }
+
     // Hide loader, show search
     const loader = document.getElementById('admin-global-loader');
     const searchContainer = document.querySelector('.search-container');
+    
+    // Also hide spinner in Search Button
+    const searchBtnText = document.getElementById('adminSearchBtnText');
+    const searchBtnSpinner = document.getElementById('adminSearchBtnSpinner');
+    if (searchBtnText) searchBtnText.style.display = 'flex';
+    if (searchBtnSpinner) searchBtnSpinner.style.display = 'none';
+
     if (loader) loader.style.display = 'none';
     if (searchContainer) searchContainer.style.display = 'block';
+    
+    }, 100);
 }
 
 function renderSalaryList(users) {
@@ -324,6 +343,15 @@ function initSearch() {
         };
     }
 
+    // Manual Refresh Button Click
+    const refreshBtn = document.getElementById('adminRefreshDataBtn');
+    if (refreshBtn) {
+        refreshBtn.onclick = () => {
+            console.log("[Admin] Manual Refresh triggered by user.");
+            loadAllUsersSalary();
+        };
+    }
+
     if (closeReportBtn) {
         closeReportBtn.onclick = () => {
             if (salaryView) salaryView.style.display = 'none';
@@ -352,23 +380,48 @@ function initSearch() {
             let csv = [];
             const rows = table.querySelectorAll("tr");
             
+            const monthHeader = document.querySelector('.custom-month-dropdown');
+            const yearHeader = document.querySelector('.custom-year-dropdown');
+            const selectedMonth = monthHeader ? monthHeader.value : 'Report';
+            const selectedYear = yearHeader ? yearHeader.value : '';
+
             for (let i = 0; i < rows.length; i++) {
-                const row = [], cols = rows[i].querySelectorAll("td, th");
-                for (let j = 0; j < cols.length; j++) {
-                    let data = cols[j].innerText.replace(/₹|,/g, "").replace(/\n/g, " ").trim();
-                    row.push('"' + data + '"');
+                const rowData = [], cols = rows[i].querySelectorAll("td, th");
+                
+                // Add Month and Year at the start of every row
+                if (i === 0) {
+                    rowData.push('"Month"', '"Year"'); // Headers
+                } else {
+                    rowData.push('"' + selectedMonth + '"', '"' + selectedYear + '"'); // Data
                 }
-                csv.push(row.join(","));
+
+                for (let j = 0; j < cols.length; j++) {
+                    let rawText = cols[j].innerText;
+                    
+                    // Special handling for the first column (Name + ID)
+                    if (j === 0) {
+                        if (i === 0) {
+                            rowData.push('"Employee Name"', '"Employee Code"');
+                        } else {
+                            // Split Name and ID using the newline character
+                            const parts = rawText.split('\n').map(p => p.trim());
+                            rowData.push('"' + (parts[0] || "") + '"', '"' + (parts[1] || "") + '"');
+                        }
+                        continue;
+                    }
+
+                    let data = rawText.replace(/₹|,/g, "").replace(/\n/g, " ").trim();
+                    rowData.push('"' + data + '"');
+                }
+                csv.push(rowData.join(","));
             }
 
             const csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             
-            const monthHeader = document.querySelector('.custom-month-dropdown');
-            const yearHeader = document.querySelector('.custom-year-dropdown');
-            const month = monthHeader ? monthHeader.value : 'Report';
-            const year = yearHeader ? yearHeader.value : '';
+            const month = selectedMonth || 'Report';
+            const year = selectedYear || '';
             
             link.setAttribute("href", encodedUri);
             link.setAttribute("download", `Salary_Report_${month}_${year}.csv`);
@@ -390,6 +443,17 @@ function initSearch() {
  * Updates Summary Tiles, Calendar, and Records Table for a specific user calculation object
  */
 function updateDetailedAttendanceUI(calc) {
+    if (!calc) return;
+
+    // Show Spinner in Search Button during detail load
+    const searchBtnText = document.getElementById('adminSearchBtnText');
+    const searchBtnSpinner = document.getElementById('adminSearchBtnSpinner');
+    if (searchBtnText) searchBtnText.style.display = 'none';
+    if (searchBtnSpinner) searchBtnSpinner.style.display = 'flex';
+
+    // Small delay to ensure spinner is visible during rendering
+    setTimeout(() => {
+
     // Show the widget container
     const widget = document.getElementById('attendanceDetailWidget');
     if (widget) widget.style.display = 'block';
@@ -586,6 +650,12 @@ function updateDetailedAttendanceUI(calc) {
     drawAdminCalendar(calc);
 
     console.log("%c[UI] Detailed view update complete.", "color: green; font-weight: bold;");
+
+    // Hide Spinner after detail load is complete
+    if (searchBtnText) searchBtnText.style.display = 'flex';
+    if (searchBtnSpinner) searchBtnSpinner.style.display = 'none';
+
+    }, 300);
 }
 
 // Ensure it runs

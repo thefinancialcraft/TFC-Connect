@@ -16,8 +16,18 @@
 
     <meta name="description" content="Welcome to the user page where you can manage your account.">
     <style>
+        /* Hide scrollbars for the salary report while keeping functionality */
+        .salary-report-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+        .salary-report-wrapper {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
         #searchResultsDropdown::-webkit-scrollbar { display: none; }
         #searchResultsDropdown { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-spin { animation: spin 1s linear infinite; display: inline-block; }
     </style>
 </head>
 <body>
@@ -256,6 +266,9 @@
                     <div class="flex-row" style="width: 100%; align-items: center; gap: 10px; background: #f9f9f9; padding: 0 15px; border-radius: 10px; border: 1px solid #ddd; min-height: 46px; position: relative; overflow: visible !important;">
                         <i class="fi fi-rr-search" style="color: #0051d4;"></i>
                         <input type="text" id="employeeSearchInput" placeholder="Enter Name or ID..." style="border: none; background: transparent; outline: none; flex: 1; font-size: 14px; color: #333;">
+                        <button id="adminRefreshDataBtn" style="background: transparent; border: none; padding: 5px; color: #0051d4; cursor: pointer; display: flex; align-items: center;" title="Refresh Data from Server">
+                            <i class="fi flex fi-rr-refresh" style="font-size: 18px;"></i>
+                        </button>
                         
                         <!-- Dynamic Search Results Dropdown -->
                         <div id="searchResultsDropdown" style="display: none; position: absolute; top: 48px; left: 0; width: 100%; background: white; border: none; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 2147483647; max-height: 250px; overflow-y: auto;"></div>
@@ -281,10 +294,13 @@
 
                         <!-- Action Buttons -->
                         <div class="flex-row" style="gap: 8px;">
-                            <button id="findEmployeeRecordBtn" style="background: #0051d4; color: white; border: none; padding: 0 15px; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; min-height: 46px; white-space: nowrap;">
-                                <i class="fi fi-rr-paper-plane flex"></i> Search
+                            <button id="findEmployeeRecordBtn" style="background: #0051d4; color: white; border: none; padding: 0 15px; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; min-width: 100px; white-space: nowrap;">
+                                <span id="adminSearchBtnText" style="display: flex; align-items: center; gap: 8px;">
+                                    <i class="fi fi-rr-paper-plane flex"></i> Search
+                                </span>
+                                <i id="adminSearchBtnSpinner" class="fi flex fi-rr-spinner animate-spin" style="display: none; font-size: 16px;"></i>
                             </button>
-                            <button id="adminExportBtn" style="background: #f0f4ff; color: #0051d4; border: 1px solid #0051d4; padding: 0 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; min-height: 46px;">
+                            <button id="adminExportBtn" style="background: #f0f4ff; color: #0051d4; border: 1px solid #0051d4; padding: 0 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; min-height: 46px;" title="Monthly Salary Report">
                                 <i class="fi fi-rr-file-download flex" style="font-size: 18px;"></i>
                             </button>
                         </div>
@@ -482,9 +498,9 @@
                     </div>
                 </div>
                 
-                <div class="salary-report-wrapper box-styling" style="background: white; border-radius: 15px; overflow-x: auto;">
+                <div class="salary-report-wrapper box-styling" style="background: white; border-radius: 15px; overflow: auto; height: calc(100vh - 230px); position: relative;">
                     <table id="salaryReportTable" style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; min-width: 1000px;">
-                        <thead style="background: #f0f4ff; color: #0051d4;">
+                        <thead style="background: #f0f4ff; color: #0051d4; position: sticky; top: 0; z-index: 20;">
                             <tr>
                                 <th style="padding: 12px 8px; border-bottom: 2px solid #0051d4; position: sticky; left: 0; background: #f0f4ff; z-index: 10; min-width: 120px; width: 120px;">Name</th>
                                 <th style="padding: 12px 8px; border-bottom: 2px solid #0051d4; position: sticky; left: 120px; font-weight: bold; background: #0051d4; color: white; z-index: 10; min-width: 90px; width: 90px; box-shadow: 4px 0 8px rgba(0,0,0,0.1);">Final Sal.</th>
