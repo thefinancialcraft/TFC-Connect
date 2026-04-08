@@ -7,8 +7,9 @@
 console.log("%c[Admin JS] Script Loaded and Ready", "background: #FF1493; color: white; padding: 5px; border-radius: 5px;");
 
 let allStoredUsers = []; 
-let rawServerResponse = null; // Store raw data for re-calculation
-let isFirstLoad = true; // Auto-load login user only on first site visit/refresh
+let rawServerResponse = null; 
+let isFirstLoad = true; 
+let lastViewedUser = null; // Track currently selected user across month changes
 
 async function loadAllUsersSalary() {
     console.log("[Admin] Step: Starting loadAllUsersSalary...");
@@ -170,23 +171,23 @@ function processAllUsers() {
         return AdminSalaryEngine.calculateSalary(payload);
     });
 
-    renderSalaryList(allStoredUsers);
-
-    // Auto-load login user ONLY ON FIRST DASHBOARD LOAD
-    if (isFirstLoad) {
+    // Logic to decide which user data to show after processing
+    if (lastViewedUser) {
+        // Re-find the same user in the new processed data set
+        const updatedUser = allStoredUsers.find(u => u.userId === lastViewedUser.userId);
+        if (updatedUser) updateDetailedAttendanceUI(updatedUser);
+    } else if (isFirstLoad) {
         const activeSess = JSON.parse(localStorage.getItem('receiveData'));
         const currentUserId = activeSess ? activeSess.userId : null;
-
-        if (currentUserId && allStoredUsers && allStoredUsers.length > 0) {
+        if (currentUserId && allStoredUsers.length > 0) {
             const currentUser = allStoredUsers.find(u => u.userId.trim().toLowerCase() === currentUserId.trim().toLowerCase());
             if (currentUser) {
-                console.log(`[Init] Auto-loading data for logged-in user: ${currentUser.userName}`);
                 updateDetailedAttendanceUI(currentUser);
-                const searchInput = document.getElementById('employeeSearchInput');
-                if (searchInput) searchInput.value = `${currentUser.userId} - ${currentUser.userName}`;
+                const sInput = document.getElementById('employeeSearchInput');
+                if (sInput) sInput.value = `${currentUser.userId} - ${currentUser.userName}`;
             }
         }
-        isFirstLoad = false; // Reset flag so it doesn't default back on month change
+        isFirstLoad = false;
     }
 
     // Hide loader, show search
@@ -289,9 +290,9 @@ function initSearch() {
     
     // Also keep button functional as a backup
     if (searchBtn) {
-        searchBtn.onclick = (e) => {
-            if (e) e.preventDefault();
-            console.log("[Search] Button Action Triggered.");
+        const handleSearchAction = (e) => {
+            if (e) { e.preventDefault(); e.stopPropagation(); }
+            console.log("[Search] Action Triggered.");
             const term = searchInput.value.toLowerCase().trim();
             if (!term) return;
 
@@ -308,6 +309,8 @@ function initSearch() {
                 performSearch();
             }
         };
+        searchBtn.onclick = handleSearchAction;
+        searchBtn.addEventListener('touchend', handleSearchAction);
     }
 
 
@@ -346,6 +349,12 @@ function initSearch() {
             generateSalaryReport();
         };
     }
+
+    // Dropdown Change Listeners (Fix for Mobile Reset)
+    const mDrop = document.querySelector('.custom-month-dropdown');
+    const yDrop = document.querySelector('.custom-year-dropdown');
+    if (mDrop) mDrop.addEventListener('change', (e) => { e.preventDefault(); e.stopPropagation(); processAllUsers(); });
+    if (yDrop) yDrop.addEventListener('change', (e) => { e.preventDefault(); e.stopPropagation(); processAllUsers(); });
 
     if (closeReportBtn) {
         closeReportBtn.onclick = () => {
@@ -454,6 +463,7 @@ function initSearch() {
  */
 function updateDetailedAttendanceUI(calc) {
     if (!calc) return;
+    lastViewedUser = calc; // Save this user as current context
 
     // Show Spinner in Search Button during detail load
     const searchBtnText = document.getElementById('adminSearchBtnText');
