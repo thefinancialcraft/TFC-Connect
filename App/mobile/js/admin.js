@@ -312,20 +312,46 @@ function initSearch() {
         };
     }
 
+    // --- Mobile Fix: Ensure all buttons are clickable ---
+    const mobileSearchBtn = document.getElementById('findEmployeeRecordBtn');
+    if (mobileSearchBtn) {
+        mobileSearchBtn.onclick = (e) => {
+            if (e) e.preventDefault();
+            console.log("[Action] Search Button Clicked.");
+            const searchInput = document.getElementById('employeeSearchInput');
+            if (searchInput && searchInput.value.trim() !== "") {
+                const term = searchInput.value.toLowerCase().trim();
+                const userSelection = allStoredUsers.find(u => 
+                    u.userName.toLowerCase().includes(term) || 
+                    u.userId.toLowerCase().includes(term)
+                );
+                if (userSelection) updateDetailedAttendanceUI(userSelection);
+            }
+        };
+    }
+
+    const refreshBtn = document.getElementById('adminRefreshDataBtn');
+    if (refreshBtn) {
+        refreshBtn.onclick = (e) => {
+            if (e) e.preventDefault();
+            console.log("[Action] Manual Refresh Triggered.");
+            loadAllUsersSalary();
+        };
+    }
+
     // Doc (Salary Report) Button Click
     const exportBtn = document.getElementById('adminExportBtn');
-    const recordsView = document.getElementById('attendanceDetailWidget');
     const salaryView = document.getElementById('adminSalaryReportView');
     const closeReportBtn = document.getElementById('closeSalaryReportBtn');
 
     if (exportBtn) {
-        exportBtn.onclick = () => {
+        exportBtn.onclick = (e) => {
+            if (e) e.preventDefault();
             if (!allStoredUsers || allStoredUsers.length === 0) {
                 alert("No data processed yet. Please wait.");
                 return;
             }
 
-            // Hide EVERYTHING except the salary report
             const searchContainer = document.querySelector('.search-container');
             const sectionsToHide = document.querySelectorAll('.attendance-widget > div:not(#adminSalaryReportView)');
 
@@ -334,21 +360,9 @@ function initSearch() {
             
             if (salaryView) {
                 salaryView.style.display = 'block';
-                // Ensure parent shows it
                 salaryView.parentElement.style.display = 'block';
             }
-
-            // Populate Table
             generateSalaryReport();
-        };
-    }
-
-    // Manual Refresh Button Click
-    const refreshBtn = document.getElementById('adminRefreshDataBtn');
-    if (refreshBtn) {
-        refreshBtn.onclick = () => {
-            console.log("[Admin] Manual Refresh triggered by user.");
-            loadAllUsersSalary();
         };
     }
 
