@@ -385,33 +385,48 @@ function initSearch() {
             const selectedMonth = monthHeader ? monthHeader.value : 'Report';
             const selectedYear = yearHeader ? yearHeader.value : '';
 
+            const monthNames = { "JAN": "01", "FEB": "02", "MAR": "03", "APR": "04", "MAY": "05", "JUN": "06", "JUL": "07", "AUG": "08", "SEP": "09", "OCT": "10", "NOV": "11", "DEC": "12" };
+            const mm = monthNames[selectedMonth] || "00";
+            const currentSyncTime = new Date().toLocaleString('en-GB').replace(',', '');
+
             for (let i = 0; i < rows.length; i++) {
-                const rowData = [], cols = rows[i].querySelectorAll("td, th");
-                
-                // Add Month and Year at the start of every row
+                const rowData = [];
+                const cols = rows[i].querySelectorAll("td, th");
+
                 if (i === 0) {
-                    rowData.push('"Month"', '"Year"'); // Headers
+                    // Headers matching user request
+                    rowData.push("Entry Id", "User Id", "Month", "Name", "Monthly Salary", "OnTime", "Lates", "Halfdays", "Absent", "Final Absent", "Final Halfday", "Final Present", "Total Attend Days", "Leave Adjust", "Current Salary", "Final Salary", "Sync Time");
                 } else {
-                    rowData.push('"' + selectedMonth + '"', '"' + selectedYear + '"'); // Data
-                }
-
-                for (let j = 0; j < cols.length; j++) {
-                    let rawText = cols[j].innerText;
+                    // Extract Combined Name & ID Cell
+                    const parts = cols[0].innerText.split('\n').map(p => p.trim());
+                    const empName = parts[0] || "";
+                    const empId = parts[1] || "";
                     
-                    // Special handling for the first column (Name + ID)
-                    if (j === 0) {
-                        if (i === 0) {
-                            rowData.push('"Employee Name"', '"Employee Code"');
-                        } else {
-                            // Split Name and ID using the newline character
-                            const parts = rawText.split('\n').map(p => p.trim());
-                            rowData.push('"' + (parts[0] || "") + '"', '"' + (parts[1] || "") + '"');
-                        }
-                        continue;
-                    }
+                    // Generate Entry Id (UserId + MM + YYYY)
+                    const entryId = empId.replace(/-/g, '') + mm + selectedYear;
+                    const monthDisplay = `${selectedMonth} ${selectedYear}`;
 
-                    let data = rawText.replace(/₹|,/g, "").replace(/\n/g, " ").trim();
-                    rowData.push('"' + data + '"');
+                    // Map columns to exact order
+                    // Table order: Name(0), FinalSal(1), BaseSal(2), OnTime(3), Lates(4), HDay(5), Absent(6), FinalAbs(7), FinalHD(8), FinalPres(9), TAttend(10), LeaveAdj(11), CurrSal(12)
+                    rowData.push(
+                        `"${entryId}"`,
+                        `"${empId}"`,
+                        `"${monthDisplay}"`,
+                        `"${empName}"`,
+                        `"${cols[2].innerText.replace(/₹|,/g, '').trim()}"`, // Monthly Salary
+                        `"${cols[3].innerText.trim()}"`, // OnTime
+                        `"${cols[4].innerText.trim()}"`, // Lates
+                        `"${cols[5].innerText.trim()}"`, // Halfdays
+                        `"${cols[6].innerText.trim()}"`, // Absent
+                        `"${cols[7].innerText.trim()}"`, // Final Absent
+                        `"${cols[8].innerText.trim()}"`, // Final Halfday
+                        `"${cols[9].innerText.trim()}"`, // Final Present
+                        `"${cols[10].innerText.trim()}"`, // Total Attend Days
+                        `"${cols[11].innerText.trim()}"`, // Leave Adjust
+                        `"${cols[12].innerText.replace(/₹|,/g, '').trim()}"`, // Current Salary
+                        `"${cols[1].innerText.replace(/₹|,/g, '').trim()}"`,  // Final Salary
+                        `"${currentSyncTime}"`
+                    );
                 }
                 csv.push(rowData.join(","));
             }
@@ -854,6 +869,14 @@ function generateSalaryReport() {
     if (!tbody) return;
 
     tbody.innerHTML = '';
+
+    // Update Dynamic Title in Header
+    const monthHeader = document.querySelector('.custom-month-dropdown');
+    const yearHeader = document.querySelector('.custom-year-dropdown');
+    const selectedMonth = monthHeader ? monthHeader.value : "APR";
+    const selectedYear = yearHeader ? yearHeader.value : "2026";
+    const reportTitle = document.getElementById('salaryReportTitle');
+    if (reportTitle) reportTitle.textContent = `${selectedMonth} ${selectedYear} Report`;
     
     // Sort users alphabetically
     const sortedUsers = [...allStoredUsers].sort((a, b) => a.userName.localeCompare(b.userName));
