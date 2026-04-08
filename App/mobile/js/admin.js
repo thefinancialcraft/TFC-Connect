@@ -8,6 +8,7 @@ console.log("%c[Admin JS] Script Loaded and Ready", "background: #FF1493; color:
 
 let allStoredUsers = []; 
 let rawServerResponse = null; // Store raw data for re-calculation
+let isFirstLoad = true; // Auto-load login user only on first site visit/refresh
 
 async function loadAllUsersSalary() {
     console.log("[Admin] Step: Starting loadAllUsersSalary...");
@@ -171,20 +172,21 @@ function processAllUsers() {
 
     renderSalaryList(allStoredUsers);
 
-    // [New] Auto-load logged-in user data by default
-    const activeSess = JSON.parse(localStorage.getItem('receiveData'));
-    const currentUserId = activeSess ? activeSess.userId : null;
+    // Auto-load login user ONLY ON FIRST DASHBOARD LOAD
+    if (isFirstLoad) {
+        const activeSess = JSON.parse(localStorage.getItem('receiveData'));
+        const currentUserId = activeSess ? activeSess.userId : null;
 
-    if (currentUserId && allStoredUsers && allStoredUsers.length > 0) {
-        const currentUser = allStoredUsers.find(u => u.userId.trim().toLowerCase() === currentUserId.trim().toLowerCase());
-        if (currentUser) {
-            console.log(`[Init] Auto-loading data for logged-in user: ${currentUser.userName}`);
-            updateDetailedAttendanceUI(currentUser);
-            
-            // Set the search bar text
-            const searchInput = document.getElementById('employeeSearchInput');
-            if (searchInput) searchInput.value = `${currentUser.userId} - ${currentUser.userName}`;
+        if (currentUserId && allStoredUsers && allStoredUsers.length > 0) {
+            const currentUser = allStoredUsers.find(u => u.userId.trim().toLowerCase() === currentUserId.trim().toLowerCase());
+            if (currentUser) {
+                console.log(`[Init] Auto-loading data for logged-in user: ${currentUser.userName}`);
+                updateDetailedAttendanceUI(currentUser);
+                const searchInput = document.getElementById('employeeSearchInput');
+                if (searchInput) searchInput.value = `${currentUser.userId} - ${currentUser.userName}`;
+            }
         }
+        isFirstLoad = false; // Reset flag so it doesn't default back on month change
     }
 
     // Hide loader, show search
@@ -287,11 +289,12 @@ function initSearch() {
     
     // Also keep button functional as a backup
     if (searchBtn) {
-        searchBtn.onclick = () => {
+        searchBtn.onclick = (e) => {
+            if (e) e.preventDefault();
+            console.log("[Search] Button Action Triggered.");
             const term = searchInput.value.toLowerCase().trim();
             if (!term) return;
 
-            // Try to find an exactly matching user or a single best match
             const filtered = allStoredUsers.filter(u => 
                 searchInput.value.includes(u.userId) || 
                 term.includes(u.userId.toLowerCase()) ||
@@ -299,36 +302,14 @@ function initSearch() {
             );
 
             if (filtered.length === 1) {
-                // Unique match found, refresh current view
                 updateDetailedAttendanceUI(filtered[0]);
                 if (dropdown) dropdown.style.display = 'none';
-            } else if (filtered.length > 1) {
-                // Multiple matches, show dropdown instead
-                performSearch();
             } else {
-                console.warn("[Search] No exact user found for refresh.");
                 performSearch();
             }
         };
     }
 
-    // --- Mobile Fix: Ensure all buttons are clickable ---
-    const mobileSearchBtn = document.getElementById('findEmployeeRecordBtn');
-    if (mobileSearchBtn) {
-        mobileSearchBtn.onclick = (e) => {
-            if (e) e.preventDefault();
-            console.log("[Action] Search Button Clicked.");
-            const searchInput = document.getElementById('employeeSearchInput');
-            if (searchInput && searchInput.value.trim() !== "") {
-                const term = searchInput.value.toLowerCase().trim();
-                const userSelection = allStoredUsers.find(u => 
-                    u.userName.toLowerCase().includes(term) || 
-                    u.userId.toLowerCase().includes(term)
-                );
-                if (userSelection) updateDetailedAttendanceUI(userSelection);
-            }
-        };
-    }
 
     const refreshBtn = document.getElementById('adminRefreshDataBtn');
     if (refreshBtn) {
