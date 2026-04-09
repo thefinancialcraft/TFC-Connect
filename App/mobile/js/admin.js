@@ -867,12 +867,17 @@ function drawAdminCalendar(calc) {
             dayEl.style.border = '1px solid #fff9c4';
             dot.style.background = '#fbc02d';
             addTag('L');
-        } else if (status === 'H' || holidayMatch) {
+        } else if (status === 'H' || status === 'HALF') {
+            dayEl.style.background = '#f3e5f5';
+            dayEl.style.color = '#7b1fa2';
+            dot.style.background = '#7b1fa2';
+            addTag('H');
+        } else if (holidayMatch) {
             dayEl.style.background = '#4931e8'; // Violet
             dayEl.style.color = '#fff';
             dayEl.style.border = '1px solid #3622b3';
             dot.style.background = '#fff';
-            addTag('H');
+            addTag('O');
             if (holidayMatch) dayEl.title = holidayMatch["Holiday Reason"] || "Holiday";
         } else if (dayOfWeek === 0) {
             dayEl.style.background = '#f3e5f5';
