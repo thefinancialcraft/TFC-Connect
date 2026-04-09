@@ -130,7 +130,7 @@ function processAllUsers() {
     const searchBtnText = document.getElementById('adminSearchBtnText');
     const searchBtnSpinner = document.getElementById('adminSearchBtnSpinner');
     if (searchBtnText) searchBtnText.style.display = 'none';
-    if (searchBtnSpinner) searchBtnSpinner.style.display = 'inline-block';
+    if (searchBtnSpinner) searchBtnSpinner.style.display = 'flex';
 
     console.log(`[Admin] Step: Processing ${rawData.userDetails.length} user records for ${selectedMonth} ${selectedYear}.`);
 
@@ -837,39 +837,45 @@ function drawAdminCalendar(calc) {
             return hDate.getDate() === d && hDate.getMonth() === monthIndex && hDate.getFullYear() === year;
         });
 
-        // Coloring Logic
+        // Coloring Logic & Alphanumeric Tags
+        const addTag = (letter) => {
+            const tag = document.createElement('span');
+            tag.textContent = letter;
+            tag.style.fontSize = '8px';
+            tag.style.position = 'absolute';
+            tag.style.top = '2px';
+            tag.style.right = '4px';
+            tag.style.opacity = '0.7';
+            dayEl.appendChild(tag);
+        };
+
         if (status === 'P') {
-            dayEl.style.background = '#e8f5e9'; // Light Green
+            dayEl.style.background = '#e8f5e9';
             dayEl.style.color = '#2e7d32';
             dayEl.style.border = '1px solid #c8e6c9';
             dot.style.background = '#2e7d32';
+            addTag('P');
         } else if (status === 'A') {
-            dayEl.style.background = '#ffebee'; // Light Red
+            dayEl.style.background = '#ffebee';
             dayEl.style.color = '#c62828';
             dayEl.style.border = '1px solid #ffcdd2';
             dot.style.background = '#c62828';
+            addTag('A');
         } else if (status === 'L') {
-            dayEl.style.background = '#fffde7'; // Light Yellow
+            dayEl.style.background = '#fffde7';
             dayEl.style.color = '#fbc02d';
             dayEl.style.border = '1px solid #fff9c4';
             dot.style.background = '#fbc02d';
+            addTag('L');
         } else if (status === 'H' || holidayMatch) {
             dayEl.style.background = '#4931e8'; // Violet
-            dayEl.style.color = '#fff'; // White text for contrast
+            dayEl.style.color = '#fff';
             dayEl.style.border = '1px solid #3622b3';
             dot.style.background = '#fff';
-            if (holidayMatch) {
-                dayEl.title = holidayMatch["Holiday Reason"] || "Holiday";
-                const hMark = document.createElement('span');
-                hMark.textContent = 'H';
-                hMark.style.fontSize = '8px';
-                hMark.style.position = 'absolute';
-                hMark.style.top = '2px';
-                hMark.style.right = '4px';
-                dayEl.appendChild(hMark);
-            }
-        } else if (dayOfWeek === 0) { // Sunday
-            dayEl.style.background = '#f3e5f5'; // Light Purple
+            addTag('H');
+            if (holidayMatch) dayEl.title = holidayMatch["Holiday Reason"] || "Holiday";
+        } else if (dayOfWeek === 0) {
+            dayEl.style.background = '#f3e5f5';
             dayEl.style.color = '#7b1fa2';
             dayEl.style.border = '1px solid #e1bee7';
             dayEl.style.fontWeight = 'bold';
@@ -888,20 +894,18 @@ function formatDisplayTime(timeStr) {
     if (!timeStr || timeStr === "" || timeStr === "null") return "--";
     
     try {
-        // If it's already in "HH:MM AM/PM" format
         if (typeof timeStr === 'string' && (timeStr.includes('AM') || timeStr.includes('PM'))) {
             return timeStr;
         }
 
         const date = new Date(timeStr);
-        // If it's a valid date, extract time
         if (!isNaN(date.getTime())) {
-            let hours = date.getUTCHours();
-            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12; // the hour '0' should be '12'
-            return `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
+            return new Intl.DateTimeFormat('en-IN', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+                timeZone: 'Asia/Kolkata'
+            }).format(date);
         }
         return timeStr; 
     } catch (e) {
