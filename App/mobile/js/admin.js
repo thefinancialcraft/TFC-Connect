@@ -242,6 +242,7 @@ function initSearch() {
     const searchInput = document.getElementById('employeeSearchInput');
     const dropdown = document.getElementById('searchResultsDropdown');
     const searchBtn = document.getElementById('findEmployeeRecordBtn');
+    const showAllBtn = document.getElementById('showAllUsersBtn');
     
     if (!searchInput || !dropdown) return;
 
@@ -283,6 +284,37 @@ function initSearch() {
             dropdown.style.display = 'block';
         }
     };
+
+    // Show All Users Toggle
+    if (showAllBtn) {
+        const toggleAll = (e) => {
+            if (e) { e.preventDefault(); e.stopPropagation(); }
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            } else {
+                // Clear input to show everything or just show all
+                const filtered = [...allStoredUsers].sort((a,b) => a.userName.localeCompare(b.userName));
+                dropdown.innerHTML = '';
+                filtered.forEach(u => {
+                    const item = document.createElement('div');
+                    item.style.padding = '12px 15px';
+                    item.style.cursor = 'pointer';
+                    item.style.borderBottom = '1px solid #eee';
+                    item.style.fontSize = '13px';
+                    item.innerHTML = `<strong style="color: #0051d4;">${u.userId}</strong> - ${u.userName}`;
+                    item.onclick = () => { 
+                        updateDetailedAttendanceUI(u); 
+                        dropdown.style.display = 'none'; 
+                        searchInput.value = `${u.userId} - ${u.userName}`; 
+                    };
+                    dropdown.appendChild(item);
+                });
+                dropdown.style.display = 'block';
+            }
+        };
+        showAllBtn.onclick = toggleAll;
+        showAllBtn.addEventListener('touchend', toggleAll);
+    }
 
     // Trigger search on typing and on focus
     searchInput.addEventListener('input', performSearch);
@@ -798,11 +830,12 @@ function drawAdminCalendar(calc) {
         const dayDate = new Date(year, monthIndex, d);
         const dayOfWeek = dayDate.getDay();
         
-        // Check if it's a holiday (from global holidays list)
-        const isGlobalHoliday = window.allHolidaysData ? window.allHolidaysData.some(h => {
-            const hDate = new Date(h.date);
+        // Check if it's a holiday (from server response)
+        const holidaysArray = (rawServerResponse && rawServerResponse.data) ? rawServerResponse.data.holidays : [];
+        const holidayMatch = holidaysArray.find(h => {
+            const hDate = new Date(h.Date);
             return hDate.getDate() === d && hDate.getMonth() === monthIndex && hDate.getFullYear() === year;
-        }) : false;
+        });
 
         // Coloring Logic
         if (status === 'P') {
@@ -820,12 +853,22 @@ function drawAdminCalendar(calc) {
             dayEl.style.color = '#fbc02d';
             dayEl.style.border = '1px solid #fff9c4';
             dot.style.background = '#fbc02d';
-        } else if (status === 'H') {
-            dayEl.style.background = '#fff3e0'; // Light Orange
-            dayEl.style.color = '#ef6c00';
-            dayEl.style.border = '1px solid #ffe0b2';
-            dot.style.background = '#ef6c00';
-        } else if (dayOfWeek === 0 || isGlobalHoliday) { // Sunday or Holiday
+        } else if (status === 'H' || holidayMatch) {
+            dayEl.style.background = '#4931e8'; // Violet
+            dayEl.style.color = '#fff'; // White text for contrast
+            dayEl.style.border = '1px solid #3622b3';
+            dot.style.background = '#fff';
+            if (holidayMatch) {
+                dayEl.title = holidayMatch["Holiday Reason"] || "Holiday";
+                const hMark = document.createElement('span');
+                hMark.textContent = 'H';
+                hMark.style.fontSize = '8px';
+                hMark.style.position = 'absolute';
+                hMark.style.top = '2px';
+                hMark.style.right = '4px';
+                dayEl.appendChild(hMark);
+            }
+        } else if (dayOfWeek === 0) { // Sunday
             dayEl.style.background = '#f3e5f5'; // Light Purple
             dayEl.style.color = '#7b1fa2';
             dayEl.style.border = '1px solid #e1bee7';
