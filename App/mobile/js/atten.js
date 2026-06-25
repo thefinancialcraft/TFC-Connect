@@ -4,12 +4,11 @@
 
 getAttenData();
 activityDataRecord();
-// Har 30 seconds me today's data update karne ke liye
+// Har 30 seconds me sabhi data (today, activity, calendar, etc.) realtime sync karne ke liye
 setInterval(getAttenData, 30000); 
-// Har 1 minute me activity/salary data update karne ke liye (60000 ms)
-setInterval(activityDataRecord, 60000);
+setInterval(activityDataRecord, 30000);
+setInterval(findHoliday, 30000);
 setInterval(updateProgressBars, 1000);
-setInterval(findHoliday, 10000);
 
 
 
