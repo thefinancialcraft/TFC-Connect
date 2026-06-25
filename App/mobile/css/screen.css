@@ -1990,5 +1990,37 @@ font-size: 9px;
    
    }
     
+}
 
+/* Desktop version showing mobile view */
+@media screen and (min-width: 1024px) {
+    body {
+        width: 350px !important;
+        height: 90vh !important;
+        margin: 5vh auto !important;
+        border: 8px solid #333;
+        border-radius: 30px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        background-color: var(--body-color);
+    }
+    .mb-header {
+        position: absolute !important;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+    }
+    #navBar {
+        position: absolute !important;
+        bottom: 0;
+        left: 0;
+        width: 100% !important;
+    }
+    .mainBody {
+        height: 100% !important;
+        overflow-y: auto !important;
+        padding-top: 60px; /* Adjust based on header height */
+        padding-bottom: 60px; /* Adjust based on navBar height */
+    }
 }
