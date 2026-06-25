@@ -4,6 +4,10 @@
 
 getAttenData();
 activityDataRecord();
+// Har 30 seconds me today's data update karne ke liye
+setInterval(getAttenData, 30000); 
+// Har 1 minute me activity/salary data update karne ke liye (60000 ms)
+setInterval(activityDataRecord, 60000);
 setInterval(updateProgressBars, 1000);
 setInterval(findHoliday, 10000);
 
@@ -2639,8 +2643,10 @@ function activityDataRecord() {
         })
         .then(result => {
             markActivity(result.data);
-            // markAttnDays(result.data);
             localStorage.setItem('markAttnDays', JSON.stringify(result.data));
+            
+            // Dashboard ke Present/Late/Absent etc elements update karne ke liye
+            markAttnDays(); 
             // findHoliday(result.data)
             
             //console.log("Server response activityDataRecord:", result);
