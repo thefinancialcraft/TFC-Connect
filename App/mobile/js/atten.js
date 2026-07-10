@@ -3680,8 +3680,10 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
 
     // **Check holidays before joining**
     holidaysBeforeJoin = holidayDetails.filter(h => {
+        const dateVal = h.Date || h.date;
+        if (!dateVal) return false;
         // DD-MM-YYYY format ko YYYY-MM-DD mein convert karna
-        const [dd, mm, yyyy] = h.date.split("-");
+        const [dd, mm, yyyy] = dateVal.split("-");
         const holidayDate = new Date(`${yyyy}-${mm}-${dd}T00:00:00`);
 
         return (

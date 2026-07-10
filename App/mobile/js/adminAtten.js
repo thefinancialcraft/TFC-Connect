@@ -162,8 +162,9 @@ const AdminSalaryEngine = {
             daysBeforeJoin = selectedDay - 1;
 
             holidaysBeforeJoin = holidayDetails.filter(h => {
-                if (!h || !h.date) return false;
-                const parts = h.date.split("-");
+                const dateVal = h.Date || h.date;
+                if (!dateVal) return false;
+                const parts = dateVal.split("-");
                 if (parts.length < 3) return false;
                 const [dd, mm, yyyy] = parts;
                 const holidayDate = new Date(`${yyyy}-${mm}-${dd}T00:00:00`);
