@@ -29,7 +29,8 @@ function updateAttendanceTimes() {
 
 let updateLocationtag;
 
-updateAttendanceTimes();
+
+setInterval(updateAttendanceTimes, 30000);
 
 // Function to generate dates
 let timeInterval; // To store the time interval for updating the clock
@@ -229,8 +230,9 @@ function updateDateAndWeek() {
 updateDateAndWeek(); 
 
 
-// setInterval(updateTime, 1000);
-// updateTime(); 
+setInterval(updateTime, 30000);
+setInterval(generateDates, 30000);
+
 
 function generateDates(attrecord, holidays = []) {
 
@@ -1565,6 +1567,8 @@ function observeDateChange() {
 
 getCheckinInfo();
 
+setInterval(getCheckinInfo, 30000);
+
 
 async function getCheckinInfo() {
     // Retrieve punchInData from localStorage
@@ -2585,6 +2589,9 @@ if (selectedDateText === formattedCurrentDate) {
         //////console.log("Invalid date format. Please use 'DD MMM YYYY'");
     }
 }
+
+
+setInterval(activityDataRecord, 30000);
 
 
 
