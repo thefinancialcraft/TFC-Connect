@@ -3611,10 +3611,19 @@ function generateAttendanceTable(holidayDetails, salaryData, userDetails, isCall
 
     // **आने वाली छुट्टियों की गिनती निकालें**
     const adjustedHolidaysCount = holidayDetails.filter(h => {
-        // Holiday date: "DD-MM-YYYY" → Date object
-        const [dd, mm, yyyy] = h.date.split("-");
-        const holidayDate = new Date(`${yyyy}-${mm}-${dd}T00:00:00`);
-    
+        const dateVal = h.Date || h.date;
+        if (!dateVal) return false;
+        let holidayDate;
+        if (typeof dateVal === "string" && dateVal.includes("-")) {
+            const parts = dateVal.split("-");
+            if (parts[0].length === 4) { // YYYY-MM-DD
+                holidayDate = new Date(dateVal);
+            } else { // DD-MM-YYYY
+                holidayDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}T00:00:00`);
+            }
+        } else {
+            holidayDate = new Date(dateVal);
+        }
         // Current date: already in "YYYY-MM-DD"
         const currentDateObj = new Date(currentDate + "T00:00:00");
     
@@ -3692,9 +3701,17 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
     holidaysBeforeJoin = holidayDetails.filter(h => {
         const dateVal = h.Date || h.date;
         if (!dateVal) return false;
-        // DD-MM-YYYY format ko YYYY-MM-DD mein convert karna
-        const [dd, mm, yyyy] = dateVal.split("-");
-        const holidayDate = new Date(`${yyyy}-${mm}-${dd}T00:00:00`);
+        let holidayDate;
+        if (typeof dateVal === "string" && dateVal.includes("-")) {
+            const parts = dateVal.split("-");
+            if (parts[0].length === 4) { // YYYY-MM-DD
+                holidayDate = new Date(dateVal);
+            } else { // DD-MM-YYYY
+                holidayDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}T00:00:00`);
+            }
+        } else {
+            holidayDate = new Date(dateVal);
+        }
 
         return (
             holidayDate.toLocaleString('en-US', { month: 'short', year: 'numeric' }).toUpperCase() === formattedUserDate &&

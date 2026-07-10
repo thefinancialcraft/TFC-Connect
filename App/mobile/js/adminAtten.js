@@ -174,10 +174,17 @@ const AdminSalaryEngine = {
             holidaysBeforeJoin = holidayDetails.filter(h => {
                 const dateVal = h.Date || h.date;
                 if (!dateVal) return false;
-                const parts = dateVal.split("-");
-                if (parts.length < 3) return false;
-                const [dd, mm, yyyy] = parts;
-                const holidayDate = new Date(`${yyyy}-${mm}-${dd}T00:00:00`);
+                let holidayDate;
+                if (typeof dateVal === "string" && dateVal.includes("-")) {
+                    const parts = dateVal.split("-");
+                    if (parts[0].length === 4) { // YYYY-MM-DD
+                        holidayDate = new Date(dateVal);
+                    } else { // DD-MM-YYYY
+                        holidayDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}T00:00:00`);
+                    }
+                } else {
+                    holidayDate = new Date(dateVal);
+                }
                 
                 const formattedHoliday = holidayDate.toLocaleString('en-US', { month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' }).toUpperCase().replace(/[.,]/g, "");
                 return formattedHoliday === formattedUserDate && holidayDate.getDate() < selectedDay;
