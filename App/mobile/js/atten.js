@@ -3591,7 +3591,17 @@ function generateAttendanceTable(holidayDetails, salaryData, userDetails, isCall
 
     // //console.log("userdetailsresult", userDetails);
 
-    const userDate = new Date(userDetails);
+    let userDate;
+    if (typeof userDetails === "string" && userDetails.includes("-")) {
+        const parts = userDetails.split("-");
+        if (parts[0].length === 4) { // YYYY-MM-DD
+            userDate = new Date(userDetails);
+        } else { // DD-MM-YYYY
+            userDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}T00:00:00`);
+        }
+    } else {
+        userDate = new Date(userDetails);
+    }
     const formattedUserDate = userDate.toLocaleString('en-US', { month: 'short', year: 'numeric' }).toUpperCase();
     const formattedUserDateDDMMYYYY = userDate.toLocaleDateString('en-GB').split('/').join('-');
 

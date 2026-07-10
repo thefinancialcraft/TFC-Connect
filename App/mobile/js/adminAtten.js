@@ -154,7 +154,17 @@ const AdminSalaryEngine = {
         // Mid-month joiner logic (Parity with atten.js)
         let daysBeforeJoin = 0;
         let holidaysBeforeJoin = 0;
-        const userDate = new Date(userDetails.Join_date);
+        let userDate;
+        if (typeof userDetails.Join_date === "string" && userDetails.Join_date.includes("-")) {
+            const parts = userDetails.Join_date.split("-");
+            if (parts[0].length === 4) { // YYYY-MM-DD
+                userDate = new Date(userDetails.Join_date);
+            } else { // DD-MM-YYYY
+                userDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}T00:00:00`);
+            }
+        } else {
+            userDate = new Date(userDetails.Join_date);
+        }
         const formattedUserDate = userDate.toLocaleString('en-US', { month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' }).toUpperCase().replace(/[.,]/g, "");
         
         if (formattedUserDate === selectedMonthYear) {
@@ -180,7 +190,7 @@ const AdminSalaryEngine = {
 
         // Correctly initialize casualLeave before use
         let casualLeave = 0;
-        const currentJoinMonthYear = new Date(userDetails.Join_date).toLocaleString('en-US', { month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' }).toUpperCase().replace(/[.,]/g, "");
+        const currentJoinMonthYear = userDate.toLocaleString('en-US', { month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' }).toUpperCase().replace(/[.,]/g, "");
 
         if (selectedMonthYear === currentJoinMonthYear) {
             casualLeave = 0;
