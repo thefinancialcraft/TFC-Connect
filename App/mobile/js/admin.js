@@ -980,6 +980,7 @@ function generateSalaryReport() {
 /**
  * Displays a popup modal with attendance details for a clicked date
  */
+ 
 function showAttendanceModal(day, month, year, record, holidayMatch) {
     console.log("[Admin UI] showAttendanceModal triggered for day:", day, "month:", month, "year:", year);
     let modal = document.getElementById('adminAttendanceModal');
@@ -1059,6 +1060,68 @@ function showAttendanceModal(day, month, year, record, holidayMatch) {
         html += `<div style="text-align: center; color: #888; padding: 20px 0; font-size: 14px;">No attendance record found for this day.</div>`;
     }
     
+    // Add 4 option buttons at the bottom
+    const fullDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const targetUid = lastViewedUser ? lastViewedUser.userId : '';
+    html += `<div style="display: flex; justify-content: space-between; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+        <button onclick="updateAtnStatusByAdmin(event, 'P', '${targetUid}', '${fullDateStr}')" style="flex: 1; margin: 0 4px; padding: 10px; border: none; border-radius: 6px; background: #e8f5e9; color: #2e7d32; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">P</button>
+        <button onclick="updateAtnStatusByAdmin(event, 'L', '${targetUid}', '${fullDateStr}')" style="flex: 1; margin: 0 4px; padding: 10px; border: none; border-radius: 6px; background: #fffde7; color: #fbc02d; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">L</button>
+        <button onclick="updateAtnStatusByAdmin(event, 'H', '${targetUid}', '${fullDateStr}')" style="flex: 1; margin: 0 4px; padding: 10px; border: none; border-radius: 6px; background: #f3e5f5; color: #7b1fa2; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">H</button>
+        <button onclick="updateAtnStatusByAdmin(event, 'A', '${targetUid}', '${fullDateStr}')" style="flex: 1; margin: 0 4px; padding: 10px; border: none; border-radius: 6px; background: #ffebee; color: #c62828; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">A</button>
+    </div>`;
+    
     content.innerHTML = html;
     modal.style.display = 'flex';
+}
+
+/**
+ * Updates attendance status for a specific user and date
+ */
+window.updateAtnStatusByAdmin = async function(event, status, targetUserId, dateStr) {
+    if (!targetUserId) {
+        alert("Error: User ID not found.");
+        return;
+    }
+
+    const reason = prompt(`Please enter reason for marking as ${status}:`);
+    if (reason === null) return; // User cancelled
+
+    const btn = event.currentTarget;
+    const origText = btn.textContent;
+    btn.textContent = '...';
+    btn.disabled = true;
+
+    try {
+        const configResponse = await fetch('/TFC-Connect/App/config.json');
+        const config = await configResponse.json();
+        
+        const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
+        if (!activeTicket) throw new Error("No active ticket found");
+
+        const data = new URLSearchParams();
+        data.append('action', 'updateAtnStatusByAdmin');
+        data.append('atnToken', activeTicket.token);
+        data.append('status', status);
+        data.append('reason', reason);
+
+        const response = await fetch(config.scriptUrl, { method: 'POST', body: data });
+        const result = await response.json();
+
+        if (result.status === 'success' || result.success) {
+            alert("Attendance updated successfully!");
+            document.getElementById('adminAttendanceModal').style.display = 'none';
+            // Refresh logic to show updated data
+            if (typeof loadAllUsersSalary === 'function') {
+                loadAllUsersSalary();
+            }
+        } else {
+            alert("Failed to update: " + (result.message || "Unknown error"));
+        }
+    } catch (e) {
+        console.error("Error updating attendance:", e);
+        alert("Error updating attendance. Check console.");
+    } finally {
+        btn.textContent = origText;
+        btn.disabled = false;
+    }
 }
