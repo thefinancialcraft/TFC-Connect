@@ -1061,13 +1061,20 @@ function showAttendanceModal(day, month, year, record, holidayMatch) {
     }
     
     // Add 4 option buttons at the bottom
-    const fullDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const targetUid = lastViewedUser ? lastViewedUser.userId : '';
+    
+    // Generate atntoken: YYMMDD + numeric part of UID
+    const shortYear = year.toString().slice(-2);
+    const shortMonth = String(month + 1).padStart(2, '0');
+    const shortDay = String(day).padStart(2, '0');
+    const numericUid = targetUid.replace(/\D/g, ''); 
+    const generatedAtnToken = `${shortYear}${shortMonth}${shortDay}${numericUid}`;
+
     html += `<div style="display: flex; justify-content: space-between; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-        <button onclick="updateAtnStatusByAdmin(event, 'P', '${targetUid}', '${fullDateStr}')" style="flex: 1; margin: 0 4px; padding: 10px; border: none; border-radius: 6px; background: #e8f5e9; color: #2e7d32; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">P</button>
-        <button onclick="updateAtnStatusByAdmin(event, 'L', '${targetUid}', '${fullDateStr}')" style="flex: 1; margin: 0 4px; padding: 10px; border: none; border-radius: 6px; background: #fffde7; color: #fbc02d; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">L</button>
-        <button onclick="updateAtnStatusByAdmin(event, 'H', '${targetUid}', '${fullDateStr}')" style="flex: 1; margin: 0 4px; padding: 10px; border: none; border-radius: 6px; background: #f3e5f5; color: #7b1fa2; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">H</button>
-        <button onclick="updateAtnStatusByAdmin(event, 'A', '${targetUid}', '${fullDateStr}')" style="flex: 1; margin: 0 4px; padding: 10px; border: none; border-radius: 6px; background: #ffebee; color: #c62828; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">A</button>
+        <button onclick="updateAtnStatusByAdmin(event, 'P', '${targetUid}', '${generatedAtnToken}')" style="flex: 1; margin: 0 4px; padding: 10px; border: none; border-radius: 6px; background: #e8f5e9; color: #2e7d32; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">P</button>
+        <button onclick="updateAtnStatusByAdmin(event, 'L', '${targetUid}', '${generatedAtnToken}')" style="flex: 1; margin: 0 4px; padding: 10px; border: none; border-radius: 6px; background: #fffde7; color: #fbc02d; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">L</button>
+        <button onclick="updateAtnStatusByAdmin(event, 'H', '${targetUid}', '${generatedAtnToken}')" style="flex: 1; margin: 0 4px; padding: 10px; border: none; border-radius: 6px; background: #f3e5f5; color: #7b1fa2; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">H</button>
+        <button onclick="updateAtnStatusByAdmin(event, 'A', '${targetUid}', '${generatedAtnToken}')" style="flex: 1; margin: 0 4px; padding: 10px; border: none; border-radius: 6px; background: #ffebee; color: #c62828; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">A</button>
     </div>`;
     
     content.innerHTML = html;
@@ -1077,9 +1084,9 @@ function showAttendanceModal(day, month, year, record, holidayMatch) {
 /**
  * Updates attendance status for a specific user and date
  */
-window.updateAtnStatusByAdmin = async function(event, status, targetUserId, dateStr) {
+window.updateAtnStatusByAdmin = async function(event, status, targetUserId, generatedAtnToken) {
     if (!targetUserId) {
-        alert("Error: User ID not found.");
+        console.error("Error: User ID not found.");
         return;
     }
 
@@ -1095,12 +1102,9 @@ window.updateAtnStatusByAdmin = async function(event, status, targetUserId, date
         const configResponse = await fetch('/TFC-Connect/App/config.json');
         const config = await configResponse.json();
         
-        const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
-        if (!activeTicket) throw new Error("No active ticket found");
-
         const data = new URLSearchParams();
         data.append('action', 'updateAtnStatusByAdmin');
-        data.append('atnToken', activeTicket.token);
+        data.append('atnToken', generatedAtnToken); // Generated format: 260703011
         data.append('status', status);
         data.append('reason', reason);
 
@@ -1115,11 +1119,10 @@ window.updateAtnStatusByAdmin = async function(event, status, targetUserId, date
                 loadAllUsersSalary();
             }
         } else {
-            alert("Failed to update: " + (result.message || "Unknown error"));
+            console.error("Failed to update: " + (result.message || "Unknown error"));
         }
     } catch (e) {
         console.error("Error updating attendance:", e);
-        alert("Error updating attendance. Check console.");
     } finally {
         btn.textContent = origText;
         btn.disabled = false;
