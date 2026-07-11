@@ -981,6 +981,7 @@ function generateSalaryReport() {
  * Displays a popup modal with attendance details for a clicked date
  */
 function showAttendanceModal(day, month, year, record, holidayMatch) {
+    console.log("[Admin UI] showAttendanceModal triggered for day:", day, "month:", month, "year:", year);
     let modal = document.getElementById('adminAttendanceModal');
     if (!modal) {
         modal = document.createElement('div');
@@ -994,7 +995,7 @@ function showAttendanceModal(day, month, year, record, holidayMatch) {
         modal.style.display = 'flex';
         modal.style.justifyContent = 'center';
         modal.style.alignItems = 'center';
-        modal.style.zIndex = '10000';
+        modal.style.zIndex = '2147483647'; // Max z-index to ensure it shows above everything
         
         const content = document.createElement('div');
         content.id = 'adminAttendanceModalContent';
