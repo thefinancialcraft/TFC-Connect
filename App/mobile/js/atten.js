@@ -5,7 +5,7 @@
 getAttenData();
 activityDataRecord();
 // Har 30 seconds me sabhi data (today, activity, calendar, etc.) realtime sync karne ke liye
-setInterval(getAttenData, 30000); 
+setInterval(getAttenData, 30000);
 setInterval(activityDataRecord, 30000);
 setInterval(findHoliday, 30000);
 setInterval(updateProgressBars, 1000);
@@ -125,12 +125,12 @@ async function updateTime() {
             timeElement.textContent = formattedTime;
         }
 
-        
+
         punchWatch = formattedTime;
         initPunchWatch();
 
 
-  
+
 
     } catch (error) {
         console.error("Error fetching backend data:", error);
@@ -203,31 +203,31 @@ function startTimeupdate() {
 
 // Function to stop the clock update and freeze the current time
 function stopTimeUpdate() {
-  clearInterval(timeInterval); // Stop the time update
-  document.getElementById("currentTime").textContent = lastTime; // Display the frozen time
-  console.log("last time", lastTime);
+    clearInterval(timeInterval); // Stop the time update
+    document.getElementById("currentTime").textContent = lastTime; // Display the frozen time
+    console.log("last time", lastTime);
 }
 
 function updateDateAndWeek() {
-  const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednessday", "Thursday", "Friday", "Saturday"];
-  const monthsOfYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  const currentDate = new Date();
-  
-  const weekName = daysOfWeek[currentDate.getDay()];
-  const day = currentDate.getDate().toString().padStart(2, '0'); // Add leading zero for single-digit days
-  const month = monthsOfYear[currentDate.getMonth()];
-  const year = currentDate.getFullYear();
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednessday", "Thursday", "Friday", "Saturday"];
+    const monthsOfYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const currentDate = new Date();
 
-  const formattedDate = `${day} ${month} ${year}`;
+    const weekName = daysOfWeek[currentDate.getDay()];
+    const day = currentDate.getDate().toString().padStart(2, '0'); // Add leading zero for single-digit days
+    const month = monthsOfYear[currentDate.getMonth()];
+    const year = currentDate.getFullYear();
 
-  const weekElement = document.querySelector('.crn-wek');
-  const dateElement = document.querySelector('.crn-date');
+    const formattedDate = `${day} ${month} ${year}`;
 
-  weekElement.textContent = weekName;
-  dateElement.textContent = formattedDate;
+    const weekElement = document.querySelector('.crn-wek');
+    const dateElement = document.querySelector('.crn-date');
+
+    weekElement.textContent = weekName;
+    dateElement.textContent = formattedDate;
 }
 
-updateDateAndWeek(); 
+updateDateAndWeek();
 
 
 setInterval(updateTime, 30000);
@@ -274,7 +274,7 @@ function generateDates(attrecord, holidays = []) {
     for (let i = 0; i < 6; i++) {
         const date = new Date(today);
         date.setDate(today.getDate() - i); // Set the date to today, and subtract i days
-        
+
         const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits (DD)
         const month = date.toLocaleString('default', { month: 'short' }); // Get short month name
 
@@ -304,7 +304,7 @@ function generateDates(attrecord, holidays = []) {
         const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
         const mark = attendance[formattedDate] || null;
         let color = 'transparent'; // Default color if no attendance mark
-        
+
         // Set colors based on attendance mark
         if (mark === 'P') color = '#31e774'; // Present
         else if (mark === 'L') color = '#ffd606'; // Late
@@ -331,29 +331,29 @@ function generateDates(attrecord, holidays = []) {
 
         // Append to container
         dateContainer.appendChild(atnBox);
-       
+
     }
 }
 
 
 
 
-  const slider = document.getElementById('slider');
-  const camCont = document.getElementById('cam-cnt');
-  const checkinCont = document.getElementById('chknBtn');
-  const actionCont = document.getElementById('actBtn');
-  const sliderText = document.getElementById('sliderText');
-  const switchContainer = document.querySelector('.atn-switch');
-  let videoElement; // Store the video element
-  let mediaStream; // Store the media stream for stopping the camera
-  
-  let isTouching = false;
-  let startX = 0;
-  let sliderLeft = 0;
+const slider = document.getElementById('slider');
+const camCont = document.getElementById('cam-cnt');
+const checkinCont = document.getElementById('chknBtn');
+const actionCont = document.getElementById('actBtn');
+const sliderText = document.getElementById('sliderText');
+const switchContainer = document.querySelector('.atn-switch');
+let videoElement; // Store the video element
+let mediaStream; // Store the media stream for stopping the camera
 
-  updateLocation();
+let isTouching = false;
+let startX = 0;
+let sliderLeft = 0;
 
-  async function updateLocation() {
+updateLocation();
+
+async function updateLocation() {
     const locationElement = document.getElementById('location');
     const pnchBtn = document.getElementById('cam-stp');
     pnchBtn.style.display = "none";
@@ -455,57 +455,57 @@ function generateDates(attrecord, holidays = []) {
 
 
 
- function restartTime() {
+function restartTime() {
     timeInterval = setInterval(startTimeupdate, 1000); // Stop the time update
-   
-  }
+
+}
 
 
 
 // Modify startCamera function to update location
 function startCamera() {
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      ////console.error("getUserMedia is not supported in your browser.");
-      alert("Your browser does not support camera access. Please try using a modern browser like Chrome, Firefox, or Safari.");
-      return;
-  }
-  document.getElementById('snapshotImage').style.display = 'none';
-  document.getElementById('videoElement').style.display = 'flex';
-  document.getElementById('camCancel').style.display = 'block';
-  document.getElementById('bcToDash').style.display = 'none';
-  document.getElementById('SnapWhts').style.display = 'none';
-  document.querySelector('.loader').style.display = 'flex';
-  document.querySelector('.loader').style.width = '48%';
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        ////console.error("getUserMedia is not supported in your browser.");
+        alert("Your browser does not support camera access. Please try using a modern browser like Chrome, Firefox, or Safari.");
+        return;
+    }
+    document.getElementById('snapshotImage').style.display = 'none';
+    document.getElementById('videoElement').style.display = 'flex';
+    document.getElementById('camCancel').style.display = 'block';
+    document.getElementById('bcToDash').style.display = 'none';
+    document.getElementById('SnapWhts').style.display = 'none';
+    document.querySelector('.loader').style.display = 'flex';
+    document.querySelector('.loader').style.width = '48%';
 
-  restartTime();
+    restartTime();
 
-  // Try to access the camera
-  navigator.mediaDevices.getUserMedia({
-      video: {
-          width: 1920, // Increase resolution for a wider field of view
-          height: 1080 // Adjust height accordingly
-      }
-  })
+    // Try to access the camera
+    navigator.mediaDevices.getUserMedia({
+        video: {
+            width: 1920, // Increase resolution for a wider field of view
+            height: 1080 // Adjust height accordingly
+        }
+    })
 
-  .then((stream) => {
-     
-      //////console.log("Camera stream started successfully.");
-      videoElement = document.getElementById('videoElement');
-      videoElement.srcObject = stream;
-      videoElement.autoplay = true;
-      videoElement.style.width = '100%';
-      videoElement.style.height = '100%';
-      videoElement.style.objectFit = 'cover';
-      videoElement.style.transform = 'scaleX(-1)'; // Flip video horizontally if needed
+        .then((stream) => {
 
-      mediaStream = stream; // Store the media stream for stopping it later
+            //////console.log("Camera stream started successfully.");
+            videoElement = document.getElementById('videoElement');
+            videoElement.srcObject = stream;
+            videoElement.autoplay = true;
+            videoElement.style.width = '100%';
+            videoElement.style.height = '100%';
+            videoElement.style.objectFit = 'cover';
+            videoElement.style.transform = 'scaleX(-1)'; // Flip video horizontally if needed
 
-      camCont.style.perspective = '1500px'; // Optional styling for camera container
-  })
-  .catch((err) => {
-      ////console.error('Error accessing the camera: ', err);
-      alert("Error accessing the camera. Please try again.");
-  });
+            mediaStream = stream; // Store the media stream for stopping it later
+
+            camCont.style.perspective = '1500px'; // Optional styling for camera container
+        })
+        .catch((err) => {
+            ////console.error('Error accessing the camera: ', err);
+            alert("Error accessing the camera. Please try again.");
+        });
 }
 
 document.getElementById('cam-stp').addEventListener('click', () => {
@@ -535,12 +535,12 @@ document.getElementById('cam-stp').addEventListener('click', () => {
         function convertTo24HourFormat(time) {
             let match = time.match(/(\d{1,2}):(\d{2}):?(\d{2})?\s?([APap][Mm])?/);
             if (!match) return time; // अगर फॉर्मेट मैच नहीं हुआ तो वही रिटर्न करो
-        
+
             let hours = parseInt(match[1], 10);
             let minutes = match[2];
             let seconds = match[3] || "00"; // अगर सेकंड नहीं मिले तो "00" सेट करो
             let period = match[4] ? match[4].toUpperCase() : null;
-        
+
             if (period) {
                 if (period === "PM" && hours !== 12) {
                     hours += 12;
@@ -548,15 +548,15 @@ document.getElementById('cam-stp').addEventListener('click', () => {
                     hours = 0;
                 }
             }
-        
+
             // `padStart(2, '0')` का उपयोग करके `01:02:02` जैसा फॉर्मेट सुनिश्चित करें
             return `${String(hours).padStart(2, "0")}:${minutes}:${seconds}`;
         }
-        
-      
-        
+
+
+
         const watermarkText = `${formattedDate} ${convertTo24HourFormat(checkinTime)}`;
-        
+
         // //console.log("watermarkText", watermarkText);
 
 
@@ -604,7 +604,7 @@ document.getElementById('cam-stp').addEventListener('click', () => {
         document.getElementById('cam-stp').style.display = 'none';
         document.querySelector('.loader').style.display = 'flex';
         document.querySelector('.loader').style.width = '100%';
-        
+
         document.getElementById('camCancel').style.display = 'none';
 
         // Create a download link for the flipped snapshot image
@@ -649,72 +649,72 @@ function checkInUpdate(formattedDate, checkinTime) {
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
-    
+
     const userId = document.querySelector('.userId')?.textContent || "Unknown UserId";
     const last3Digits = userId.slice(-3); // Get last 3 digits of userId
     const userName = document.querySelector('.userName')?.textContent || "Unknown UserName";
     const location = document.getElementById('location')?.textContent || "Unknown Location";
 
-     // Get the current date and time components
-     const day = String(currentDate.getDate()).padStart(2, '0');
-     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-     const year = String(currentDate.getFullYear()).slice(-2); // Last two digits of the year
-     const hours = String(currentDate.getHours()).padStart(2, '0');
-     const minutes = String(currentDate.getMinutes()).padStart(2, '0');
-     const seconds = String(currentDate.getSeconds()).padStart(2, '0');
-     
-     // Generate the atn_token
-     const atnToken = `${year}${month}${day}${last3Digits}`;   
+    // Get the current date and time components
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const year = String(currentDate.getFullYear()).slice(-2); // Last two digits of the year
+    const hours = String(currentDate.getHours()).padStart(2, '0');
+    const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+    const seconds = String(currentDate.getSeconds()).padStart(2, '0');
 
-     const officeTiming = JSON.parse(localStorage.getItem('officeTiming'));
+    // Generate the atn_token
+    const atnToken = `${year}${month}${day}${last3Digits}`;
 
-      // Correctly fetch WhatsApp data once
-      const checkInElements = document.querySelectorAll(".checkIn");
-      checkInElements.forEach(element => {
-          element.textContent = checkinTime;
-      });
+    const officeTiming = JSON.parse(localStorage.getItem('officeTiming'));
 
-
-      const officeCheckIn = officeTiming.checkinTime;
-      const checkinStamp = `${formattedDate} ${checkinTime}`;
+    // Correctly fetch WhatsApp data once
+    const checkInElements = document.querySelectorAll(".checkIn");
+    checkInElements.forEach(element => {
+        element.textContent = checkinTime;
+    });
 
 
-        let checkinDate = checkinStamp.split(" ")[0]; // "29/03/25"
-        
-        // officeCheckIn से समय निकालें
-        let officeTime = officeCheckIn.split(" ")[1] || officeCheckIn; // "01:03:00"
-        
-        // नई तारीख और समय को जोड़ें
-        let updatedOfficeCheckIn = checkinDate + " " + officeTime;
-    
+    const officeCheckIn = officeTiming.checkinTime;
+    const checkinStamp = `${formattedDate} ${checkinTime}`;
 
-        function convertToISTTimestamp(dateTimeStr) {
-            let [date, time] = dateTimeStr.split(" ");
-            let [day, month, year] = date.split("/");
-            year = "20" + year; // 25 को 2025 बनाएं
-        
-            // Date Object को IST में सेट करें
-            let dateObj = new Date(`${year}-${month}-${day}T${time}+05:30`);
-        
-            // Timestamp (milliseconds since epoch)
-            return dateObj.getTime();
-        }
-        
 
-        let checkinTimestamp = convertToISTTimestamp(checkinStamp);
-        let officeCheckinTimestamp = convertToISTTimestamp(updatedOfficeCheckIn);
-        
-        //console.log("checkinStamp Timestamp:", checkinTimestamp);
-        //console.log("officeCheckIn Timestamp:", officeCheckinTimestamp);
-        
-     
+    let checkinDate = checkinStamp.split(" ")[0]; // "29/03/25"
 
-      //console.log("checkinStamp", checkinStamp);
-      //console.log("officeCheckIn", updatedOfficeCheckIn);
+    // officeCheckIn से समय निकालें
+    let officeTime = officeCheckIn.split(" ")[1] || officeCheckIn; // "01:03:00"
+
+    // नई तारीख और समय को जोड़ें
+    let updatedOfficeCheckIn = checkinDate + " " + officeTime;
+
+
+    function convertToISTTimestamp(dateTimeStr) {
+        let [date, time] = dateTimeStr.split(" ");
+        let [day, month, year] = date.split("/");
+        year = "20" + year; // 25 को 2025 बनाएं
+
+        // Date Object को IST में सेट करें
+        let dateObj = new Date(`${year}-${month}-${day}T${time}+05:30`);
+
+        // Timestamp (milliseconds since epoch)
+        return dateObj.getTime();
+    }
+
+
+    let checkinTimestamp = convertToISTTimestamp(checkinStamp);
+    let officeCheckinTimestamp = convertToISTTimestamp(updatedOfficeCheckIn);
+
+    //console.log("checkinStamp Timestamp:", checkinTimestamp);
+    //console.log("officeCheckIn Timestamp:", officeCheckinTimestamp);
 
 
 
-    
+    //console.log("checkinStamp", checkinStamp);
+    //console.log("officeCheckIn", updatedOfficeCheckIn);
+
+
+
+
     const userCheckIn = checkinTimestamp;
 
     function addTimeToTimestamp(timestamp, minutesToAdd, secondsToAdd) {
@@ -726,14 +726,14 @@ function checkInUpdate(formattedDate, checkinTime) {
         // नए टाइमस्टैम्प में मिनट और सेकंड जोड़ें
         return timestamp - (minutesToAdd * 60 + secondsToAdd) * 1000;
     }
-    
+
     function addCustomTime(officeCheckInTimestamp, timeToAdd) {
         // "HH:MM:SS" को घंटे, मिनट, सेकंड में स्प्लिट करें
         let [hours, minutes, seconds] = timeToAdd.split(":").map(Number);
-    
+
         // कुल मिनट निकालें (घंटे * 60 + मिनट)
-        let totalMinutesToAdd = hours * 60 + minutes; 
-    
+        let totalMinutesToAdd = hours * 60 + minutes;
+
         // सेकंड्स को जोड़ने के लिए पास करें
         return addTimeToTimestamp(officeCheckInTimestamp, totalMinutesToAdd, seconds);
     }
@@ -741,10 +741,10 @@ function checkInUpdate(formattedDate, checkinTime) {
     function subCustomTime(officeCheckInTimestamp, timeToAdd) {
         // "HH:MM:SS" को घंटे, मिनट, सेकंड में स्प्लिट करें
         let [hours, minutes, seconds] = timeToAdd.split(":").map(Number);
-    
+
         // कुल मिनट निकालें (घंटे * 60 + मिनट)
-        let totalMinutesToAdd = hours * 60 + minutes; 
-    
+        let totalMinutesToAdd = hours * 60 + minutes;
+
         // सेकंड्स को जोड़ने के लिए पास करें
         return subTimeToTimestamp(officeCheckInTimestamp, totalMinutesToAdd, seconds);
     }
@@ -761,7 +761,7 @@ function checkInUpdate(formattedDate, checkinTime) {
     console.log('office Check in Timing', officeCheckIn);
     console.log('office Check out Timing', officeTiming.checkoutTime);
     console.log('User Reached at', userCheckIn);
-    
+
 
     console.log("Checkin time:", truserCheckIn);
     console.log("Late Deadline:", lateDeadline);
@@ -772,25 +772,25 @@ function checkInUpdate(formattedDate, checkinTime) {
 
     function convertFromISTTimestamp(timestamp) {
         let dateObj = new Date(timestamp);
-    
+
         // दिन, महीना और साल निकालें
         let day = String(dateObj.getDate()).padStart(2, "0");
         let month = String(dateObj.getMonth() + 1).padStart(2, "0"); // JS में महीने 0 से शुरू होते हैं
         let year = String(dateObj.getFullYear()).slice(-2); // केवल आखिरी दो अंक लें
-    
+
         // घंटे और मिनट निकालें
         let hours = String(dateObj.getHours()).padStart(2, "0");
         let minutes = String(dateObj.getMinutes()).padStart(2, "0");
         let seconds = String(dateObj.getSeconds()).padStart(2, "0");
-    
+
         // फॉर्मेट में कन्वर्ट करें → "DD/MM/YY HH:MM"
         return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
     }
-    
+
     // उदाहरण के लिए
 
     console.log("Trail time:", convertFromISTTimestamp(truserCheckIn));
-    console.log("Late Deadline:",convertFromISTTimestamp(lateDeadline));
+    console.log("Late Deadline:", convertFromISTTimestamp(lateDeadline));
     console.log("Halfday Deadline:", convertFromISTTimestamp(halfdayDeadline));
     console.log("Absent Deadline:", convertFromISTTimestamp(halfdayDeadline));
     console.log("Pre Entry Deadline:", convertFromISTTimestamp(preEntryDeadline));
@@ -799,9 +799,9 @@ function checkInUpdate(formattedDate, checkinTime) {
 
     // Call updateCheckInStatus with the proper arguments
     const checkinstatus = updateCheckInStatus(truserCheckIn, lateDeadline, halfdayDeadline, absentDeadline, preEntryDeadline);
-   
 
-   
+
+
     let statusMark; // StatusMark ko initialize karte hain
 
     // Check checkinstatus aur uske basis par statusMark ko update karte hain
@@ -815,9 +815,9 @@ function checkInUpdate(formattedDate, checkinTime) {
         statusMark = "H"; // "H" ka matlab Halfday hai
     }
 
-// Ab `statusMark` ko updated value mil gayi hai
-//////console.log("Check-in Status:", checkinstatus);
-//////console.log("Status Mark:", statusMark);
+    // Ab `statusMark` ko updated value mil gayi hai
+    //////console.log("Check-in Status:", checkinstatus);
+    //////console.log("Status Mark:", statusMark);
 
 
 
@@ -832,8 +832,8 @@ function checkInUpdate(formattedDate, checkinTime) {
         userName: userName,
         location: location,
         checkinTime: checkinTime,
-        checkinstatus : checkinstatus,
-        statusMark : statusMark,
+        checkinstatus: checkinstatus,
+        statusMark: statusMark,
         action: "uploadCheckinData" // Action to be included in the data
     };
 }
@@ -858,7 +858,7 @@ function isTimeGreaterThanOrEqual(timestamp1, timestamp2) {
 
 // Function to update check-in status
 function updateCheckInStatus(truserCheckIn, lateDeadline, halfdayDeadline, absentDeadline, preEntryDeadline) {
-    
+
     // If userCheckIn is less than lateDeadline, return "On-time"
     if (isTimeLessThan(truserCheckIn, lateDeadline) && isTimeGreaterThan(truserCheckIn, preEntryDeadline)) {
         return "On time";
@@ -923,13 +923,13 @@ async function uploadCheckinData(checkinData, snapshotData) {
         document.querySelector('.loader').style.display = 'none';
 
         localStorage.setItem('whatsAppData', JSON.stringify(data.uploadedData));
-        
+
         // ✅ Data upload hone ke baad local storage se hata do
         localStorage.removeItem('punchInData');
 
 
         return true; // ✅ Return success
-        
+
     } catch (error) {
         //console.error("Error uploading data:", error.message);
         saveToLocalStorage(checkinData, snapshotData);
@@ -948,11 +948,11 @@ function saveToLocalStorage(checkinData, snapshotData) {
         timestamp: new Date().toLocaleDateString('en-GB'), // Format as DD/MM/YYYY
         isAtnMarked: false // Add flag to track attendance marking status
     };
-    
+
 
     localStorage.setItem('punchInData', JSON.stringify(punchInData));
     //console.log("Data saved to local storage as 'punchInData' due to an error.");
-      
+
     document.getElementById('cam-stp').style.display = 'none';
     document.getElementById('punchWhts').style.display = 'block';
     document.getElementById('punchToDash').style.display = 'block';
@@ -965,42 +965,42 @@ function saveToLocalStorage(checkinData, snapshotData) {
 }
 
 
-  document.getElementById('punchWhts').addEventListener('click', () => {
-      // Stop the camera stream and hide video container
-      if (mediaStream) {
-          mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
-      }
+document.getElementById('punchWhts').addEventListener('click', () => {
+    // Stop the camera stream and hide video container
+    if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
+    }
 
-      camCont.style.display = 'none'; // Hide video container
-  
-
-      document.getElementById('atn-switch').style.display = 'flex';
-      document.getElementById('resetCont').style.display = 'flex';
-      document.getElementById('actBtn').style.display = 'none';
-      document.getElementById('chknBtn').style.display = 'none';
-
-      const punchInData = JSON.parse(localStorage.getItem('punchInData'));
-  
-      
-      var message = '*Reached*, ' + punchInData.checkinData.userName + '\n' +
-                    'Date: ' + punchInData.checkinData.date + '\n' +
-                    'Time: ' + punchInData.checkinData.checkinTime + '\n' 
-                    + '\n' +
-                    'Currently am facing network issue, Update Soon';
-
-                 
-                    var encodedMessage = encodeURIComponent(message);
-                    var whatsappUrl = 'https://wa.me/?text=' + encodedMessage;
-      
-                    window.open(whatsappUrl, '_blank');
+    camCont.style.display = 'none'; // Hide video container
 
 
-  });
+    document.getElementById('atn-switch').style.display = 'flex';
+    document.getElementById('resetCont').style.display = 'flex';
+    document.getElementById('actBtn').style.display = 'none';
+    document.getElementById('chknBtn').style.display = 'none';
+
+    const punchInData = JSON.parse(localStorage.getItem('punchInData'));
+
+
+    var message = '*Reached*, ' + punchInData.checkinData.userName + '\n' +
+        'Date: ' + punchInData.checkinData.date + '\n' +
+        'Time: ' + punchInData.checkinData.checkinTime + '\n'
+        + '\n' +
+        'Currently am facing network issue, Update Soon';
+
+
+    var encodedMessage = encodeURIComponent(message);
+    var whatsappUrl = 'https://wa.me/?text=' + encodedMessage;
+
+    window.open(whatsappUrl, '_blank');
+
+
+});
 
 
 
-  // bcToDash button functionality: Stop the stream and hide cam-cnt, reset UI
-  document.getElementById('punchToDash').addEventListener('click', () => {
+// bcToDash button functionality: Stop the stream and hide cam-cnt, reset UI
+document.getElementById('punchToDash').addEventListener('click', () => {
     // Stop the camera stream and hide video container
     if (mediaStream) {
         mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
@@ -1011,7 +1011,7 @@ function saveToLocalStorage(checkinData, snapshotData) {
     document.getElementById('resetCont').style.display = 'flex';
     document.getElementById('actBtn').style.display = 'none';
     document.getElementById('chknBtn').style.display = 'none';
-       
+
 });
 
 
@@ -1027,7 +1027,8 @@ function startPunchInCheck() {
 }
 
 // Function to Stop the Interval
-function stopPunchInCheck() {punchInInterval
+function stopPunchInCheck() {
+    punchInInterval
     if (punchInInterval) {  // Agar interval chalu hai toh hi stop karo
         clearInterval();
         punchInInterval = null; // Reset the variable
@@ -1060,7 +1061,7 @@ async function checkPunchInStatus() {
 
             if (checkinData && snapshotData) {
                 const uploadSuccess = await uploadCheckinData(checkinData, snapshotData);
-                
+
                 if (uploadSuccess) {
                     stopPunchInCheck();
                     //console.log("checkPunchStatus uploading Done");
@@ -1078,93 +1079,93 @@ async function checkPunchInStatus() {
 }
 
 
-  
-  // camCancel button functionality: Simply stop the stream and hide the cam-cnt
-  document.getElementById('camCancel').addEventListener('click', () => {
-      if (mediaStream) {
-          mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
-      }
-      camCont.style.display = 'none';
-      slider.style.left = '0px'; // Snap back to the left
-      sliderText.classList.remove('wait-animate'); // Remove animation
-      sliderText.textContent = 'Check In'; // Reset the text
-      checkinCont.style.display = "flex";
-      actionCont.style.display = "none";
-         
-  });
-  
-  // bcToDash button functionality: Stop the stream and hide cam-cnt, reset UI
-  document.getElementById('bcToDash').addEventListener('click', () => {
-      // Stop the camera stream and hide video container
-      if (mediaStream) {
-          mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
-      }
-      camCont.style.display = 'none'; // Hide video container
-  
-      // Reset UI elements
-      checkinCont.style.display = "none";
-      actionCont.style.display = "flex"; 
-      window.location.reload();  
+
+// camCancel button functionality: Simply stop the stream and hide the cam-cnt
+document.getElementById('camCancel').addEventListener('click', () => {
+    if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
+    }
+    camCont.style.display = 'none';
+    slider.style.left = '0px'; // Snap back to the left
+    sliderText.classList.remove('wait-animate'); // Remove animation
+    sliderText.textContent = 'Check In'; // Reset the text
+    checkinCont.style.display = "flex";
+    actionCont.style.display = "none";
+
+});
+
+// bcToDash button functionality: Stop the stream and hide cam-cnt, reset UI
+document.getElementById('bcToDash').addEventListener('click', () => {
+    // Stop the camera stream and hide video container
+    if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
+    }
+    camCont.style.display = 'none'; // Hide video container
+
+    // Reset UI elements
+    checkinCont.style.display = "none";
+    actionCont.style.display = "flex";
+    window.location.reload();
     //   document.getElementById('stsBx').style.display = 'none';
-  });
-  
-
-  // SnapWhts button functionality: Stop the stream, hide cam-cnt, and redirect to WhatsApp
-  document.getElementById('SnapWhts').addEventListener('click', () => {
-      // Stop the camera stream and hide video container
-      if (mediaStream) {
-          mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
-      }
-
-      camCont.style.display = 'none'; // Hide video container
-  
-      // Reset UI elements
-      checkinCont.style.display = "none";
-      actionCont.style.display = "flex";
-
-      const whatsAppData = JSON.parse(localStorage.getItem('whatsAppData'));
-  
-      var message = '*Reached*, ' + whatsAppData.userName + '\n' +
-                    'Date: ' + whatsAppData.date + '\n' +
-                    'Time: ' + whatsAppData.checkinTime + '\n' +
-                    'Status: ' + whatsAppData.checkinstatus + '\n' +
-                    'location: *' + whatsAppData.location + '*\n' +
-                    'Image Link: ' + whatsAppData.snapshotLink;
-
-                 
-                    var encodedMessage = encodeURIComponent(message);
-                    var whatsappUrl = 'https://wa.me/?text=' + encodedMessage;
-      
-                    window.open(whatsappUrl, '_blank');
+});
 
 
-  });
-  
-  // Slider functionality
-  slider.addEventListener('touchstart', (e) => {
-      isTouching = true;
-      startX = e.touches[0].clientX;
-      sliderLeft = parseInt(getComputedStyle(slider).left, 10);
-  });
-  
-  slider.addEventListener('touchmove', (e) => {
-      if (!isTouching) return;
-  
-      const deltaX = e.touches[0].clientX - startX;
-      let newLeft = sliderLeft + deltaX;
-  
-      // Constrain the slider within the container
-      const maxLeft = switchContainer.offsetWidth - slider.offsetWidth;
-      if (newLeft < 0) newLeft = 0;
-      if (newLeft > maxLeft) newLeft = maxLeft;
-  
-      slider.style.left = `${newLeft}px`;
-  });
+// SnapWhts button functionality: Stop the stream, hide cam-cnt, and redirect to WhatsApp
+document.getElementById('SnapWhts').addEventListener('click', () => {
+    // Stop the camera stream and hide video container
+    if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
+    }
+
+    camCont.style.display = 'none'; // Hide video container
+
+    // Reset UI elements
+    checkinCont.style.display = "none";
+    actionCont.style.display = "flex";
+
+    const whatsAppData = JSON.parse(localStorage.getItem('whatsAppData'));
+
+    var message = '*Reached*, ' + whatsAppData.userName + '\n' +
+        'Date: ' + whatsAppData.date + '\n' +
+        'Time: ' + whatsAppData.checkinTime + '\n' +
+        'Status: ' + whatsAppData.checkinstatus + '\n' +
+        'location: *' + whatsAppData.location + '*\n' +
+        'Image Link: ' + whatsAppData.snapshotLink;
+
+
+    var encodedMessage = encodeURIComponent(message);
+    var whatsappUrl = 'https://wa.me/?text=' + encodedMessage;
+
+    window.open(whatsappUrl, '_blank');
+
+
+});
+
+// Slider functionality
+slider.addEventListener('touchstart', (e) => {
+    isTouching = true;
+    startX = e.touches[0].clientX;
+    sliderLeft = parseInt(getComputedStyle(slider).left, 10);
+});
+
+slider.addEventListener('touchmove', (e) => {
+    if (!isTouching) return;
+
+    const deltaX = e.touches[0].clientX - startX;
+    let newLeft = sliderLeft + deltaX;
+
+    // Constrain the slider within the container
+    const maxLeft = switchContainer.offsetWidth - slider.offsetWidth;
+    if (newLeft < 0) newLeft = 0;
+    if (newLeft > maxLeft) newLeft = maxLeft;
+
+    slider.style.left = `${newLeft}px`;
+});
 
 
 
 
-  slider.addEventListener('touchend', () => {
+slider.addEventListener('touchend', () => {
     if (!isTouching) return;
 
     isTouching = false;
@@ -1276,23 +1277,23 @@ const circumference = 439.82; // Correct circumference for r = 70
 
 // Function to update the progress based on a specific value
 function updateProgress(targetProgress) {
-  const incrementSpeed = 0.5; // Speed of the progress increment
+    const incrementSpeed = 0.5; // Speed of the progress increment
 
-  if (progress < targetProgress) {
-    progress += incrementSpeed;
-    const offset = circumference - (progress / 100) * circumference;
-    progressCircle.style.strokeDashoffset = offset; // Update the stroke dashoffset
-    progressText.innerHTML = `${Math.floor(progress)}% <p>Attendance</p>`;
-    setTimeout(() => updateProgress(targetProgress), 10); // Smooth transition with slight delay
-  } else {
-    // Stop exactly at targetProgress
-    progress = targetProgress;
-    const offset = circumference - (progress / 100) * circumference;
-    progressCircle.style.strokeDashoffset = offset;
-    progressText.innerHTML = `${Math.floor(progress)}% <p>Attendance</p>`;
-  }
+    if (progress < targetProgress) {
+        progress += incrementSpeed;
+        const offset = circumference - (progress / 100) * circumference;
+        progressCircle.style.strokeDashoffset = offset; // Update the stroke dashoffset
+        progressText.innerHTML = `${Math.floor(progress)}% <p>Attendance</p>`;
+        setTimeout(() => updateProgress(targetProgress), 10); // Smooth transition with slight delay
+    } else {
+        // Stop exactly at targetProgress
+        progress = targetProgress;
+        const offset = circumference - (progress / 100) * circumference;
+        progressCircle.style.strokeDashoffset = offset;
+        progressText.innerHTML = `${Math.floor(progress)}% <p>Attendance</p>`;
+    }
 
-  
+
 }
 
 
@@ -1306,66 +1307,66 @@ const circleCircumference = 502.65; // Circumference of the circle (2 * π * r)
 
 // Function to update each segment's progress
 function updateSegmentProgress() {
-  let totalProgress = 0;
-  let startAngle = 0; // Start angle for each segment
+    let totalProgress = 0;
+    let startAngle = 0; // Start angle for each segment
 
-  // Loop over each segment and apply progress
-  progressSegments.forEach((segment, index) => {
-    const segmentPercentage = segmentPercentages[index];
-    
-    if (segmentPercentage > 0) {
-      const segmentProgress = (segmentPercentage / 100) * circleCircumference; // Calculate the stroke offset based on percentage
+    // Loop over each segment and apply progress
+    progressSegments.forEach((segment, index) => {
+        const segmentPercentage = segmentPercentages[index];
 
-      // Calculate the starting point for each segment to avoid overlap
-      const segmentDashoffset = circleCircumference - segmentProgress;
-      segment.style.strokeDashoffset = segmentDashoffset;
-      
-      // Apply the rotation to the segment so it starts at the right angle
-      segment.style.transform = `rotate(${startAngle}deg)`;
+        if (segmentPercentage > 0) {
+            const segmentProgress = (segmentPercentage / 100) * circleCircumference; // Calculate the stroke offset based on percentage
 
-      // Update the start angle for the next segment
-      startAngle += (segmentPercentage / 100) * 360; // 360 degrees for the full circle
-    } else {
-      // If the percentage is 0, ensure no progress is displayed (reset stroke-dashoffset)
-      segment.style.strokeDashoffset = circleCircumference;
-      segment.style.transform = `rotate(${startAngle}deg)`;
-    }
-  });
+            // Calculate the starting point for each segment to avoid overlap
+            const segmentDashoffset = circleCircumference - segmentProgress;
+            segment.style.strokeDashoffset = segmentDashoffset;
+
+            // Apply the rotation to the segment so it starts at the right angle
+            segment.style.transform = `rotate(${startAngle}deg)`;
+
+            // Update the start angle for the next segment
+            startAngle += (segmentPercentage / 100) * 360; // 360 degrees for the full circle
+        } else {
+            // If the percentage is 0, ensure no progress is displayed (reset stroke-dashoffset)
+            segment.style.strokeDashoffset = circleCircumference;
+            segment.style.transform = `rotate(${startAngle}deg)`;
+        }
+    });
 }
 
 
 function setSegmentPercentage(segmentIndex, targetPercentage) {
     if (segmentIndex >= 0 && segmentIndex < segmentPercentages.length) {
-      // Ensure percentage is within 0-100% range
-      if (targetPercentage >= 0 && targetPercentage <= 100) {
-        const currentPercentage = segmentPercentages[segmentIndex]; // Current percentage
-        const step = (targetPercentage - currentPercentage) / 100; // Small incremental step
-  
-        // Incrementally update the percentage
-        const interval = setInterval(() => {
-          if (
-            (step > 0 && segmentPercentages[segmentIndex] < targetPercentage) || 
-            (step < 0 && segmentPercentages[segmentIndex] > targetPercentage)
-          ) {
-            segmentPercentages[segmentIndex] += step; // Increment the percentage
-            updateSegmentProgress(); // Recalculate the progress
-          } else {
-            segmentPercentages[segmentIndex] = targetPercentage; // Set to the exact target
-            updateSegmentProgress();
-            clearInterval(interval); // Stop the incremental updates
-          }
-        }, 10); // Adjust the interval timing for smoother or faster progress
-      }
+        // Ensure percentage is within 0-100% range
+        if (targetPercentage >= 0 && targetPercentage <= 100) {
+            const currentPercentage = segmentPercentages[segmentIndex]; // Current percentage
+            const step = (targetPercentage - currentPercentage) / 100; // Small incremental step
+
+            // Incrementally update the percentage
+            const interval = setInterval(() => {
+                if (
+                    (step > 0 && segmentPercentages[segmentIndex] < targetPercentage) ||
+                    (step < 0 && segmentPercentages[segmentIndex] > targetPercentage)
+                ) {
+                    segmentPercentages[segmentIndex] += step; // Increment the percentage
+                    updateSegmentProgress(); // Recalculate the progress
+                } else {
+                    segmentPercentages[segmentIndex] = targetPercentage; // Set to the exact target
+                    updateSegmentProgress();
+                    clearInterval(interval); // Stop the incremental updates
+                }
+            }, 10); // Adjust the interval timing for smoother or faster progress
+        }
     }
-  }
-  
+}
+
 
 
 
 function updateBar(index, targetValue, color, duration = 1000) {
     // Select all progress rings
     const progressRings = document.querySelectorAll('.progress-ring');
-    
+
     // Get specific progress ring by index
     const progressRing = progressRings[index];
     const circle = progressRing.querySelector('.progress');
@@ -1387,10 +1388,10 @@ function updateBar(index, targetValue, color, duration = 1000) {
     function animateProgress(currentTime) {
         if (!startTime) startTime = currentTime;
         let elapsedTime = currentTime - startTime;
-        
+
         // Calculate progress based on time elapsed
         let progress = Math.min(elapsedTime / duration, 1); // Ensures max value is 1
-        
+
         // **Easing effect (smooth transition)**
         let easedProgress = progress * (2 - progress); // Ease-in-out effect
 
@@ -1470,7 +1471,7 @@ function createCalendarFromSpan(attrecord, response = []) {
     const today = currentDate.getDate();
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
-    
+
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const firstDay = new Date(year, month, 1).getDay();
 
@@ -1521,7 +1522,7 @@ function createCalendarFromSpan(attrecord, response = []) {
                 let formattedDate = `${year}-${(month + 1).toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
                 let isHoliday = holidays[formattedDate] ? true : false;
                 let mark = attendance[formattedDate] || null;
-                
+
                 let color = 'transparent';
                 if (mark === 'P') color = '#31e774';
                 else if (mark === 'L') color = '#ffd606';
@@ -1529,7 +1530,7 @@ function createCalendarFromSpan(attrecord, response = []) {
                 else if (mark === 'A') color = '#ff4000';
                 else if (isHoliday) color = '#4931e7';
 
-                let spanHTML = !isToday 
+                let spanHTML = !isToday
                     ? `<span class="cl-indic" style=" background-color: ${color};"></span>`
                     : '';
 
@@ -1575,23 +1576,23 @@ async function getCheckinInfo() {
     const punchInData = JSON.parse(localStorage.getItem('punchInData'));
     const punchOutData = JSON.parse(localStorage.getItem('punchOutData'));
 
-   
-    // If punchInData exists and conditions match, update UI accordingly
-    if (updateLocationtag === true ) {
 
-        const userDetails = JSON.parse(localStorage.getItem("userDetails")) ; 
-        const islocation = userDetails.isLocation; 
+    // If punchInData exists and conditions match, update UI accordingly
+    if (updateLocationtag === true) {
+
+        const userDetails = JSON.parse(localStorage.getItem("userDetails"));
+        const islocation = userDetails.isLocation;
         console.log("islocation", islocation);
 
-        if(!islocation){
+        if (!islocation) {
             document.getElementById("locUpdCnt").style.display = "flex";
-        } else{
+        } else {
             document.getElementById("locUpdCnt").style.display = "none";
         }
-        
-     }
+
+    }
     // If punchInData exists and conditions match, update UI accordingly
-    if (punchInData && punchInData.isAtnMarked === false ) {
+    if (punchInData && punchInData.isAtnMarked === false) {
         document.getElementById('atn-switch').style.display = 'flex';
         document.getElementById('resetCont').style.display = 'flex';
         document.getElementById('actBtn').style.display = 'none';
@@ -1601,8 +1602,8 @@ async function getCheckinInfo() {
         return; // Function exits here if condition matches
     }
 
-      // If punchInData exists and conditions match, update UI accordingly
-      if (punchOutData && punchOutData.isAtnMarked === false ) {
+    // If punchInData exists and conditions match, update UI accordingly
+    if (punchOutData && punchOutData.isAtnMarked === false) {
 
         document.getElementById('resetCont').style.display = 'flex';
         document.getElementById('actBtn').style.display = 'none';
@@ -1687,7 +1688,7 @@ async function getCheckinInfo() {
 
 
         } else if (result.message === 'showCheckIn') {
-            
+
 
             document.getElementById('atn-switch').style.display = 'flex';
             document.getElementById('actBtn').style.display = 'none';
@@ -1738,7 +1739,7 @@ function checkWhatsAppDate() {
         document.getElementById('resetCont').style.display = 'flex';
         document.getElementById('actBtn').style.display = 'none';
         document.getElementById('chknBtn').style.display = 'none';
-    } 
+    }
     // Date match na ho to doosra block execute hoga
     else {
         document.getElementById('atn-switch').style.display = 'flex';
@@ -1757,18 +1758,18 @@ function checkWhatsAppDate() {
 
 
 
-let noRecd ;
+let noRecd;
 noRecd = "hide";
 localStorage.setItem('noRecd', noRecd);
 
 
 
 
-function showRecdfun(){
+function showRecdfun() {
     const noRecdRes = localStorage.getItem('noRecd');
     //////console.log("noRecdRes", noRecdRes);
-    
-    if(noRecdRes === "show"){
+
+    if (noRecdRes === "show") {
         document.getElementById('crd-bx-cnt').style.display = "none";
         document.getElementById('noRecd').style.display = "flex";
     }
@@ -1777,11 +1778,11 @@ function showRecdfun(){
 }
 
 
-function hideRecdfun(){
+function hideRecdfun() {
     const noRecdRes = localStorage.getItem('noRecd');
     //////console.log("noRecdRes", noRecdRes);
-    
-    if(noRecdRes === "hide"){
+
+    if (noRecdRes === "hide") {
         document.getElementById('crd-bx-cnt').style.display = "block";
         document.getElementById('noRecd').style.display = "none";
     }
@@ -1790,7 +1791,7 @@ function hideRecdfun(){
 }
 
 
-function resetToCurrentDate(){
+function resetToCurrentDate() {
     updateAttenStatus();
     let noRecd = "hide";
     localStorage.setItem('noRecd', noRecd);
@@ -1807,27 +1808,27 @@ function resetAttenStatus() {
     document.getElementById("finalDecision").textContent = "------";
 }
 
-function updateAttenStatus(){
+function updateAttenStatus() {
     document.getElementById("checkInTime").textContent = "loading...";
-      document.getElementById("checkOutTime").textContent = "loading...";
-      document.getElementById("checkInStatus").textContent = "loading...";
-      document.getElementById("checkOutStatus").textContent = "loading...";
-      document.getElementById("finalStatus").textContent = "loading...";
-      document.getElementById("finalDecision").textContent = "loading...";
+    document.getElementById("checkOutTime").textContent = "loading...";
+    document.getElementById("checkInStatus").textContent = "loading...";
+    document.getElementById("checkOutStatus").textContent = "loading...";
+    document.getElementById("finalStatus").textContent = "loading...";
+    document.getElementById("finalDecision").textContent = "loading...";
 }
 
 
-function brkAlrt(){
+function brkAlrt() {
     const brkAlertBox = document.getElementById('brkAlertBox');
-    
+
     if (brkAlertBox) {
         brkAlertBox.classList.remove('visible'); // Slide out to hide
     }
 }
 
-function showAlrt(){
+function showAlrt() {
     const brkAlertBox = document.getElementById('brkAlertBox');
-    
+
     if (brkAlertBox) {
         brkAlertBox.classList.add('visible'); // Slide in to show
     }
@@ -1836,9 +1837,9 @@ function showAlrt(){
 
 
 
-function showActivity(){
+function showActivity() {
     const allActivity = document.getElementById('allActivity');
-    
+
     if (allActivity) {
         allActivity.classList.add('visible'); // Slide out to hide
     }
@@ -1847,25 +1848,25 @@ function showActivity(){
 
 
 
-function hideActivity(){
+function hideActivity() {
     const allActivity = document.getElementById('allActivity');
-    
+
     if (allActivity) {
         allActivity.classList.remove('visible'); // Slide in to show
     }
 }
 
-function hideAttnRecord(){
+function hideAttnRecord() {
     const allActivity = document.getElementById('allAttnRecord');
-    
+
     if (allActivity) {
         allActivity.classList.remove('visible'); // Slide in to show
     }
 }
 
-function showAttnRecord(){
+function showAttnRecord() {
     const allActivity = document.getElementById('allAttnRecord');
-    
+
     if (allActivity) {
         allActivity.classList.add('visible'); // Slide out to hide
     }
@@ -1882,7 +1883,7 @@ function showAttnRecord(){
 
 
 async function getAttenData() {
-   
+
     // Retrieve the active ticket from localStorage
     const activeTicket = localStorage.getItem('receiveData');
     if (!activeTicket) {
@@ -1894,37 +1895,37 @@ async function getAttenData() {
     const userId = ticketData.userId || 'N/A';
     const token = ticketData.token || 'N/A';
     const last3Digits = userId.slice(-3); // Get last 3 digits of userId
-    
 
-     // Get the current date and time components
-     const currentDate = new Date();
-     const day = String(currentDate.getDate()).padStart(2, '0');
-     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-     const year = String(currentDate.getFullYear()).slice(-2); // Last two digits of the year
-     const hours = String(currentDate.getHours()).padStart(2, '0');
-     const minutes = String(currentDate.getMinutes()).padStart(2, '0');
-     const seconds = String(currentDate.getSeconds()).padStart(2, '0');
-     
-     // Generate the atn_token
-     const atnToken = `${year}${month}${day}${last3Digits}`;
-   
-      // Log the active ticket object
-      const ticketObject = { UserId: userId, Token: token, atnToken: atnToken};
+
+    // Get the current date and time components
+    const currentDate = new Date();
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const year = String(currentDate.getFullYear()).slice(-2); // Last two digits of the year
+    const hours = String(currentDate.getHours()).padStart(2, '0');
+    const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+    const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+
+    // Generate the atn_token
+    const atnToken = `${year}${month}${day}${last3Digits}`;
+
+    // Log the active ticket object
+    const ticketObject = { UserId: userId, Token: token, atnToken: atnToken };
     //   console.log('Active Ticket:', ticketObject);
 
-      // Fetch the backend URL from config.json
-      const response = await fetch('/TFC-Connect/App/config.json');
-      const config = await response.json();
-      const scriptUrl = config.scriptUrl;
+    // Fetch the backend URL from config.json
+    const response = await fetch('/TFC-Connect/App/config.json');
+    const config = await response.json();
+    const scriptUrl = config.scriptUrl;
 
-      // Prepare the data to send
-      const data = new URLSearchParams();
-      data.append('action', 'getAttenData');
-      data.append('token', token);
-      data.append('userId', userId);
-      data.append('atnToken', atnToken);
+    // Prepare the data to send
+    const data = new URLSearchParams();
+    data.append('action', 'getAttenData');
+    data.append('token', token);
+    data.append('userId', userId);
+    data.append('atnToken', atnToken);
 
-      const backendResponse = await fetch(scriptUrl, {
+    const backendResponse = await fetch(scriptUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -1933,47 +1934,47 @@ async function getAttenData() {
     });
 
     const result = await backendResponse.json();
-   
-    
-// Get the date from the element with class "selected-date-text"
-let selectedDateText = document.querySelector(".selected-date-text")?.textContent.trim();
 
 
-// Convert selected date to a proper format (23 MAR 2025)
-let selectedDate = new Date(selectedDateText);
-// let currentDate = new Date();
+    // Get the date from the element with class "selected-date-text"
+    let selectedDateText = document.querySelector(".selected-date-text")?.textContent.trim();
 
-// Format current date to match the format "23 MAR 2025"
-let formattedCurrentDate = currentDate.getDate() + " " + 
-    currentDate.toLocaleString('en-US', { month: 'short' }).toUpperCase() + " " + 
-    currentDate.getFullYear();
 
-// Run function only if selected date matches current date
-if (selectedDateText === formattedCurrentDate) {
-    if (result.status === "error") {
-        resetAttenStatus();
-        let noRecd = "show";
-        localStorage.setItem('noRecd', noRecd);
-        //////console.log("Data available hai:", data);
-    } else {
-        //////console.log("Data undefined hai, 'noRecd' ko 'hide' set nahi kiya gaya.");
+    // Convert selected date to a proper format (23 MAR 2025)
+    let selectedDate = new Date(selectedDateText);
+    // let currentDate = new Date();
 
-        updateAttenStatus();
-        let noRecd = "hide";
-        localStorage.setItem('noRecd', noRecd);
-        checkInOutDate(result.data);
-        
+    // Format current date to match the format "23 MAR 2025"
+    let formattedCurrentDate = currentDate.getDate() + " " +
+        currentDate.toLocaleString('en-US', { month: 'short' }).toUpperCase() + " " +
+        currentDate.getFullYear();
+
+    // Run function only if selected date matches current date
+    if (selectedDateText === formattedCurrentDate) {
+        if (result.status === "error") {
+            resetAttenStatus();
+            let noRecd = "show";
+            localStorage.setItem('noRecd', noRecd);
+            //////console.log("Data available hai:", data);
+        } else {
+            //////console.log("Data undefined hai, 'noRecd' ko 'hide' set nahi kiya gaya.");
+
+            updateAttenStatus();
+            let noRecd = "hide";
+            localStorage.setItem('noRecd', noRecd);
+            checkInOutDate(result.data);
+
+        }
     }
-} 
- else {
-    //////console.log("Selected date aur current date match nahi kar rahe, function execute nahi hoga.");
-  
-   
-}
+    else {
+        //////console.log("Selected date aur current date match nahi kar rahe, function execute nahi hoga.");
+
+
+    }
 
     // console.log('data get from getAttenData:', result);
- 
-    
+
+
     let checkinstatusresponse;
 
     if (!result.data || typeof result.data.Check_in_status === 'undefined') {
@@ -1991,9 +1992,9 @@ if (selectedDateText === formattedCurrentDate) {
             checkinstatusresponse = result.data.Check_in_status;  // Fallback to raw value
         }
     }
-    
+
     localStorage.setItem('Check_in_status', checkinstatusresponse);
-    
+
     checkInOutDate(result.data);
 
 }
@@ -2159,7 +2160,7 @@ async function sendCheckoutData(ticketObject) {
         stopPunchOutCheck();
         localStorage.removeItem('punchOutData');
         window.location.reload();
-        
+
 
         return result;
 
@@ -2239,15 +2240,15 @@ async function checkPunchOutStatus() {
         }
 
         if (punchOutData && punchOutData.isAtnMarked === false) {
-            
+
             const resetCont = document.getElementById("resetCont");
             const actBtn = document.getElementById("actBtn");
-        
+
             if (resetCont) resetCont.style.display = "flex";
             if (actBtn) actBtn.style.display = "none";
 
 
-            
+
             const { ticketObject } = punchOutData;
 
             if (ticketObject) {
@@ -2340,7 +2341,7 @@ class DatePicker {
         } else {
             this.selectedDate = new Date(); // Today (default)
         }
-        this.date = new Date(this.selectedDate); 
+        this.date = new Date(this.selectedDate);
 
         this.init();
     }
@@ -2351,9 +2352,8 @@ class DatePicker {
     }
 
     updateSelectedDateText() {
-        this.dateDisplay.textContent = `${this.selectedDate.getDate().toString().padStart(2, "0")} ${
-            this.selectedDate.toLocaleString("default", { month: "short" }).toUpperCase()
-        } ${this.selectedDate.getFullYear()}`;
+        this.dateDisplay.textContent = `${this.selectedDate.getDate().toString().padStart(2, "0")} ${this.selectedDate.toLocaleString("default", { month: "short" }).toUpperCase()
+            } ${this.selectedDate.getFullYear()}`;
     }
 
     addEventListeners() {
@@ -2388,8 +2388,8 @@ document.querySelectorAll(".date-picker-container").forEach(container => {
     let dateText = container.querySelector(".selected-date-text");
 
     let type = dateText.classList.contains("start-date-text") ? "start"
-             : dateText.classList.contains("end-date-text") ? "end"
-             : "current";
+        : dateText.classList.contains("end-date-text") ? "end"
+            : "current";
 
     datePickers.push(new DatePicker(container, type));
 });
@@ -2423,8 +2423,8 @@ function renderCalendar() {
         day.className = "calendar-day";
         day.textContent = i;
 
-        if (i === activeDatePicker.selectedDate.getDate() && 
-            year === activeDatePicker.selectedDate.getFullYear() && 
+        if (i === activeDatePicker.selectedDate.getDate() &&
+            year === activeDatePicker.selectedDate.getFullYear() &&
             month === activeDatePicker.selectedDate.getMonth()) {
             day.classList.add("calendar-day-selected");
         }
@@ -2470,38 +2470,38 @@ function updateMonthDates(index) {
     let monthSpan = document.querySelector(`.act-mnth-slt-${index}`);
     let startSpan = document.querySelector(`.act-start-${index}`);
     let endSpan = document.querySelector(`.act-end-${index}`);
-    
+
     if (!monthSpan || !startSpan || !endSpan) {
         ////console.error("One or more elements not found for index:", index);
         return;
     }
-    
+
     let monthYearText = monthSpan.innerText.trim(); // "MMM YYYY"
     let date = new Date(monthYearText);
-    
+
     if (isNaN(date.getTime())) {
         ////console.error("Invalid date format in act-mnth-slt-", index);
         return;
     }
-    
+
     let currentDate = new Date();
     let firstDate = new Date(date.getFullYear(), date.getMonth(), 1);
     let lastDate;
-    
+
     // Check if selected month is the current month
     if (date.getFullYear() === currentDate.getFullYear() && date.getMonth() === currentDate.getMonth()) {
         lastDate = currentDate; // Set to current date only (without time)
     } else {
         lastDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
     }
-    
+
     function formatDate(date) {
         let day = date.getDate().toString().padStart(2, '0');
         let month = date.toLocaleString("en-GB", { month: "short" }).toUpperCase();
         let year = date.getFullYear();
         return `${day} ${month} ${year}`;
     }
-    
+
     startSpan.innerText = formatDate(firstDate);
     endSpan.innerText = formatDate(lastDate);
 }
@@ -2528,30 +2528,30 @@ function checkInOutDate(data) {
     //////console.log("Data received in checkInOutDate: ", data); // Log the data to check what's being passed
 
 
-// Get the date from the element with class "selected-date-text"
-let selectedDateText = document.querySelector(".selected-date-text")?.textContent.trim();
+    // Get the date from the element with class "selected-date-text"
+    let selectedDateText = document.querySelector(".selected-date-text")?.textContent.trim();
 
-// Convert selected date to a proper format (23 MAR 2025)
-let selectedDate = new Date(selectedDateText);
-let currentDate = new Date();
+    // Convert selected date to a proper format (23 MAR 2025)
+    let selectedDate = new Date(selectedDateText);
+    let currentDate = new Date();
 
-// Format current date to match the format "23 MAR 2025"
-let formattedCurrentDate = currentDate.getDate() + " " + 
-    currentDate.toLocaleString('en-US', { month: 'short' }).toUpperCase() + " " + 
-    currentDate.getFullYear();
+    // Format current date to match the format "23 MAR 2025"
+    let formattedCurrentDate = currentDate.getDate() + " " +
+        currentDate.toLocaleString('en-US', { month: 'short' }).toUpperCase() + " " +
+        currentDate.getFullYear();
 
-// Run function only if selected date matches current date
-if (selectedDateText === formattedCurrentDate) {
-    if (typeof data !== "undefined") {
-        let noRecd = "hide";
-        localStorage.setItem('noRecd', noRecd);
-        //////console.log("Data available hai:", data);
+    // Run function only if selected date matches current date
+    if (selectedDateText === formattedCurrentDate) {
+        if (typeof data !== "undefined") {
+            let noRecd = "hide";
+            localStorage.setItem('noRecd', noRecd);
+            //////console.log("Data available hai:", data);
+        } else {
+            //////console.log("Data undefined hai, 'noRecd' ko 'hide' set nahi kiya gaya.");
+        }
     } else {
-        //////console.log("Data undefined hai, 'noRecd' ko 'hide' set nahi kiya gaya.");
+        //////console.log("Selected date aur current date match nahi kar rahe, function execute nahi hoga.");
     }
-} else {
-    //////console.log("Selected date aur current date match nahi kar rahe, function execute nahi hoga.");
-}
 
 
     const checkInOutDate = document.getElementById("checkInOutDate");
@@ -2583,7 +2583,7 @@ if (selectedDateText === formattedCurrentDate) {
         } else {
             //////console.log("Formatted date does not match the current date. Skipping function A.", formattedDate);
             updateAtnCellsByDate(formattedDate);
-            
+
         }
     } else {
         //////console.log("Invalid date format. Please use 'DD MMM YYYY'");
@@ -2650,11 +2650,11 @@ function activityDataRecord() {
         .then(result => {
             markActivity(result.data);
             localStorage.setItem('markAttnDays', JSON.stringify(result.data));
-            
+
             // Dashboard ke Present/Late/Absent etc elements update karne ke liye
-            markAttnDays(); 
+            markAttnDays();
             // findHoliday(result.data)
-            
+
             //console.log("Server response activityDataRecord:", result);
 
         })
@@ -2662,7 +2662,7 @@ function activityDataRecord() {
             ////console.error("Error in activityDataRecord:", error);
         });
 
-        markActivity();  
+    markActivity();
 }
 
 function markActivity(data) {
@@ -2799,8 +2799,8 @@ function markActivity(data) {
         let parts = dateString.split(" ");
         if (parts.length !== 3) return null;
 
-        let day = parts[0].padStart(2, "0"); 
-        let month = parts[1]; 
+        let day = parts[0].padStart(2, "0");
+        let month = parts[1];
         let year = parts[2];
 
         return `${day} ${month} ${year}`;
@@ -2858,12 +2858,12 @@ function getCurrentDateInDDMMYY() {
 }
 
 function updateAtnCells(data) {
-    
+
     if (data !== undefined) {
         //////console.log("Data received in updateAtnCells: ", data); // Log the data if it's not undefined
 
         resetAttenStatus();
-     
+
         function formatTime(timeString) {
             const date = new Date(timeString);
             let hours = date.getHours();
@@ -2874,42 +2874,42 @@ function updateAtnCells(data) {
             minutes = minutes < 10 ? '0' + minutes : minutes;
             return hours + ':' + minutes + ' ' + ampm;
         }
-        
+
 
         if (data.Check_in_time && data.Check_in_time.trim() !== "") {
-           
+
             document.getElementById("checkInTime").textContent = formatTime(data.Check_in_time);
         }
-        
+
         if (data.Check_out_time && data.Check_out_time.trim() !== "") {
-            
+
             document.getElementById("checkOutTime").textContent = formatTime(data.Check_out_time);
         }
-        
-          
+
+
         if (data.Check_in_status && data.Check_in_status.trim() !== "") {
-           
+
             document.getElementById("checkInStatus").textContent = data.Check_in_status;
         }
 
         if (data.Check_out_status && data.Check_out_status.trim() !== "") {
-            
+
             document.getElementById("checkOutStatus").textContent = data.Check_out_status;
         }
 
 
         if (data.Status && data.Status.trim() !== "") {
-           
+
             document.getElementById("finalStatus").textContent = data.Status;
         }
-        
+
         if (data.Desicion && data.Desicion.trim() !== "") {
-            
+
             document.getElementById("finalDecision").textContent = data.Desicion;
         }
 
-        
-        
+
+
     } else {
         //////console.log("Data received in: undifined", );
     }
@@ -2973,7 +2973,7 @@ async function updateAtnCellsByDate(formattedDate) {
         });
 
         getAttenData();
-      
+
         // Log the backend response before further processing
         //////console.log("Backend Response:", backendResponse);
 
@@ -2984,27 +2984,27 @@ async function updateAtnCellsByDate(formattedDate) {
             // Handle the backend data as needed
             if (backendData && backendData.data) {
 
-                updateAtnCells(backendData.data); 
-               
-     
-                let noRecd ;
+                updateAtnCells(backendData.data);
+
+
+                let noRecd;
                 noRecd = "hide";
                 localStorage.setItem('noRecd', noRecd);
-                
+
 
 
             } else {
 
                 //////console.log("No data found in backend response.");
                 resetAttenStatus();
-               
-                let noRecd ;
+
+                let noRecd;
                 noRecd = "show";
                 localStorage.setItem('noRecd', noRecd);
-             
-                
-                
-              
+
+
+
+
 
             }
         } else {
@@ -3078,7 +3078,7 @@ function findHoliday() {
         .then(result => {
             //////console.log("Server response findHoliday:", result);
             createCalendarFromSpan(attrecord, result.holidays);
-            updateHoliday( result.holidays );
+            updateHoliday(result.holidays);
             generateDates(attrecord, result.holidays);
             chkInOutRcd(attrecord);
 
@@ -3175,22 +3175,22 @@ function markAttnDays() {
     let response = JSON.parse(localStorage.getItem('markAttnDays'));
 
     ////console.log("markAttnDays record", response);
-    
+
     let presentCount = 0;
     let lateCount = 0;
     let holidayCount = 0;
     let absentCount = 0;
-    
+
     // Get the selected month and year from the element
     let selectedMonthYear = document.getElementById("ttl-mnt-cnt").textContent.trim();
     let totalWorkingDays = parseInt(document.getElementById("Working-count").textContent) || 1;
-    
+
     response.forEach(record => {
         // Convert response.Date to Indian Standard Time (IST) and 'MMM YYYY' format
         let dateObj = new Date(record.Date);
-        let istDateObj = new Date(dateObj.toLocaleString("en-US", {timeZone: "Asia/Kolkata"}));
+        let istDateObj = new Date(dateObj.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
         let formattedDate = istDateObj.toLocaleString('en-US', { month: 'short', year: 'numeric' }).toUpperCase();
-        
+
         if (formattedDate === selectedMonthYear) {
             let mark = record.Mark.toUpperCase(); // Convert to uppercase to handle both cases
             switch (mark) {
@@ -3209,31 +3209,31 @@ function markAttnDays() {
             }
         }
     });
-    
+
     document.getElementById("ttl_prsnt").textContent = presentCount.toString().padStart(2, '0') + " Days";
     document.getElementById("ttl_late").textContent = lateCount.toString().padStart(2, '0') + " Days";
     document.getElementById("ttl_hday").textContent = holidayCount.toString().padStart(2, '0') + " Days";
     document.getElementById("ttl_absnt").textContent = absentCount.toString().padStart(2, '0') + " Days";
-    
+
     // Calculate total attendance days (P + L + H)
     let totalAttendanceDays = presentCount + lateCount + holidayCount;
     let attendancePercent = totalWorkingDays > 0 ? Math.min((totalAttendanceDays / totalWorkingDays) * 100, 100) : 0;
-    
-    
-    
+
+
+
     updateProgress(Math.round(attendancePercent));
-    
+
     // Ensure percentages don't exceed 100%
     let presentPercent = totalWorkingDays > 0 ? Math.min((presentCount / totalWorkingDays) * 100, 100) : 0;
     let latePercent = totalWorkingDays > 0 ? Math.min((lateCount / totalWorkingDays) * 100, 100) : 0;
     let holidayPercent = totalWorkingDays > 0 ? Math.min((holidayCount / totalWorkingDays) * 100, 100) : 0;
     let absentPercent = totalWorkingDays > 0 ? Math.min((absentCount / totalWorkingDays) * 100, 100) : 0;
-    
+
     // Store last known percentages to avoid fluctuations
     if (!window.lastPercentages) {
         window.lastPercentages = { present: 0, late: 0, holiday: 0, absent: 0 };
     }
-    
+
     // Update progress bars and segments only if values change
     if (window.lastPercentages.present !== presentPercent) {
         updateBar(0, presentPercent, '#31e774'); // Green for present
@@ -3389,7 +3389,7 @@ function chkInOutRcd(attrecord) {
     const imageLinks = document.querySelectorAll('.entry-image');
 
     imageLinks.forEach(link => {
-        link.addEventListener('click', function(event) {
+        link.addEventListener('click', function (event) {
             // Find the icon element inside the link
             const icon = link.querySelector('i');
 
@@ -3450,7 +3450,7 @@ function findSalary(holidayDetails) {
         .then(result => {
             //console.log("Raw Server response:", result);
 
-            
+
 
             // Process data into an array of objects
             const salaryData = [];
@@ -3499,7 +3499,7 @@ function findSalary(holidayDetails) {
 
 
 
-                        // Process data into an array of objects
+            // Process data into an array of objects
             const justPercentData = [];
 
             Object.entries(result.justPercentData).forEach(([key, value]) => {
@@ -3524,7 +3524,7 @@ function findSalary(holidayDetails) {
 
 
 
-             const incentiveData = [];
+            const incentiveData = [];
 
             Object.entries(result.incentiveData).forEach(([key, value]) => {
                 if (key !== "User ID" && key !== "Name") {
@@ -3546,33 +3546,33 @@ function findSalary(holidayDetails) {
             });
 
 
-            
 
 
-                        // Process data into an array of objects
+
+            // Process data into an array of objects
             const isJustificationData = [];
-               Object.entries(result.isJustificationData).forEach(([key, value]) => {
-                 if (key !== "User ID" && key !== "Name") {
-               const date = new Date(key);
-               if (!isNaN(date)) { // Ensure it's a valid date
-                   // Convert to IST manually by adjusting for UTC offset
-                   const istDate = new Date(date.getTime() + (5.5 * 60 * 60 * 1000))
-                   // Extract YYYY-MM-DD from IST date
-                   const yyyy = istDate.getFullYear();
-                   const mm = String(istDate.getMonth() + 1).padStart(2, '0'); // Month is 0-based
-                   const dd = String(istDate.getDate()).padStart(2, '0')
-                   const formattedDate = `${yyyy}-${mm}-${dd}`
-                   isJustificationData.push({ date: formattedDate, isJustification: value });
-                                }
-                            }
-                        });
+            Object.entries(result.isJustificationData).forEach(([key, value]) => {
+                if (key !== "User ID" && key !== "Name") {
+                    const date = new Date(key);
+                    if (!isNaN(date)) { // Ensure it's a valid date
+                        // Convert to IST manually by adjusting for UTC offset
+                        const istDate = new Date(date.getTime() + (5.5 * 60 * 60 * 1000))
+                        // Extract YYYY-MM-DD from IST date
+                        const yyyy = istDate.getFullYear();
+                        const mm = String(istDate.getMonth() + 1).padStart(2, '0'); // Month is 0-based
+                        const dd = String(istDate.getDate()).padStart(2, '0')
+                        const formattedDate = `${yyyy}-${mm}-${dd}`
+                        isJustificationData.push({ date: formattedDate, isJustification: value });
+                    }
+                }
+            });
 
 
 
             localStorage.setItem("userDetails", JSON.stringify(result.userDetails));
 
             // //console.log("Processed Salary Data (IST):", salaryData);
-            generateAttendanceTable(holidayDetails , salaryData, result.userDetails.Join_date, result.userDetails.isCaller, isJustificationData, justPercentData, paidLeaveData, incentiveData );
+            generateAttendanceTable(holidayDetails, salaryData, result.userDetails.Join_date, result.userDetails.isCaller, isJustificationData, justPercentData, paidLeaveData, incentiveData);
         })
         .catch(error => {
             //console.error("Error in findSalary:", error);
@@ -3583,7 +3583,7 @@ function findSalary(holidayDetails) {
 
 function generateAttendanceTable(holidayDetails, salaryData, userDetails, isCaller, isJustificationData, justPercentData, paidLeaveData, incentiveData) {
     const currentDate = new Date().toISOString().split('T')[0]; // आज की तारीख YYYY-MM-DD
-    
+
 
     //console.log("isJustificationDataresult", incentiveData);
 
@@ -3593,7 +3593,7 @@ function generateAttendanceTable(holidayDetails, salaryData, userDetails, isCall
 
     let userDate;
     if (typeof userDetails === "string" && userDetails.includes("-")) {
-        const parts = userDetails.split("-");
+        const parts = userDetails.split("");
         if (parts[0].length === 4) { // YYYY-MM-DD
             userDate = new Date(userDetails);
         } else { // DD-MM-YYYY
@@ -3611,26 +3611,17 @@ function generateAttendanceTable(holidayDetails, salaryData, userDetails, isCall
 
     // **आने वाली छुट्टियों की गिनती निकालें**
     const adjustedHolidaysCount = holidayDetails.filter(h => {
-        const dateVal = h.Date || h.date;
-        if (!dateVal) return false;
-        let holidayDate;
-        if (typeof dateVal === "string" && dateVal.includes("-")) {
-            const parts = dateVal.split("-");
-            if (parts[0].length === 4) { // YYYY-MM-DD
-                holidayDate = new Date(dateVal);
-            } else { // DD-MM-YYYY
-                holidayDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}T00:00:00`);
-            }
-        } else {
-            holidayDate = new Date(dateVal);
-        }
+        // Holiday date: "DD-MM-YYYY" → Date object
+        const [dd, mm, yyyy] = h.date.split("-");
+        const holidayDate = new Date(`${yyyy}-${mm}-${dd}T00:00:00`);
+
         // Current date: already in "YYYY-MM-DD"
         const currentDateObj = new Date(currentDate + "T00:00:00");
-    
+
         // Compare
         return holidayDate < currentDateObj;
     }).length;
-    
+
     console.log("Adjusted Holidays Count:", holidayDetails);
 
     // `ttl-mnt-cnt` se month aur year extract karo
@@ -3647,19 +3638,19 @@ function generateAttendanceTable(holidayDetails, salaryData, userDetails, isCall
 
 
     // salaryData me se previous month ka salary filter karo
-const prevDate = new Date(`${yearText}-${monthText}-01`); // Current month ka first date banao
-prevDate.setMonth(prevDate.getMonth() - 1); // Previous month me shift karo
+    const prevDate = new Date(`${yearText}-${monthText}-01`); // Current month ka first date banao
+    prevDate.setMonth(prevDate.getMonth() - 1); // Previous month me shift karo
 
-// Previous month ka short format aur year nikal lo
-const prevMonthText = prevDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
-const prevYearText = prevDate.getFullYear().toString();
+    // Previous month ka short format aur year nikal lo
+    const prevMonthText = prevDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+    const prevYearText = prevDate.getFullYear().toString();
 
-const monthliIncentive = incentiveData.find(({ date }) => {
-    const itemDate = new Date(date);
-    const itemMonth = itemDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
-    const itemYear = itemDate.getFullYear().toString();
-    return itemMonth === prevMonthText && itemYear === prevYearText;
-})?.incentiveData || 0;
+    const monthliIncentive = incentiveData.find(({ date }) => {
+        const itemDate = new Date(date);
+        const itemMonth = itemDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+        const itemYear = itemDate.getFullYear().toString();
+        return itemMonth === prevMonthText && itemYear === prevYearText;
+    })?.incentiveData || 0;
 
 
 
@@ -3672,53 +3663,45 @@ const monthliIncentive = incentiveData.find(({ date }) => {
     })?.paidLeaveData || 0;
 
 
-// isJustify me se current month ka isJustify filter karo
-const justPercent = justPercentData.find(({ date }) => {
-    const itemDate = new Date(date);
-    const itemMonth = itemDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
-    const itemYear = itemDate.getFullYear().toString();
-    return itemMonth === monthText && itemYear === yearText;
-})?.justPercentData || 0;  // Default value "No" rakhi agar koi record na mile
+    // isJustify me se current month ka isJustify filter karo
+    const justPercent = justPercentData.find(({ date }) => {
+        const itemDate = new Date(date);
+        const itemMonth = itemDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+        const itemYear = itemDate.getFullYear().toString();
+        return itemMonth === monthText && itemYear === yearText;
+    })?.justPercentData || 0;  // Default value "No" rakhi agar koi record na mile
 
 
-// isJustify me se current month ka isJustify filter karo
-const isJustify = isJustificationData.find(({ date }) => {
-    const itemDate = new Date(date);
-    const itemMonth = itemDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
-    const itemYear = itemDate.getFullYear().toString();
-    return itemMonth === monthText && itemYear === yearText;
-})?.isJustification || "No";  // Default value "No" rakhi agar koi record na mile
+    // isJustify me se current month ka isJustify filter karo
+    const isJustify = isJustificationData.find(({ date }) => {
+        const itemDate = new Date(date);
+        const itemMonth = itemDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+        const itemYear = itemDate.getFullYear().toString();
+        return itemMonth === monthText && itemYear === yearText;
+    })?.isJustification || "No";  // Default value "No" rakhi agar koi record na mile
 
 
-// Calculate the difference in days (if same month and year)
-let daysBeforeSelectedDate = 0;
-let holidaysBeforeJoin = 0;
-if (formattedUserDate === `${monthText} ${yearText}`) {
-    const selectedDay = parseInt(formattedUserDateDDMMYYYY.split('-')[0], 10);
-    daysBeforeSelectedDate = selectedDay - 1; // Pehle ke din count karne ke liye
+    // Calculate the difference in days (if same month and year)
+    let daysBeforeSelectedDate = 0;
+    let holidaysBeforeJoin = 0;
+    if (formattedUserDate === `${monthText} ${yearText}`) {
+        const selectedDay = parseInt(formattedUserDateDDMMYYYY.split('-')[0], 10);
+        daysBeforeSelectedDate = selectedDay - 1; // Pehle ke din count karne ke liye
 
-    // **Check holidays before joining**
-    holidaysBeforeJoin = holidayDetails.filter(h => {
-        const dateVal = h.Date || h.date;
-        if (!dateVal) return false;
-        let holidayDate;
-        if (typeof dateVal === "string" && dateVal.includes("-")) {
-            const parts = dateVal.split("-");
-            if (parts[0].length === 4) { // YYYY-MM-DD
-                holidayDate = new Date(dateVal);
-            } else { // DD-MM-YYYY
-                holidayDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}T00:00:00`);
-            }
-        } else {
-            holidayDate = new Date(dateVal);
-        }
+        // **Check holidays before joining**
+        holidaysBeforeJoin = holidayDetails.filter(h => {
+            const dateVal = h.Date || h.date;
+            if (!dateVal) return false;
+            // DD-MM-YYYY format ko YYYY-MM-DD mein convert karna
+            const [dd, mm, yyyy] = dateVal.split("-");
+            const holidayDate = new Date(`${yyyy}-${mm}-${dd}T00:00:00`);
 
-        return (
-            holidayDate.toLocaleString('en-US', { month: 'short', year: 'numeric' }).toUpperCase() === formattedUserDate &&
-            holidayDate.getDate() < selectedDay
-        );
-    }).length;
-}
+            return (
+                holidayDate.toLocaleString('en-US', { month: 'short', year: 'numeric' }).toUpperCase() === formattedUserDate &&
+                holidayDate.getDate() < selectedDay
+            );
+        }).length;
+    }
 
 
     const isCurrentMonth = formattedUserDate === `${monthText} ${yearText}`;
@@ -3737,23 +3720,29 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
         { index: 4, title: "Full Day Count", custom: () => extractValue("ttl_prsnt") + extractValueByIndex(2) },
 
 
-        { index: 5, title: "Late Adjusted Count", custom: () => {
-            let late = extractValue("ttl_late");
-            return late - (late % 5) - Math.floor(late / 5);
-        }},
+        {
+            index: 5, title: "Late Adjusted Count", custom: () => {
+                let late = extractValue("ttl_late");
+                return late - (late % 5) - Math.floor(late / 5);
+            }
+        },
         { index: 6, title: "Late Rem Final", custom: () => extractValue("ttl_late") % 5 - Math.floor((extractValue("ttl_late") % 5) / 3) },
-        { index: 7, title: "Final Adjusted Halfday Count", custom: () => {
-            let halfday = extractValue("ttl_hday");
-            let lateRemDiv3 = Math.floor((extractValue("ttl_late") % 5) / 3);
-            return (halfday + lateRemDiv3 - ((halfday + lateRemDiv3) % 2)) - Math.floor((halfday + lateRemDiv3) / 2);
-        }},
-        { index: 8, title: "Total Adjusted Days", custom: () => {
-            let fullDay = extractValue("ttl_prsnt") + extractValueByIndex(2);
-            let lateAdj = extractValueByIndex(5);
-            let lateRemFinal = extractValueByIndex(6);
-            let finalHalfday = extractValueByIndex(7);
-            return fullDay + lateAdj + lateRemFinal + finalHalfday;
-        }},
+        {
+            index: 7, title: "Final Adjusted Halfday Count", custom: () => {
+                let halfday = extractValue("ttl_hday");
+                let lateRemDiv3 = Math.floor((extractValue("ttl_late") % 5) / 3);
+                return (halfday + lateRemDiv3 - ((halfday + lateRemDiv3) % 2)) - Math.floor((halfday + lateRemDiv3) / 2);
+            }
+        },
+        {
+            index: 8, title: "Total Adjusted Days", custom: () => {
+                let fullDay = extractValue("ttl_prsnt") + extractValueByIndex(2);
+                let lateAdj = extractValueByIndex(5);
+                let lateRemFinal = extractValueByIndex(6);
+                let finalHalfday = extractValueByIndex(7);
+                return fullDay + lateAdj + lateRemFinal + finalHalfday;
+            }
+        },
         { index: 9, title: "Late Count", id: "ttl_late" },
         { index: 10, title: "Late Rem of 5", custom: () => extractValue("ttl_late") % 5 },
         { index: 11, title: "Late Div by 5 (INT)", custom: () => Math.floor(extractValue("ttl_late") / 5) },
@@ -3772,19 +3761,21 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
 
 
 
-        { index: 24, title: "Total Attend Days", custom: () => {
-            let totalComingDays = extractValueByIndex(23);
-            let totalAdjustedDays = extractValueByIndex(8);
-            let halfdayLateMod2 = extractValueByIndex(18);
-            return totalComingDays === 0 ? 0 : (halfdayLateMod2 === 1 ? totalAdjustedDays + 0.5 : totalAdjustedDays) - extractValueByIndex(32);
-        }},
+        {
+            index: 24, title: "Total Attend Days", custom: () => {
+                let totalComingDays = extractValueByIndex(23);
+                let totalAdjustedDays = extractValueByIndex(8);
+                let halfdayLateMod2 = extractValueByIndex(18);
+                return totalComingDays === 0 ? 0 : (halfdayLateMod2 === 1 ? totalAdjustedDays + 0.5 : totalAdjustedDays) - extractValueByIndex(32);
+            }
+        },
 
 
 
         { index: 25, title: "Monthly Salary", custom: () => matchingSalary }, // ✅ Salary ka data add kiya
-        { 
-            index: 26, 
-            title: "Per Day Salary", 
+        {
+            index: 26,
+            title: "Per Day Salary",
             custom: () => extractValueByIndex(25) / extractValue("ttl-mnth-day")
         }
         ,
@@ -3795,35 +3786,35 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
                 const value24 = extractValueByIndex(24);
                 const value26 = extractValueByIndex(26);
                 const value25 = extractValueByIndex(25);
-        
+
                 let currentSalary = Math.round(value24 * value26);
-        
+
                 return currentSalary > value25 ? value25 : currentSalary;
             }
-        },        
-        { 
-            index: 28, 
-            title: "Selected Month & Year", 
-            custom: () => `${monthText} ${yearText}` 
         },
-        { 
-            index: 29, 
-            title: "Joining Month", 
+        {
+            index: 28,
+            title: "Selected Month & Year",
+            custom: () => `${monthText} ${yearText}`
+        },
+        {
+            index: 29,
+            title: "Joining Month",
             custom: () => formattedUserDate
         },
-        { 
-            index: 30, 
-            title: "Joining Date", 
+        {
+            index: 30,
+            title: "Joining Date",
             custom: () => formattedUserDateDDMMYYYY
         },
-        { 
-            index: 31, 
-            title: "Days Before Join", 
+        {
+            index: 31,
+            title: "Days Before Join",
             custom: () => daysBeforeSelectedDate
         },
-        { 
-            index: 32, 
-            title: "Holidays Before Joining", 
+        {
+            index: 32,
+            title: "Holidays Before Joining",
             custom: () => holidaysBeforeJoin
         },
         {
@@ -3834,29 +3825,29 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
                     localStorage.setItem("CasualLeave", "No"); // Store "No" in localStorage
                     return 0;
                 }
-        
+
                 let index34Value = extractValueByIndex(34)?.toString().trim().toLowerCase();
                 let index35Value = extractValueByIndex(35)?.toString().trim().toLowerCase();
-        
+
                 let result = 0; // Default value
-        
+
                 if (index34Value === "no") {
                     result = 1;
                 } else if (index34Value === "yes") {
                     result = index35Value === "yes" ? 1 : 0;
                 }
-        
-               
-        
+
+
+
                 return result;
             }
-        },           
-        { 
-            index: 34, 
-            title: "isCaller", 
+        },
+        {
+            index: 34,
+            title: "isCaller",
             custom: () => {
                 localStorage.setItem("isCaller", isCaller);
-        
+
                 return isCaller;
             }
         },
@@ -3866,27 +3857,27 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
             custom: () => {
                 // Store the value in localStorage
                 localStorage.setItem("isJustify", isJustify);
-        
+
                 return isJustify;
             }
         },
-        
+
         {
             index: 36,
             title: "justPercentData",
             custom: () => {
                 const formattedJustPercent = (justPercent * 100).toFixed(0) + "%";
-        
+
                 // Save to localStorage
                 localStorage.setItem("justPercentData", formattedJustPercent);
-        
+
                 return formattedJustPercent;
             }
         },
         {
             index: 37,
             title: "Paid Leave",
-            custom: () => paidLeave  
+            custom: () => paidLeave
         },
         {
             index: 38,
@@ -3895,9 +3886,9 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
                 let totalLeave = extractValueByIndex(37) + extractValueByIndex(33); // Previous Leave + Casual Leave
                 let finalAbsent = extractValueByIndex(22);  // Final Absent
                 let finalHalfday = extractValueByIndex(21); // Final Halfday
-        
+
                 let balanceLeave;
-        
+
                 if (finalAbsent === 0) {
                     balanceLeave = totalLeave - finalHalfday;
                 } else if (finalAbsent > totalLeave) {
@@ -3905,7 +3896,7 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
                 } else {
                     balanceLeave = totalLeave - finalAbsent;
                 }
-        
+
                 return balanceLeave < 0 ? 0 : balanceLeave; // Ensures negative values return 0
             }
         },
@@ -3916,12 +3907,12 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
                 let totalLeave = extractValueByIndex(37) + extractValueByIndex(33);
                 let finalAbsent = extractValueByIndex(22);
                 let finalHalfday = extractValueByIndex(21);
-        
+
                 // Agar total leave = 0 hai, toh 0 return karo
                 if (totalLeave === 0) {
                     return 0;
                 }
-        
+
                 if (finalAbsent === 0) {
                     return finalHalfday;
                 } else if (finalAbsent > totalLeave) {
@@ -3940,13 +3931,13 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
                 const value25 = extractValueByIndex(25);
                 const value26 = extractValueByIndex(26);
                 const value39 = extractValueByIndex(39);
-                
+
                 let finalPayout = Math.round(value27 + (value26 * value39));
-                
-                 // Agar final payout, value25 ke 100 ke andar hai, toh value25 return kare
-        if (value25 - finalPayout <= 10 && value25 - finalPayout > 0) {
-            return value25;
-        }
+
+                // Agar final payout, value25 ke 100 ke andar hai, toh value25 return kare
+                if (value25 - finalPayout <= 10 && value25 - finalPayout > 0) {
+                    return value25;
+                }
 
                 return finalPayout > value25 ? value25 : finalPayout;
             }
@@ -3959,11 +3950,11 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
                 const value14 = extractValueByIndex(14);
                 const value26 = extractValueByIndex(26);
                 const value39 = extractValueByIndex(39);
-        
+
                 // Apply the formula: ((IF(index 18=1, index 14+0.5, index 14)) * index 26) - (index 39 * index 26)
                 const adjustedValue14 = value18 === 1 ? value14 + 0.5 : value14;
-                const waveOut = Math.round((adjustedValue14)*value26) ;
-        
+                const waveOut = Math.round((adjustedValue14) * value26);
+
                 return waveOut;
             }
         },
@@ -3975,37 +3966,37 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
                 const value41 = extractValueByIndex(41);
                 const value39 = extractValueByIndex(39);
                 const value26 = extractValueByIndex(26);
-        
+
                 // Apply the formula: ((IF(index 18=1, index 14+0.5, index 14)) * index 26) - (index 39 * index 26)
-                const preSalary = Math.round(value25 - value41 +(value39 * value26))
-                
-        
+                const preSalary = Math.round(value25 - value41 + (value39 * value26))
+
+
                 return preSalary > value25 ? value25 : preSalary;
             }
         },
-        { 
-            index: 43, 
-            title: "Leave applied", 
+        {
+            index: 43,
+            title: "Leave applied",
             custom: () => {
                 if (`${monthText} ${yearText}` === formattedUserDate) {
                     localStorage.setItem("isPaidLeave", "No"); // Store "No" in localStorage
                     return 0;
-                } 
-                
+                }
+
                 if (extractValueByIndex(21) === 0 && extractValueByIndex(22) === 0) {
                     localStorage.setItem("isPaidLeave", "No"); // Store "No" in localStorage
                     return 0;
                 }
-        
+
                 let result = 1; // Default to 1 if conditions are met
-        
+
                 // Pehle index 34 ki value check karni hai (Yes/No case-insensitive)
-                let index34Value = extractValueByIndex(34)?.toString().trim().toLowerCase(); 
+                let index34Value = extractValueByIndex(34)?.toString().trim().toLowerCase();
                 let index35Value = extractValueByIndex(35)?.toString().trim().toLowerCase();
-        
+
                 if (index34Value === "no") {
                     return result;  // Agar index 34 "no" hai, toh actual result return karo
-                } 
+                }
                 if (index34Value === "yes") {
                     if (index35Value === "no") {
                         localStorage.setItem("isPaidLeave", "No");
@@ -4015,24 +4006,24 @@ if (formattedUserDate === `${monthText} ${yearText}`) {
                         return result;  // Agar dono "yes" hain, toh actual result return karo
                     }
                 }
-        
+
                 // Store "Yes" if result is 1, otherwise store "No"
                 localStorage.setItem("isPaidLeave", result === 1 ? "Yes" : "No");
-        
+
                 return result;
             }
         },
-        { 
-            index: 44, 
-            title: "Monthly Incentive", 
+        {
+            index: 44,
+            title: "Monthly Incentive",
             custom: () => monthliIncentive
         }
-        
-        
-       
-     
-        
-        
+
+
+
+
+
+
     ];
 
     // Extract numbers from text
@@ -4080,9 +4071,9 @@ function updateAttendDays(data) {
     const getValue = (title, isCurrency = false, noFormat = false) => {
         let item = data.find(row => row.Title.trim() === title);
         if (!item) return noFormat ? "0" : (isCurrency ? "₹0" : "00 Days"); // Default fallback
-        
+
         let value = String(item.Days).padStart(2, "0"); // Ensure 2-digit format
-        
+
         if (noFormat) return value; // No formatting (for "44. Monthly Incentive")
         return isCurrency ? `₹${value}` : `${value} Days`;
     };
@@ -4101,9 +4092,9 @@ function updateAttendDays(data) {
     Object.entries(elements).forEach(([id, title]) => {
         let el = document.getElementById(id);
         if (el) {
-            el.innerText = (id === "ttl_sal_pay") 
+            el.innerText = (id === "ttl_sal_pay")
                 ? getValue(title, true) // Format as ₹ for salary payout
-                : (id === "ttl_Inc_pay") 
+                : (id === "ttl_Inc_pay")
                     ? getValue(title, false, true) // No formatting for Monthly Incentive
                     : getValue(title); // Default formatting for other values
         }
@@ -4114,7 +4105,7 @@ function updateAttendDays(data) {
         const monthYear = document.getElementById("ttl-mnt-cnt")?.innerText || "N/A";
         const userData = JSON.parse(localStorage.getItem('receiveData')) || {};
         const agentName = userData.userName || "N/A";
-        
+
         const salaryValue = getValue("40. Final Payout", false, true);
         const onTime = document.getElementById("ttl_prsnt")?.innerText || "00 Days";
         const lates = document.getElementById("ttl_late")?.innerText || "00 Days";
@@ -4183,7 +4174,7 @@ function updateAttendDays(data) {
 async function updateSalaryToSheet(details) {
     const payload = new URLSearchParams();
     payload.append('action', 'updateSalaryToSheet');
-    
+
     // Append all details to payload
     for (const key in details) {
         payload.append(key, details[key]);
@@ -4231,7 +4222,7 @@ function updateProgressBars() {
 
         if (percentage >= 100) {
             progressPercentage.innerText = 'Complete';
-        } 
+        }
     });
 }
 
