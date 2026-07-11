@@ -632,6 +632,9 @@ function updateDetailedAttendanceUI(calc) {
         console.log(`Final Absent - ${calc.results[22] || 0}`);
         console.log(`Final Halfday - ${calc.results[21] || 0}`);
         console.log(`Final Present - ${calc.results[20] || 0}`);
+        console.log(`Holidays Before Join - ${calc.results[32] || 0}`);
+        const holidayDeduction = Math.round((calc.results[32] || 0) * (calc.results[26] || 0));
+        console.log(`Holidays Deduction - ₹${holidayDeduction}`);
         console.log(`Total Attend Days - ${calc.results[24] || 0}`);
         console.log(`Leave Adjust - ${calc.results[39] || 0}`);
         console.log(`Current Salary - ₹${calc.results[27] || 0}`);
