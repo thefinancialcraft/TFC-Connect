@@ -794,13 +794,15 @@ function drawAdminCalendar(calc) {
         grid.appendChild(empty);
     }
 
-    // Prepare Date Map for status colors
+    // Prepare Date Map for status colors and full records
     const dateStatusMap = {};
+    const dateRecordMap = {};
     if (calc.attendanceRecords) {
         calc.attendanceRecords.forEach(rec => {
             const d = new Date(rec.Date);
             if (d.getMonth() === monthIndex && d.getFullYear() === year) {
                 dateStatusMap[d.getDate()] = rec.Mark;
+                dateRecordMap[d.getDate()] = rec;
             }
         });
     }
@@ -820,8 +822,10 @@ function drawAdminCalendar(calc) {
         dayEl.style.color = '#333';
         dayEl.style.border = '1px solid #eee';
         dayEl.style.position = 'relative'; // Required for dot positioning
+        dayEl.style.cursor = 'pointer';
 
         const status = dateStatusMap[d];
+        const record = dateRecordMap[d];
         const dot = document.createElement('span');
         dot.style.position = 'absolute';
         dot.style.bottom = '4px';
@@ -839,6 +843,12 @@ function drawAdminCalendar(calc) {
             const hDate = new Date(h.Date);
             return hDate.getDate() === d && hDate.getMonth() === monthIndex && hDate.getFullYear() === year;
         });
+
+        dayEl.onclick = () => {
+            if (typeof showAttendanceModal === 'function') {
+                showAttendanceModal(d, monthIndex, year, record, holidayMatch);
+            }
+        };
 
         // Coloring Logic & Alphanumeric Tags
         const addTag = (letter) => {
@@ -965,4 +975,89 @@ function generateSalaryReport() {
         `;
         tbody.appendChild(row);
     });
+}
+
+/**
+ * Displays a popup modal with attendance details for a clicked date
+ */
+function showAttendanceModal(day, month, year, record, holidayMatch) {
+    let modal = document.getElementById('adminAttendanceModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'adminAttendanceModal';
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100vw';
+        modal.style.height = '100vh';
+        modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+        modal.style.display = 'flex';
+        modal.style.justifyContent = 'center';
+        modal.style.alignItems = 'center';
+        modal.style.zIndex = '10000';
+        
+        const content = document.createElement('div');
+        content.id = 'adminAttendanceModalContent';
+        content.style.backgroundColor = '#fff';
+        content.style.padding = '20px';
+        content.style.borderRadius = '12px';
+        content.style.width = '90%';
+        content.style.maxWidth = '350px';
+        content.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)';
+        content.style.fontFamily = 'Inter, Arial, sans-serif';
+        content.style.position = 'relative';
+        
+        modal.appendChild(content);
+        
+        modal.onclick = (e) => {
+            if (e.target === modal) modal.style.display = 'none';
+        };
+        
+        document.body.appendChild(modal);
+    }
+    
+    const content = document.getElementById('adminAttendanceModalContent');
+    const dateObj = new Date(year, month, day);
+    const dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    
+    let html = `<div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">
+        <h3 style="margin:0; font-size: 16px; color: #333;">${dateStr}</h3>
+        <span onclick="document.getElementById('adminAttendanceModal').style.display='none'" style="cursor:pointer; font-size: 24px; color: #888; font-weight: bold; line-height: 1;">&times;</span>
+    </div>`;
+    
+    if (holidayMatch) {
+        html += `<div style="background: #e8eaf6; color: #3f51b5; padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 10px; text-align: center;">Holiday: ${holidayMatch["Holiday Reason"] || "N/A"}</div>`;
+    }
+    
+    if (record) {
+        let statusColor = '#333';
+        const mark = record.Mark ? record.Mark.toUpperCase() : 'N/A';
+        if (mark === 'P') statusColor = '#2e7d32';
+        else if (mark === 'A') statusColor = '#c62828';
+        else if (mark === 'L') statusColor = '#fbc02d';
+        else if (mark === 'H' || mark === 'HALF') statusColor = '#7b1fa2';
+        
+        const inTime = formatDisplayTime(record.Check_in_time);
+        const outTime = formatDisplayTime(record.Check_out_time);
+        
+        html += `<div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; justify-content: space-between; background: #f9f9f9; padding: 10px; border-radius: 8px;">
+                <span style="color: #666; font-size: 14px;">Status</span>
+                <span style="font-weight: bold; color: ${statusColor};">${mark}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; background: #f9f9f9; padding: 10px; border-radius: 8px;">
+                <span style="color: #666; font-size: 14px;">Punch In</span>
+                <span style="font-weight: bold; color: #333;">${inTime}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; background: #f9f9f9; padding: 10px; border-radius: 8px;">
+                <span style="color: #666; font-size: 14px;">Punch Out</span>
+                <span style="font-weight: bold; color: #333;">${outTime}</span>
+            </div>
+        </div>`;
+    } else {
+        html += `<div style="text-align: center; color: #888; padding: 20px 0; font-size: 14px;">No attendance record found for this day.</div>`;
+    }
+    
+    content.innerHTML = html;
+    modal.style.display = 'flex';
 }
