@@ -1993,29 +1993,74 @@ font-size: 9px;
 }
 
 /* Desktop version showing mobile view */
-@media screen and (min-width: 1024px) {
-    body {
-        width: 350px !important;
-        height: 90vh !important;
-        margin: 5vh auto !important;
-        border: 8px solid #333;
-        border-radius: 30px;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        background-color: var(--body-color);
+@media screen and (min-width: 500px) {
+    html {
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%) !important;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        padding: 0;
     }
+
+    body {
+        width: 400px !important;
+        height: 844px !important;
+        max-height: 92vh !important;
+        margin: 0 auto !important;
+        border: 12px solid #1e293b !important;
+        border-radius: 46px !important;
+        position: relative !important;
+        overflow: hidden !important;
+        box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 2px rgba(255, 255, 255, 0.1) !important;
+        background-color: var(--body-color, #fbfaff) !important;
+        transform: translateZ(0); /* Contains position: fixed elements inside mobile frame */
+    }
+
+    /* Mobile Notch / Dynamic Island pill */
+    body::before {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 110px;
+        height: 24px;
+        background-color: #1e293b;
+        border-radius: 20px;
+        z-index: 99999;
+        pointer-events: none;
+    }
+
+    /* Mobile Bottom Home Bar */
+    body::after {
+        content: '';
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 130px;
+        height: 4px;
+        background-color: rgba(0, 0, 0, 0.25);
+        border-radius: 4px;
+        z-index: 99999;
+        pointer-events: none;
+    }
+
     .mb-header {
         position: absolute !important;
         top: 0;
         left: 0;
         width: 100% !important;
+        z-index: 1000;
     }
     #navBar {
         position: absolute !important;
         bottom: 0;
         left: 0;
         width: 100% !important;
+        z-index: 1000;
     }
     .mainBody {
         height: 100% !important;
