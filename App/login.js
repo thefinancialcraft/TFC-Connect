@@ -687,18 +687,18 @@ function handleResponse(result) {
 
         // Normalize and validate user type and device type
         const userType = result.userType ? result.userType.toLowerCase() : null;
-        // Desktop URL is disabled for now, force mobile view
-        const userDevice = 'mobile';
+        const userDevice = loginData.deviceType ? loginData.deviceType.toLowerCase() : null;
         const validUserTypes = ['user', 'admin', 'agent'];
-        console.log("userrrrr:", userType);
-        console.log("userDevice forced to mobile view for now");
+        const validUserDevices = ['desktop', 'mobile'];
+        console.log("userrrrr:",userType);
+        console.log("userrrrr:", userDevice);
     
-        // Check if userType is valid
-        if (userType && validUserTypes.includes(userType)) {
-            console.log("Validation successful, redirecting to mobile page:", userType);
+        // Check if userType and userDevice are valid
+        if (userType && validUserTypes.includes(userType) && userDevice && validUserDevices.includes(userDevice)) {
+            console.log("Validation successful:", userDevice);
     
-            // Redirect based on user type (forcing mobile version)
-            window.location.href = `/TFC-Connect/App/mobile/html/${userType}.html`;
+            // Redirect based on device and user type
+            window.location.href = `/TFC-Connect/App/${userDevice}/html/${userType}.html`;
         } else {
             showErrorMessage(document.getElementById('error-message'), 'Unexpected user type or device');
             highlightInputFields();
