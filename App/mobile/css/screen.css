@@ -1997,11 +1997,12 @@ font-size: 9px;
     html {
         background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%) !important;
         min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 0;
-        padding: 0;
+        width: 100vw;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
     body {
@@ -2013,22 +2014,22 @@ font-size: 9px;
         border-radius: 46px !important;
         position: relative !important;
         overflow: hidden !important;
-        box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 2px rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 25px 65px -10px rgba(0, 0, 0, 0.75), 0 0 0 2px rgba(255, 255, 255, 0.1) !important;
         background-color: var(--body-color, #fbfaff) !important;
-        transform: translateZ(0); /* Contains position: fixed elements inside mobile frame */
+        contain: paint; /* Hard clips all child overlays inside body */
     }
 
     /* Mobile Notch / Dynamic Island pill */
     body::before {
         content: '';
         position: absolute;
-        top: 10px;
+        top: 8px;
         left: 50%;
         transform: translateX(-50%);
-        width: 110px;
-        height: 24px;
+        width: 90px;
+        height: 18px;
         background-color: #1e293b;
-        border-radius: 20px;
+        border-radius: 12px;
         z-index: 99999;
         pointer-events: none;
     }
@@ -2037,10 +2038,10 @@ font-size: 9px;
     body::after {
         content: '';
         position: absolute;
-        bottom: 8px;
+        bottom: 6px;
         left: 50%;
         transform: translateX(-50%);
-        width: 130px;
+        width: 120px;
         height: 4px;
         background-color: rgba(0, 0, 0, 0.25);
         border-radius: 4px;
@@ -2048,24 +2049,64 @@ font-size: 9px;
         pointer-events: none;
     }
 
+    /* Convert ALL fixed overlays to absolute so they are strictly contained inside body */
+    .sidebar,
+    #sidebar,
+    #cam-cnt,
+    #qrScanner,
+    #brkAlertBox,
+    #mailVerify,
+    .mail-verify,
+    .loc-info,
+    .allActivity,
+    #allActivity,
+    #allAttnRecord,
+    .mb-header,
+    #navBar,
+    .navbar {
+        position: absolute !important;
+    }
+
+    .sidebar,
+    #sidebar {
+        height: 100% !important;
+        top: 0 !important;
+        bottom: 0 !important;
+    }
+
+    .allActivity,
+    #allActivity,
+    #allAttnRecord,
+    #mailVerify,
+    .mail-verify,
+    #cam-cnt,
+    #qrScanner {
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
     .mb-header {
-        position: absolute !important;
-        top: 0;
-        left: 0;
+        top: 0 !important;
+        left: 0 !important;
         width: 100% !important;
         z-index: 1000;
+        padding-top: 15px !important;
     }
-    #navBar {
-        position: absolute !important;
-        bottom: 0;
-        left: 0;
-        width: 100% !important;
+
+    #navBar,
+    .navbar {
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
         z-index: 1000;
     }
+
     .mainBody {
         height: 100% !important;
         overflow-y: auto !important;
-        padding-top: 60px; /* Adjust based on header height */
-        padding-bottom: 60px; /* Adjust based on navBar height */
+        padding-top: 60px !important;
+        padding-bottom: 70px !important;
     }
 }
