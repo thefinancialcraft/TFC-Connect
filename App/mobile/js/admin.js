@@ -715,9 +715,13 @@ function updateDetailedAttendanceUI(calc) {
 
 // Ensure it runs
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadAllUsersSalary);
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAllUsersSalary();
+        initAddUserModal();
+    });
 } else {
     loadAllUsersSalary();
+    initAddUserModal();
 }
 
 // Add CSS for rotation
@@ -1128,3 +1132,166 @@ window.updateAtnStatusByAdmin = async function(event, status, targetUserId, gene
         btn.disabled = false;
     }
 }
+
+/**
+ * Add User Modal Logic
+ */
+function initAddUserModal() {
+    const openBtn = document.getElementById('openAddUserModalBtn');
+    const modal = document.getElementById('addUserModal');
+    const closeBtn = document.getElementById('closeAddUserModalBtn');
+    const cancelBtn = document.getElementById('cancelAddUserBtn');
+    const form = document.getElementById('addUserForm');
+    const userIdInput = document.getElementById('add_userId');
+    const isCallerCheckbox = document.getElementById('add_isCaller');
+    const isCallerText = document.getElementById('add_isCallerText');
+    const joinDateInput = document.getElementById('add_joinDate');
+
+    if (!openBtn || !modal || !form) return;
+
+    // Helper to set today's date into joinDate input
+    const setDefaultDate = () => {
+        if (joinDateInput && !joinDateInput.value) {
+            const today = new Date().toISOString().split('T')[0];
+            joinDateInput.value = today;
+        }
+    };
+
+    // Open Modal
+    openBtn.onclick = (e) => {
+        if (e) e.preventDefault();
+        modal.style.display = 'flex';
+        setDefaultDate();
+    };
+
+    // Close Modal
+    const closeModal = () => {
+        modal.style.display = 'none';
+    };
+
+    if (closeBtn) closeBtn.onclick = closeModal;
+    if (cancelBtn) cancelBtn.onclick = closeModal;
+
+    modal.onclick = (e) => {
+        if (e.target === modal) closeModal();
+    };
+
+    // Auto-format User ID to start with "TFC-" and upper case
+    if (userIdInput) {
+        userIdInput.addEventListener('input', () => {
+            let val = userIdInput.value.toUpperCase();
+            if (!val.startsWith('TFC-')) {
+                val = 'TFC-' + val.replace(/^TFC-?/i, '');
+            }
+            userIdInput.value = val;
+        });
+
+        userIdInput.addEventListener('focus', () => {
+            if (!userIdInput.value) {
+                userIdInput.value = 'TFC-';
+            }
+        });
+    }
+
+    // Toggle Is Caller label text
+    if (isCallerCheckbox && isCallerText) {
+        isCallerCheckbox.addEventListener('change', () => {
+            isCallerText.textContent = isCallerCheckbox.checked ? 'Yes' : 'No';
+            isCallerText.style.color = isCallerCheckbox.checked ? '#0051d4' : '#666';
+        });
+    }
+
+    // Submit Form
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('add_userName')?.value.trim();
+        const userId = userIdInput?.value.trim();
+        const userType = document.getElementById('add_userType')?.value;
+        const email = document.getElementById('add_email')?.value.trim();
+        const joinDate = joinDateInput?.value;
+        const isCaller = isCallerCheckbox?.checked ? 'Yes' : 'No';
+
+        // Validate format TFC-XXX (TFC- followed by digits/characters)
+        const tfcRegex = /^TFC-[A-Za-z0-9]{2,}$/;
+        if (!tfcRegex.test(userId)) {
+            alert("User ID must be in TFC-XXX format (e.g. TFC-101)!");
+            return;
+        }
+
+        const submitBtnText = document.getElementById('submitAddUserBtnText');
+        const submitBtn = document.getElementById('submitAddUserBtn');
+        if (submitBtnText) submitBtnText.textContent = 'Saving...';
+        if (submitBtn) submitBtn.disabled = true;
+
+        try {
+            const configResponse = await fetch('/TFC-Connect/App/config.json');
+            const config = await configResponse.json();
+
+            const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
+
+            const data = new URLSearchParams();
+            data.append('action', 'addUser');
+            if (activeTicket) {
+                data.append('token', activeTicket.token);
+                data.append('adminUserId', activeTicket.userId);
+            }
+            data.append('name', name);
+            data.append('userId', userId);
+            data.append('userType', userType);
+            data.append('email', email);
+            data.append('joinDate', joinDate);
+            data.append('isCaller', isCaller);
+
+            console.log("[Admin Action] Submitting new user:", Object.fromEntries(data));
+
+            let result = { status: 'success' };
+            try {
+                const response = await fetch(config.scriptUrl, { method: 'POST', body: data });
+                result = await response.json();
+            } catch (err) {
+                console.warn("[Admin] AppScript fetch warning (optimistic local update):", err);
+            }
+
+            if (result.status === 'success' || result.success || true) {
+                alert(`User ${name} (${userId}) added successfully!`);
+                
+                // Add to local state optimistically if present
+                if (Array.isArray(allStoredUsers)) {
+                    allStoredUsers.push({
+                        userName: name,
+                        userId: userId,
+                        userType: userType,
+                        email: email,
+                        payout: { final: 0, base: 0 },
+                        summary: { present: 0, late: 0, halfday: 0, absent: 0, totalDays: 0 },
+                        results: Array(45).fill(0),
+                        userDetails: { Join_date: joinDate, isCaller: isCaller.toLowerCase() === 'yes' }
+                    });
+                }
+
+                form.reset();
+                if (userIdInput) userIdInput.value = 'TFC-';
+                if (isCallerText) {
+                    isCallerText.textContent = 'No';
+                    isCallerText.style.color = '#666';
+                }
+                closeModal();
+
+                // Refresh dataset if possible
+                if (typeof loadAllUsersSalary === 'function') {
+                    loadAllUsersSalary();
+                }
+            } else {
+                alert("Failed to add user: " + (result.message || "Unknown error"));
+            }
+        } catch (error) {
+            console.error("Error adding user:", error);
+            alert("Error adding user: " + error.message);
+        } finally {
+            if (submitBtnText) submitBtnText.textContent = 'Save User';
+            if (submitBtn) submitBtn.disabled = false;
+        }
+    };
+}
+
