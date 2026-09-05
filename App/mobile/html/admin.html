@@ -263,22 +263,21 @@
             <div class="search-container box-styling" style=" padding: 15px; background: white; border-radius: 15px; border: 1px solid #eee; overflow: visible !important;">
                 <div class="flex-coloum" style="gap: 12px; overflow: visible !important;">
                     <!-- Row 1: Search Bar -->
-                    <div class="flex-row" style="width: 100%; align-items: center; gap: 10px; background: #f9f9f9; padding: 0 15px; border-radius: 10px; border: 1px solid #ddd; min-height: 46px; position: relative; overflow: visible !important; z-index: 5;">
-                        <i class="fi fi-rr-search" style="color: #0051d4;"></i>
-                        <input type="text" id="employeeSearchInput" placeholder="Enter Name or ID..." style="border: none; background: transparent; outline: none; flex: 1; font-size: 14px; color: #333;">
-                        <button id="showAllUsersBtn" style="background: transparent; border: none; padding: 5px; color: #888; cursor: pointer; display: flex; align-items: center;" title="Show All Users">
-                            <i class="fi fi-rr-angle-small-down" style="font-size: 20px;"></i>
+                    <div class="flex-row" style="width: 100%; align-items: center; gap: 8px; background: #f9f9f9; padding: 0 12px; border-radius: 10px; border: 1px solid #ddd; min-height: 42px; position: relative; overflow: visible !important; z-index: 5;">
+                        <i class="fi fi-rr-search" style="color: #0051d4; font-size: 15px;"></i>
+                        <input type="text" id="employeeSearchInput" placeholder="Search Name or ID..." style="border: none; background: transparent; outline: none; flex: 1; min-width: 0; font-size: 13px; color: #333;">
+                        <button id="showAllUsersBtn" style="background: transparent; border: none; padding: 4px; color: #888; cursor: pointer; display: flex; align-items: center;" title="Show All Users">
+                            <i class="fi fi-rr-angle-small-down" style="font-size: 18px;"></i>
                         </button>
-                        <button id="adminRefreshDataBtn" style="background: transparent; border: none; padding: 5px; color: #0051d4; cursor: pointer; display: flex; align-items: center;" title="Refresh Data from Server">
-                            <i class="fi flex fi-rr-refresh" style="font-size: 18px;"></i>
+                        <button id="adminRefreshDataBtn" style="background: transparent; border: none; padding: 4px; color: #0051d4; cursor: pointer; display: flex; align-items: center;" title="Refresh Data from Server">
+                            <i class="fi flex fi-rr-refresh" style="font-size: 16px;"></i>
                         </button>
-                        <button id="openAddUserModalBtn" onclick="openAddUserModal(event)" style="background: #0051d4; color: white; border: none; padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; transition: background 0.2s;" title="Add New User">
-                            <i class="fi fi-rr-user-add flex" style="font-size: 16px;"></i>
-                            <span>Add User</span>
+                        <button id="openAddUserModalBtn" onclick="openAddUserModal(event)" style="background: #0051d4; color: white; border: none; width: 32px; height: 32px; border-radius: 8px; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s;" title="Add User">
+                            <i class="fi fi-rr-user-add flex" style="font-size: 15px;"></i>
                         </button>
                         
                         <!-- Dynamic Search Results Dropdown -->
-                        <div id="searchResultsDropdown" style="display: none; position: absolute; top: 48px; left: 0; width: 100%; background: white; border: none; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 2147483647; max-height: 250px; overflow-y: auto;"></div>
+                        <div id="searchResultsDropdown" style="display: none; position: absolute; top: 46px; left: 0; width: 100%; background: white; border: none; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 2147483647; max-height: 250px; overflow-y: auto;"></div>
                     </div>
 
                     <!-- Row 2: Month/Year and Refresh Button -->
