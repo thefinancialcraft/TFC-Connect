@@ -1134,6 +1134,44 @@ window.updateAtnStatusByAdmin = async function(event, status, targetUserId, gene
 }
 
 /**
+ * Global Add User Modal Handlers
+ */
+window.openAddUserModal = function(e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    console.log("[Admin UI] Opening Add User Modal...");
+    const modal = document.getElementById('addUserModal');
+    if (!modal) {
+        console.error("[Admin UI] #addUserModal element not found!");
+        return;
+    }
+    modal.style.setProperty('display', 'flex', 'important');
+
+    const joinDateInput = document.getElementById('add_joinDate');
+    if (joinDateInput && !joinDateInput.value) {
+        joinDateInput.value = new Date().toISOString().split('T')[0];
+    }
+    const userIdInput = document.getElementById('add_userId');
+    if (userIdInput && (!userIdInput.value || userIdInput.value === '')) {
+        userIdInput.value = 'TFC-';
+    }
+};
+
+window.closeAddUserModal = function(e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    console.log("[Admin UI] Closing Add User Modal...");
+    const modal = document.getElementById('addUserModal');
+    if (modal) {
+        modal.style.setProperty('display', 'none', 'important');
+    }
+};
+
+/**
  * Add User Modal Logic
  */
 function initAddUserModal() {
@@ -1147,34 +1185,26 @@ function initAddUserModal() {
     const isCallerText = document.getElementById('add_isCallerText');
     const joinDateInput = document.getElementById('add_joinDate');
 
-    if (!openBtn || !modal || !form) return;
+    if (openBtn) {
+        openBtn.onclick = window.openAddUserModal;
+        openBtn.addEventListener('touchend', window.openAddUserModal);
+    }
 
-    // Helper to set today's date into joinDate input
-    const setDefaultDate = () => {
-        if (joinDateInput && !joinDateInput.value) {
-            const today = new Date().toISOString().split('T')[0];
-            joinDateInput.value = today;
-        }
-    };
+    if (closeBtn) {
+        closeBtn.onclick = window.closeAddUserModal;
+        closeBtn.addEventListener('touchend', window.closeAddUserModal);
+    }
+    
+    if (cancelBtn) {
+        cancelBtn.onclick = window.closeAddUserModal;
+        cancelBtn.addEventListener('touchend', window.closeAddUserModal);
+    }
 
-    // Open Modal
-    openBtn.onclick = (e) => {
-        if (e) e.preventDefault();
-        modal.style.display = 'flex';
-        setDefaultDate();
-    };
-
-    // Close Modal
-    const closeModal = () => {
-        modal.style.display = 'none';
-    };
-
-    if (closeBtn) closeBtn.onclick = closeModal;
-    if (cancelBtn) cancelBtn.onclick = closeModal;
-
-    modal.onclick = (e) => {
-        if (e.target === modal) closeModal();
-    };
+    if (modal) {
+        modal.onclick = (e) => {
+            if (e.target === modal) window.closeAddUserModal(e);
+        };
+    }
 
     // Auto-format User ID to start with "TFC-" and upper case
     if (userIdInput) {
@@ -1276,7 +1306,7 @@ function initAddUserModal() {
                     isCallerText.textContent = 'No';
                     isCallerText.style.color = '#666';
                 }
-                closeModal();
+                window.closeAddUserModal();
 
                 // Refresh dataset if possible
                 if (typeof loadAllUsersSalary === 'function') {
