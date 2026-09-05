@@ -1275,12 +1275,15 @@ function initAddUserModal() {
                 data.append('adminUserId', activeTicket.userId);
             }
             data.append('name', name);
+            data.append('userName', name);
             data.append('userId', userId);
             data.append('userType', userType);
             data.append('email', email);
             data.append('joinDate', joinDate);
+            data.append('rawJoinDate', joinDate);
             data.append('isCaller', isCaller);
             data.append('salary', salary);
+            data.append('salaryVal', salary);
 
             console.log("[Admin Action] Submitting new user:", Object.fromEntries(data));
 

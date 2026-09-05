@@ -1,7 +1,29 @@
+/**
+ * Google Apps Script - Standalone & Dispatcher Compatible addNewUser Function
+ * 
+ * Switch Case in doPost(e):
+ * case 'addNewUser': {
+ *     const { userId, userName, userType, email, rawJoinDate, isCaller, salaryVal } = e.parameter;
+ *     return addNewUser(userId, userName, userType, email, rawJoinDate, isCaller, salaryVal);
+ * }
+ */
+
 function addNewUser(userId, userName, userType, email, rawJoinDate, isCaller, salaryVal) {
   var logs = [];
   try {
     logs.push("Starting addNewUser execution...");
+
+    // Fallback: If 1st argument is Event Object 'e' or 'e.parameter', extract fields automatically
+    if (typeof userId === 'object' && userId !== null) {
+      var p = userId.parameter ? userId.parameter : userId;
+      userName = p.userName || p.name || p.newUserName || "";
+      userType = p.userType || p.newUserType || "User";
+      email = p.email || p.newUserEmail || "";
+      rawJoinDate = p.rawJoinDate || p.joinDate || p.newJoinDate || "";
+      isCaller = p.isCaller || p.newIsCaller || "Yes";
+      salaryVal = p.salaryVal || p.salary || 15000;
+      userId = p.userId || p.newUserId || "";
+    }
 
     userId = (userId || "").toString().trim();
     userName = (userName || "").toString().trim();
