@@ -1157,6 +1157,13 @@ window.openAddUserModal = function(e) {
     if (userIdInput && (!userIdInput.value || userIdInput.value === '')) {
         userIdInput.value = 'TFC-';
     }
+    const isCallerCheckbox = document.getElementById('add_isCaller');
+    const isCallerText = document.getElementById('add_isCallerText');
+    if (isCallerCheckbox) isCallerCheckbox.checked = true;
+    if (isCallerText) {
+        isCallerText.textContent = 'Yes';
+        isCallerText.style.color = '#0051d4';
+    }
 };
 
 window.closeAddUserModal = function(e) {
@@ -1239,6 +1246,7 @@ function initAddUserModal() {
         const userId = userIdInput?.value.trim();
         const userType = document.getElementById('add_userType')?.value;
         const email = document.getElementById('add_email')?.value.trim();
+        const salary = document.getElementById('add_salary')?.value.trim() || '15000';
         const joinDate = joinDateInput?.value;
         const isCaller = isCallerCheckbox?.checked ? 'Yes' : 'No';
 
@@ -1261,7 +1269,7 @@ function initAddUserModal() {
             const activeTicket = JSON.parse(localStorage.getItem('receiveData'));
 
             const data = new URLSearchParams();
-            data.append('action', 'addUser');
+            data.append('action', 'addNewUser');
             if (activeTicket) {
                 data.append('token', activeTicket.token);
                 data.append('adminUserId', activeTicket.userId);
@@ -1272,6 +1280,7 @@ function initAddUserModal() {
             data.append('email', email);
             data.append('joinDate', joinDate);
             data.append('isCaller', isCaller);
+            data.append('salary', salary);
 
             console.log("[Admin Action] Submitting new user:", Object.fromEntries(data));
 
@@ -1302,9 +1311,10 @@ function initAddUserModal() {
 
                 form.reset();
                 if (userIdInput) userIdInput.value = 'TFC-';
+                if (isCallerCheckbox) isCallerCheckbox.checked = true;
                 if (isCallerText) {
-                    isCallerText.textContent = 'No';
-                    isCallerText.style.color = '#666';
+                    isCallerText.textContent = 'Yes';
+                    isCallerText.style.color = '#0051d4';
                 }
                 window.closeAddUserModal();
 

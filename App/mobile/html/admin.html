@@ -672,12 +672,24 @@
                     </div>
                 </div>
 
-                <!-- Email -->
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <label style="font-size: 12px; font-weight: 600; color: #444;">Email</label>
-                    <div style="display: flex; align-items: center; background: #f8f9fa; border: 1px solid #ddd; border-radius: 10px; padding: 0 12px; height: 42px;">
-                        <i class="fi fi-rr-envelope" style="color: #0051d4; font-size: 15px; margin-right: 10px;"></i>
-                        <input type="email" id="add_email" placeholder="user@tfc.com" required style="border: none; background: transparent; outline: none; width: 100%; font-size: 14px; color: #333;">
+                <!-- Email & Salary Row -->
+                <div style="display: flex; gap: 10px;">
+                    <!-- Email -->
+                    <div style="flex: 1.2; display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: #444;">Email</label>
+                        <div style="display: flex; align-items: center; background: #f8f9fa; border: 1px solid #ddd; border-radius: 10px; padding: 0 10px; height: 42px;">
+                            <i class="fi fi-rr-envelope" style="color: #0051d4; font-size: 15px; margin-right: 8px;"></i>
+                            <input type="email" id="add_email" placeholder="user@tfc.com" required style="border: none; background: transparent; outline: none; width: 100%; font-size: 13px; color: #333;">
+                        </div>
+                    </div>
+
+                    <!-- Salary -->
+                    <div style="flex: 0.8; display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: #444;">Salary</label>
+                        <div style="display: flex; align-items: center; background: #f8f9fa; border: 1px solid #ddd; border-radius: 10px; padding: 0 10px; height: 42px;">
+                            <i class="fi fi-rr-money-bill-wave" style="color: #0051d4; font-size: 15px; margin-right: 6px;"></i>
+                            <input type="number" id="add_salary" placeholder="15000" value="15000" required style="border: none; background: transparent; outline: none; width: 100%; font-size: 13px; font-weight: 600; color: #333;">
+                        </div>
                     </div>
                 </div>
 
@@ -697,10 +709,10 @@
                         <label style="font-size: 12px; font-weight: 600; color: #444;">Is Caller</label>
                         <div style="display: flex; align-items: center; gap: 8px; height: 42px;">
                             <label class="switch-toggle" style="position: relative; display: inline-block; width: 44px; height: 24px;">
-                                <input type="checkbox" id="add_isCaller" style="opacity: 0; width: 0; height: 0;">
+                                <input type="checkbox" id="add_isCaller" checked style="opacity: 0; width: 0; height: 0;">
                                 <span class="slider-toggle" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 24px;"></span>
                             </label>
-                            <span id="add_isCallerText" style="font-size: 13px; font-weight: 600; color: #666;">No</span>
+                            <span id="add_isCallerText" style="font-size: 13px; font-weight: 600; color: #0051d4;">Yes</span>
                         </div>
                     </div>
                 </div>
